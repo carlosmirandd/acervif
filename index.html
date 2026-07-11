@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcervIF | Repositório Público</title>
+    
+    <!-- Favicon IFRJ -->
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { bgDark: '#050505', cyanAccent: '#00F0FF', purpleAccent: '#8A2BE2', slateMuted: '#A1A1AA' },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        body { background-color: #050505; color: #FFFFFF; overflow-x: hidden; }
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+        .glass-panel { background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease; }
+        .glass-input:focus { outline: none; border-color: #00F0FF; background: rgba(255, 255, 255, 0.05); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+        .glass-card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .glass-card-hover:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.03); box-shadow: 0 20px 40px -15px rgba(0, 240, 255, 0.1); border-color: rgba(0, 240, 255, 0.3); }
+        .text-gradient { background: linear-gradient(to right, #FFFFFF, #A1A1AA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        
+        /* Trajetórias de Voo Orbitais */
+        @keyframes traverse-1 {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.8; }
+            25% { transform: translate(70vw, 30vh) rotate(10deg) scale(1.1); opacity: 0.4; }
+            50% { transform: translate(30vw, 90vh) rotate(-5deg) scale(0.9); opacity: 0.7; }
+            75% { transform: translate(110vw, 10vh) rotate(15deg) scale(1.05); opacity: 0.1; }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.8; }
+        }
+        @keyframes traverse-2 {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.7; }
+            33% { transform: translate(60vw, -80vh) rotate(-15deg) scale(1.1); opacity: 0.2; }
+            66% { transform: translate(100vw, -20vh) rotate(10deg) scale(0.9); opacity: 0.8; }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.7; }
+        }
+        @keyframes traverse-3 {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.8; }
+            33% { transform: translate(-80vw, -40vh) rotate(15deg) scale(1.2); opacity: 0.1; }
+            66% { transform: translate(-30vw, -100vh) rotate(-10deg) scale(0.8); opacity: 0.9; }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.8; }
+        }
+        @keyframes traverse-4 {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0.5; }
+            25% { transform: translate(-50vw, 70vh) rotate(-20deg); opacity: 0.1; }
+            50% { transform: translate(-100vw, 40vh) rotate(5deg); opacity: 0.6; }
+            75% { transform: translate(-20vw, 100vh) rotate(15deg); opacity: 0.2; }
+            100% { transform: translate(0, 0) rotate(0deg); opacity: 0.5; }
+        }
+        .animate-traverse-1 { animation: traverse-1 38s ease-in-out infinite; }
+        .animate-traverse-2 { animation: traverse-2 45s ease-in-out infinite; }
+        .animate-traverse-3 { animation: traverse-3 42s ease-in-out infinite; }
+        .animate-traverse-4 { animation: traverse-4 50s ease-in-out infinite; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00F0FF; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyanAccent selection:text-bgDark relative pb-20">
+
+    <!-- Fundo -->
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none"></div>
+    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-cyanAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float"></div>
+    <div class="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purpleAccent rounded-full blur-[150px] opacity-[0.08] pointer-events-none -z-10 animate-float" style="animation-delay: 2s;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 relative z-10">
+        
+        <!-- Elementos Flutuantes (Decorativos) -->
+        <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+            <!-- Sistema Online -->
+            <div class="absolute top-10 left-[5%] sm:left-10 inline-flex items-center space-x-2 px-4 py-1.5 rounded-full glass-panel border border-cyanAccent/20 animate-traverse-1">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyanAccent opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyanAccent"></span>
+                </span>
+                <span class="text-xs font-mono text-cyanAccent uppercase tracking-widest font-semibold">Sistema Online</span>
+            </div>
+
+            <!-- Card Engenharia de Computação -->
+            <div class="absolute bottom-20 left-[5%] sm:left-20 glass-panel rounded-xl p-3 border border-purpleAccent/20 animate-traverse-2">
+                <div class="flex items-center space-x-2 text-purpleAccent font-mono text-xs font-bold">
+                    <i data-lucide="terminal" class="w-4 h-4"></i>
+                    <span>~/O(n log n)</span>
+                </div>
+            </div>
+
+            <!-- Card Engenharia de Produção -->
+            <div class="absolute bottom-1/4 right-[5%] sm:right-20 glass-panel rounded-xl p-3 border border-cyanAccent/20 animate-traverse-3">
+                <div class="flex items-center space-x-2 text-cyanAccent font-mono text-xs font-bold">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+                    <span>Six Sigma // Lean</span>
+                </div>
+            </div>
+            
+            <!-- Texto Decorativo -->
+            <div class="absolute top-1/4 right-[5%] sm:right-32 text-slateMuted/40 font-mono text-sm font-bold animate-traverse-4">
+                &#123; hardware &amp; processos &#125;
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6 relative z-10">
+            <div class="flex items-center group cursor-default">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png" alt="Logo IFRJ" class="w-10 h-10 mr-4 group-hover:scale-110 transition-transform duration-500 drop-shadow-[0_0_8px_rgba(0,240,255,0.3)]">
+                <div>
+                    <h1 class="text-4xl font-bold tracking-tighter text-gradient leading-none">AcervIF</h1>
+                    <p class="font-mono text-sm text-slateMuted mt-1">IFRJ Niterói /// Repositório Público</p>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="relative w-full md:w-96">
+                <input type="text" id="searchInput" placeholder="Buscar algoritmos, projetos..." class="w-full glass-input rounded-full py-3 pl-12 pr-4 font-mono text-sm">
+                <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-slateMuted"></i>
+            </div>
+        </div>
+
+        <!-- Categorias -->
+        <div class="flex space-x-3 overflow-x-auto pb-6 mb-8 scrollbar-hide relative z-10" id="categoriesContainer">
+            <!-- Categorias renderizadas via JS -->
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="text-center py-20 font-mono text-cyanAccent animate-pulse hidden">
+            Acessando banco de dados do núcleo...
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto mt-20 hidden relative z-10">
+            <i data-lucide="shield-alert" class="w-12 h-12 text-slateMuted mx-auto mb-4"></i>
+            <h3 class="text-xl font-bold mb-2">Acervo Vazio ou Não Encontrado</h3>
+            <p class="text-slateMuted font-mono text-sm">Nenhum registro encontrado para esta busca ou as credenciais do banco ainda não foram configuradas.</p>
+        </div>
+
+        <!-- Destaques -->
+        <div id="prioritySection" class="mb-16 hidden relative z-10">
+            <div class="flex items-center mb-6">
+                <div class="w-2 h-2 rounded-full bg-cyanAccent animate-ping mr-3"></div>
+                <h2 class="text-2xl font-bold">Em Destaque</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="priorityGrid"></div>
+        </div>
+
+        <!-- Todos os Posts -->
+        <div id="regularSection" class="hidden relative z-10">
+            <h2 class="text-2xl font-bold mb-6 text-slateMuted">Acervo Cronológico</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="regularGrid"></div>
+        </div>
+    </div>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Firebase (ES Modules) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ==========================================
+        // CONFIGURAÇÃO FIREBASE (Somente Leitura)
+        // Substitua por suas chaves do Firebase
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
+            authDomain: "acervif12.firebaseapp.com",
+            projectId: "acervif12",
+            storageBucket: "acervif12.firebasestorage.app",
+            messagingSenderId: "698647384488",
+            appId: "1:698647384488:web:c45b99428d9767fe04cd9d",
+            measurementId: "G-9C095VDTBG"
+        };
+
+        let db;
+        let allPosts = [];
+        let allCategories = [];
+        let activeCategory = 'Todas';
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const loader = document.getElementById('loader');
+        const emptyState = document.getElementById('emptyState');
+        const prioritySection = document.getElementById('prioritySection');
+        const regularSection = document.getElementById('regularSection');
+        const priorityGrid = document.getElementById('priorityGrid');
+        const regularGrid = document.getElementById('regularGrid');
+
+        async function init() {
+            lucide.createIcons();
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                await fetchData();
+            } catch (error) {
+                console.error("Erro ao inicializar Firebase. Verifique as credenciais.", error);
+                showEmptyState();
+            }
+        }
+
+        async function fetchData() {
+            loader.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            prioritySection.classList.add('hidden');
+            regularSection.classList.add('hidden');
+
+            try {
+                // Fetch Categories
+                const catQuery = query(collection(db, 'categories'), orderBy('name'));
+                const catSnapshot = await getDocs(catQuery);
+                allCategories = catSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Fetch Posts
+                const postQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+                const postSnapshot = await getDocs(postQuery);
+                allPosts = postSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                renderCategories();
+                filterAndRenderPosts();
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+                showEmptyState();
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        function renderCategories() {
+            categoriesContainer.innerHTML = '';
+            
+            // Botão "Todas"
+            const btnAll = document.createElement('button');
+            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-cyanAccent text-bgDark' : 'glass-panel text-slateMuted hover:text-white'}`;
+            btnAll.innerText = '[Todas]';
+            btnAll.onclick = () => { activeCategory = 'Todas'; renderCategories(); filterAndRenderPosts(); };
+            categoriesContainer.appendChild(btnAll);
+
+            // Botões Dinâmicos
+            allCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === cat.id ? 'bg-purpleAccent text-white' : 'glass-panel text-slateMuted hover:text-white'}`;
+                btn.innerText = cat.name;
+                btn.onclick = () => { activeCategory = cat.id; renderCategories(); filterAndRenderPosts(); };
+                categoriesContainer.appendChild(btn);
+            });
+        }
+
+        function filterAndRenderPosts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            const filtered = allPosts.filter(post => {
+                const matchesSearch = post.title.toLowerCase().includes(searchTerm) || post.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = activeCategory === 'Todas' || post.categoryId === activeCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            if (filtered.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            const priority = filtered.filter(p => p.isPriority);
+            const regular = filtered.filter(p => !p.isPriority);
+
+            // Render Priority
+            if (priority.length > 0) {
+                priorityGrid.innerHTML = priority.map(p => createPostHTML(p)).join('');
+                prioritySection.classList.remove('hidden');
+            } else {
+                prioritySection.classList.add('hidden');
+            }
+
+            // Render Regular
+            if (regular.length > 0) {
+                regularGrid.innerHTML = regular.map(p => createPostHTML(p)).join('');
+                regularSection.classList.remove('hidden');
+            } else {
+                regularSection.classList.add('hidden');
+            }
+
+            lucide.createIcons();
+        }
+
+        function createPostHTML(post) {
+            const catName = allCategories.find(c => c.id === post.categoryId)?.name || 'Desconhecida';
+            let dateStr = 'Recente';
+            if (post.createdAt && post.createdAt.toDate) {
+                dateStr = post.createdAt.toDate().toLocaleDateString('pt-BR');
+            }
+
+            const defaultImg = 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800';
+
+            return `
+                <a href="${post.redirectUrl}" target="_blank" rel="noopener noreferrer" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">
+                    <div class="relative h-48 rounded-2xl overflow-hidden">
+                        <div class="absolute inset-0 bg-bgDark/40 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                        <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="text-xl font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight">${post.title}</h3>
+                            <i data-lucide="external-link" class="w-5 h-5 text-slateMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
+                        </div>
+                        <p class="text-slateMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${post.description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                            <span class="text-xs font-mono text-purpleAccent bg-purpleAccent/10 px-3 py-1 rounded-full">${catName}</span>
+                            <span class="flex items-center text-xs font-mono text-slateMuted">
+                                <i data-lucide="calendar" class="w-3 h-3 mr-1"></i> ${dateStr}
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        function showEmptyState() {
+            prioritySection.classList.add('hidden');
+            regularSection.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+        }
+
+        searchInput.addEventListener('input', filterAndRenderPosts);
+
+        // Bootstrap
+        init();
+    </script>
+</body>
+</html>
