@@ -3,19 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AcervIF | Calendário Acadêmico 2026</title>
+    <title>AcervIF | Calendário Letivo 2026</title>
     
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <script>
+        const theme = localStorage.getItem('theme') || 'system';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: { bgDark: '#050505', cyanAccent: '#00F0FF', purpleAccent: '#8A2BE2', slateMuted: '#A1A1AA' },
+                    colors: { 
+                        themeBg: 'var(--bg-color)', 
+                        textMain: 'var(--text-main)',
+                        themeMuted: 'var(--text-muted)',
+                        cyanAccent: 'var(--cyan-accent)', 
+                        purpleAccent: 'var(--purple-accent)', 
+                        pinkAccent: 'var(--pink-accent)' 
+                    },
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
                 }
             }
@@ -23,310 +38,316 @@
     </script>
 
     <style>
-        body { background-color: #050505; color: #FFFFFF; overflow-x: hidden; }
-        .bg-grid {
-            background-size: 50px 50px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        :root {
+            --bg-color: #F8FAFC; --text-main: #0F172A; --text-muted: #64748B;
+            --cyan-accent: #0284C7; --purple-accent: #7C3AED; --pink-accent: #DB2777;
+            --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: rgba(0, 0, 0, 0.05); --glass-shadow: rgba(0, 0, 0, 0.03);
+            --grid-line: rgba(0, 0, 0, 0.04); --scroll-track: #F8FAFC; --scroll-thumb: #CBD5E1; --scroll-thumb-hover: #7C3AED;
         }
-        .glass-panel { background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .text-gradient { background: linear-gradient(to right, #FFFFFF, #A1A1AA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .calendar-today { border: 1px solid #8A2BE2; box-shadow: inset 0 0 15px rgba(138, 43, 226, 0.2); }
-        
-        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
-        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        .dark {
+            --bg-color: #050505; --text-main: #FFFFFF; --text-muted: #A1A1AA;
+            --cyan-accent: #00F0FF; --purple-accent: #8A2BE2; --pink-accent: #FF1493;
+            --glass-bg: rgba(20, 20, 20, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --glass-shadow: rgba(0, 0, 0, 0.3);
+            --grid-line: rgba(255, 255, 255, 0.03); --scroll-track: #050505; --scroll-thumb: #27272a; --scroll-thumb-hover: #8A2BE2;
+        }
+
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px); }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 4px 20px var(--glass-shadow); transition: background-color 0.3s, border-color 0.3s; }
+        .text-gradient { background: linear-gradient(to right, var(--text-main), var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #8A2BE2; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
     </style>
 </head>
-<body class="antialiased selection:bg-purpleAccent selection:text-white relative pb-20 min-h-screen">
+<body class="antialiased selection:bg-purpleAccent selection:text-white relative pb-10 min-h-screen flex flex-col">
 
-    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none"></div>
-    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-purpleAccent rounded-full blur-[180px] opacity-[0.08] pointer-events-none -z-10 animate-float"></div>
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+    <div class="fixed top-0 left-[20%] w-[500px] h-[500px] bg-purpleAccent rounded-full blur-[150px] opacity-10 pointer-events-none -z-10 transition-colors duration-500"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 w-full flex-1 relative z-10">
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 relative z-10 border-b border-white/10 pb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 border-b border-[var(--glass-border)] pb-8">
             <div class="flex items-center group cursor-default">
-                <div class="p-3 bg-white/5 rounded-2xl mr-4 border border-white/10 group-hover:scale-105 transition-transform">
-                    <i data-lucide="calendar-days" class="w-8 h-8 text-purpleAccent drop-shadow-[0_0_8px_rgba(138,43,226,0.5)]"></i>
+                <div class="p-3 bg-white dark:bg-black/40 rounded-2xl mr-4 border border-[var(--glass-border)] shadow-sm">
+                    <i data-lucide="calendar" class="w-8 h-8 text-purpleAccent"></i>
                 </div>
                 <div>
-                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Calendário Acadêmico</h1>
-                    <p class="font-mono text-sm text-slateMuted mt-1">IFRJ Niterói /// Eventos e Prazos 2026</p>
+                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Calendário Letivo</h1>
+                    <p class="font-mono text-sm text-themeMuted mt-1">Ano Base 2026</p>
                 </div>
             </div>
             
-            <div class="flex gap-4">
-                <a href="index.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-6 py-3 rounded-full font-mono text-sm font-bold text-slateMuted hover:bg-cyanAccent hover:text-bgDark transition-all">
-                    <i data-lucide="database" class="w-4 h-4"></i> Acervo
-                </a>
-                <a href="comercios.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-6 py-3 rounded-full font-mono text-sm font-bold text-slateMuted hover:bg-pinkAccent hover:text-white transition-all">
-                    <i data-lucide="store" class="w-4 h-4"></i> Comércios
-                </a>
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="index.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-cyanAccent hover:bg-cyanAccent hover:text-white transition-all shadow-sm flex items-center"><i data-lucide="database" class="w-4 h-4 mr-2"></i>Acervo</a>
+                <a href="comercios.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-pinkAccent hover:bg-pinkAccent hover:text-white transition-all shadow-sm flex items-center"><i data-lucide="store" class="w-4 h-4 mr-2"></i>Comércios</a>
+                
+                <div class="relative group z-50">
+                    <button class="glass-panel p-3 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-11 h-11 shadow-sm">
+                        <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="sun" class="w-4 h-4 inline mr-2"></i> Claro</button>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="moon" class="w-4 h-4 inline mr-2"></i> Escuro</button>
+                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="monitor" class="w-4 h-4 inline mr-2"></i> Sistema</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Calendário Principal -->
-            <div class="lg:col-span-2 glass-panel rounded-3xl p-4 sm:p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <button id="btnPrevMonth" class="p-3 glass-panel rounded-full hover:bg-white/10 transition-colors"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
-                    <h3 id="calendarMonthYear" class="text-2xl font-bold font-mono text-white tracking-widest uppercase">Mês Ano</h3>
-                    <button id="btnNextMonth" class="p-3 glass-panel rounded-full hover:bg-white/10 transition-colors"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+        <div class="flex flex-col lg:flex-row gap-8">
+            <div class="w-full lg:w-1/3 space-y-6">
+                <div class="glass-panel rounded-3xl p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center text-textMain"><i data-lucide="list-todo" class="mr-2 text-purpleAccent"></i> Eventos do Mês</h2>
+                    <div id="monthEventsList" class="flex flex-col gap-3 font-mono text-sm max-h-[600px] overflow-y-auto pr-2"></div>
                 </div>
-                
-                <div class="grid grid-cols-7 gap-2 mb-4 text-center font-mono text-xs sm:text-sm text-slateMuted font-bold">
-                    <div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>
+
+                <div class="glass-panel rounded-3xl p-6">
+                    <h3 class="font-bold mb-3 text-sm text-themeMuted">Legenda de Cores</h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>Feriados</div>
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>Recessos</div>
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>Secretaria</div>
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>SIGAA</div>
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>Semanas Acad.</div>
+                        <div class="flex items-center"><div class="w-3 h-3 rounded-full bg-purpleAccent mr-2"></div>Ativ. Extras</div>
+                    </div>
                 </div>
-                
-                <div id="calendarGrid" class="grid grid-cols-7 gap-2 sm:gap-3"></div>
             </div>
 
-            <!-- Lista Lateral -->
-            <div class="lg:col-span-1 glass-panel rounded-3xl p-6 sm:p-8 flex flex-col max-h-[800px]">
-                <div class="mb-6 pb-6 border-b border-white/10">
-                    <h3 class="text-xl font-bold mb-2 flex items-center">
-                        <i data-lucide="list-todo" class="w-6 h-6 text-purpleAccent mr-3"></i> Eventos do Mês
-                    </h3>
-                    <p id="selectedMonthDisplay" class="font-mono text-sm text-slateMuted">Carregando...</p>
+            <div class="w-full lg:w-2/3 glass-panel rounded-3xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <button id="prevMonth" class="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg text-themeMuted hover:text-purpleAccent transition-colors"><i data-lucide="chevron-left"></i></button>
+                    <h2 id="currentMonthLabel" class="text-2xl font-bold uppercase tracking-widest text-textMain"></h2>
+                    <button id="nextMonth" class="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg text-themeMuted hover:text-purpleAccent transition-colors"><i data-lucide="chevron-right"></i></button>
                 </div>
-                <div id="monthEventsList" class="flex-grow overflow-y-auto space-y-4 pr-2 scrollbar-hide">
-                    <div id="loader" class="text-center py-10 font-mono text-slateMuted animate-pulse">Sincronizando...</div>
+
+                <div class="grid grid-cols-7 gap-1 mb-2">
+                    <div class="text-center font-mono text-xs font-bold text-red-500">DOM</div>
+                    <div class="text-center font-mono text-xs font-bold text-themeMuted">SEG</div>
+                    <div class="text-center font-mono text-xs font-bold text-themeMuted">TER</div>
+                    <div class="text-center font-mono text-xs font-bold text-themeMuted">QUA</div>
+                    <div class="text-center font-mono text-xs font-bold text-themeMuted">QUI</div>
+                    <div class="text-center font-mono text-xs font-bold text-themeMuted">SEX</div>
+                    <div class="text-center font-mono text-xs font-bold text-themeMuted">SÁB</div>
                 </div>
+
+                <div id="calendarGrid" class="grid grid-cols-7 gap-2"></div>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        window.setTheme = function(mode) { localStorage.setItem('theme', mode); updateTheme(); };
+        function updateTheme() {
+            const mode = localStorage.getItem('theme') || 'system';
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
-            authDomain: "acervif12.firebaseapp.com",
-            projectId: "acervif12",
-            storageBucket: "acervif12.firebasestorage.app",
-            messagingSenderId: "698647384488",
-            appId: "1:698647384488:web:c45b99428d9767fe04cd9d",
-            measurementId: "G-9C095VDTBG"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc", authDomain: "acervif12.firebaseapp.com", projectId: "acervif12", appId: "1:698647384488:web:c45b99428d9767fe04cd9d" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        let db;
-        let adminEvents = [];
-
-        // PDF Data Completa
-        const pdfEvents = [
-            // Fev
-            { start: '2026-02-02', end: '2026-02-02', title: 'Resultado da 2ª etapa de inscrição', color: 'bg-green-500' },
-            { start: '2026-02-03', end: '2026-02-06', title: 'Resultado matrícula isolada', color: 'bg-green-400' },
-            { start: '2026-02-02', end: '2026-02-12', title: 'Procedimentos Secretarias', color: 'bg-blue-500' },
-            { start: '2026-02-13', end: '2026-02-21', title: 'Recesso de carnaval', color: 'bg-orange-500' },
-            { start: '2026-02-14', end: '2026-02-22', title: '1ª etapa Inscrição disciplinas', color: 'bg-green-500' },
-            { start: '2026-02-23', end: '2026-02-23', title: 'Planejamento atividades letivas', color: 'bg-blue-400' },
-            { start: '2026-02-24', end: '2026-02-24', title: 'Início semestre letivo 2026.1 / Resultado 1ª etapa', color: 'bg-yellow-500 text-black' },
-            { start: '2026-02-25', end: '2026-02-26', title: '2ª etapa Inscrição disciplinas', color: 'bg-green-500' },
-            // Mar
-            { start: '2026-03-06', end: '2026-03-10', title: 'Trancamento de Disciplinas', color: 'bg-slate-500' },
-            { start: '2026-03-09', end: '2026-03-13', title: 'Aproveitamento de Estudos (Ingressante)', color: 'bg-blue-400' },
-            { start: '2026-03-10', end: '2026-03-10', title: 'Resultado Aproveitamento', color: 'bg-blue-500' },
-            // Abr
-            { start: '2026-04-03', end: '2026-04-03', title: 'Feriado (Sexta-Feira Santa)', color: 'bg-red-500' },
-            { start: '2026-04-04', end: '2026-04-04', title: 'Recesso', color: 'bg-orange-500' },
-            { start: '2026-04-21', end: '2026-04-21', title: 'Feriado (Tiradentes)', color: 'bg-red-500' },
-            { start: '2026-04-22', end: '2026-04-22', title: 'Recesso', color: 'bg-orange-500' },
-            { start: '2026-04-23', end: '2026-04-23', title: 'Feriado (São Jorge)', color: 'bg-red-500' },
-            // Mai
-            { start: '2026-05-01', end: '2026-05-01', title: 'Feriado (Dia do Trabalho)', color: 'bg-red-500' },
-            { start: '2026-05-02', end: '2026-05-02', title: 'Recesso', color: 'bg-orange-500' },
-            { start: '2026-05-11', end: '2026-05-15', title: 'Trancamento de curso', color: 'bg-slate-500' },
-            { start: '2026-05-18', end: '2026-05-29', title: 'Aproveitamento de Estudos (Veterano)', color: 'bg-blue-400' },
-            { start: '2026-05-18', end: '2026-05-31', title: 'Validação Atividades Complementares', color: 'bg-blue-500' },
-            // Jun
-            { start: '2026-06-03', end: '2026-06-06', title: 'Semana do Meio ambiente', color: 'bg-emerald-500' },
-            { start: '2026-06-04', end: '2026-06-04', title: 'Feriado (Corpus Christi)', color: 'bg-red-500' },
-            { start: '2026-06-12', end: '2026-06-12', title: 'Envio horários secretaria', color: 'bg-blue-500' },
-            { start: '2026-06-22', end: '2026-06-26', title: 'Reabertura Matrícula / Disc. Isoladas', color: 'bg-slate-400' },
-            { start: '2026-06-23', end: '2026-06-23', title: 'Dia Mulheres na Engenharia', color: 'bg-pink-500' },
-            // Jul
-            { start: '2026-07-02', end: '2026-07-16', title: 'Procedimentos Secretarias', color: 'bg-blue-500' },
-            { start: '2026-07-13', end: '2026-07-13', title: 'Consolidação disciplinas SIGAA', color: 'bg-green-600' },
-            { start: '2026-07-14', end: '2026-07-16', title: 'Retificação notas/frequências', color: 'bg-blue-400' },
-            { start: '2026-07-16', end: '2026-07-16', title: 'Término Semestre 2026.1', color: 'bg-yellow-500 text-black' },
-            { start: '2026-07-17', end: '2026-07-31', title: 'Férias Docentes', color: 'bg-orange-400' },
-            { start: '2026-07-18', end: '2026-07-26', title: '1ª etapa Inscrição 2026.2', color: 'bg-green-500' },
-            { start: '2026-07-28', end: '2026-07-28', title: 'Resultado 1ª etapa', color: 'bg-green-500' },
-            { start: '2026-07-29', end: '2026-07-30', title: '2ª etapa Inscrição 2026.2', color: 'bg-green-500' },
-            // Ago
-            { start: '2026-08-03', end: '2026-08-03', title: 'Resultado 2ª etapa / Planejamento', color: 'bg-blue-400' },
-            { start: '2026-08-04', end: '2026-08-04', title: 'Início Semestre 2026.2', color: 'bg-yellow-500 text-black' },
-            { start: '2026-08-05', end: '2026-08-08', title: 'Semana ETC', color: 'bg-cyan-500' },
-            { start: '2026-08-13', end: '2026-08-13', title: 'Resultado disc. isoladas', color: 'bg-green-500' },
-            { start: '2026-08-17', end: '2026-08-21', title: 'Aproveitamento (Ingressante)', color: 'bg-blue-400' },
-            { start: '2026-08-18', end: '2026-08-18', title: 'Resultado Aproveitamento', color: 'bg-blue-500' },
-            // Set
-            { start: '2026-09-07', end: '2026-09-07', title: 'Feriado (Independência)', color: 'bg-red-500' },
-            { start: '2026-09-14', end: '2026-09-18', title: 'Trancamento Disciplinas', color: 'bg-slate-500' },
-            // Out
-            { start: '2026-10-05', end: '2026-10-06', title: 'Conselhos de Classe MV1', color: 'bg-blue-400' },
-            { start: '2026-10-12', end: '2026-10-12', title: 'Feriado (Aparecida)', color: 'bg-red-500' },
-            { start: '2026-10-15', end: '2026-10-15', title: 'Feriado (Professor)', color: 'bg-red-500' },
-            { start: '2026-10-19', end: '2026-10-23', title: 'Trancamento de curso', color: 'bg-slate-500' },
-            { start: '2026-10-26', end: '2026-11-06', title: 'Aproveitamento (Veterano)', color: 'bg-blue-400' },
-            { start: '2026-10-26', end: '2026-11-13', title: 'Validação Atividades Complementares', color: 'bg-blue-500' },
-            { start: '2026-10-28', end: '2026-10-28', title: 'Feriado (Servidor Público)', color: 'bg-red-500' },
-            // Nov
-            { start: '2026-11-02', end: '2026-11-02', title: 'Feriado (Finados)', color: 'bg-red-500' },
-            { start: '2026-11-20', end: '2026-11-20', title: 'Feriado (Consciência Negra)', color: 'bg-red-500' },
-            { start: '2026-11-21', end: '2026-11-21', title: 'Recesso', color: 'bg-orange-500' },
-            // Dez
-            { start: '2026-12-07', end: '2026-12-23', title: 'Procedimentos Secretarias', color: 'bg-blue-500' },
-            { start: '2026-12-11', end: '2026-12-11', title: 'Dia do Engenheiro', color: 'bg-cyan-500' },
-            { start: '2026-12-21', end: '2026-12-21', title: 'Consolidação SIGAA', color: 'bg-green-600' },
-            { start: '2026-12-22', end: '2026-12-23', title: 'Retificação notas', color: 'bg-blue-400' },
-            { start: '2026-12-23', end: '2026-12-23', title: 'Fim ano letivo 2026', color: 'bg-yellow-500 text-black' },
-            { start: '2026-12-25', end: '2026-12-25', title: 'Feriado (Natal)', color: 'bg-red-500' },
-            { start: '2026-12-26', end: '2026-12-31', title: 'Recesso', color: 'bg-orange-500' }
+        // --- DADOS NATIVOS 100% RESTAURADOS (Ano 2026) ---
+        const hardcodedEvents = [
+            // Fevereiro
+            { title: 'Procedimentos Internos Sec/DGA', start: '2026-02-02', end: '2026-02-12', color: '#3B82F6' },
+            { title: 'Recesso de Carnaval', start: '2026-02-13', end: '2026-02-21', color: '#F97316' },
+            { title: '1ª Inscrição em disciplinas (SIGAA)', start: '2026-02-14', end: '2026-02-22', color: '#22C55E' },
+            { title: 'Planejamento Letivo', start: '2026-02-23', end: '2026-02-23', color: '#3B82F6' },
+            { title: 'Resultado 1ª Inscrição', start: '2026-02-24', end: '2026-02-24', color: '#22C55E' },
+            { title: 'Início do Semestre 2026.1', start: '2026-02-24', end: '2026-02-24', color: '#7C3AED' },
+            { title: '2ª Inscrição em disciplinas', start: '2026-02-25', end: '2026-02-26', color: '#22C55E' },
+            // Março
+            { title: 'Resultado 2ª Etapa Inscrição', start: '2026-03-02', end: '2026-03-02', color: '#22C55E' },
+            { title: 'Resultado Disciplinas Isoladas', start: '2026-03-06', end: '2026-03-06', color: '#3B82F6' },
+            { title: 'Aproveitamento (Ingressantes)', start: '2026-03-09', end: '2026-03-13', color: '#3B82F6' },
+            // Abril
+            { title: 'Feriado Sexta Santa', start: '2026-04-03', end: '2026-04-03', color: '#EF4444' },
+            { title: 'Recesso', start: '2026-04-04', end: '2026-04-04', color: '#F97316' },
+            { title: 'Trancamento Disciplina', start: '2026-04-06', end: '2026-04-10', color: '#3B82F6' },
+            { title: 'Resultado Aproveitamento', start: '2026-04-10', end: '2026-04-10', color: '#3B82F6' },
+            { title: 'Tiradentes', start: '2026-04-21', end: '2026-04-21', color: '#EF4444' },
+            { title: 'Recesso', start: '2026-04-22', end: '2026-04-22', color: '#F97316' },
+            { title: 'São Jorge', start: '2026-04-23', end: '2026-04-23', color: '#EF4444' },
+            // Maio
+            { title: 'Dia do Trabalho', start: '2026-05-01', end: '2026-05-01', color: '#EF4444' },
+            { title: 'Recesso', start: '2026-05-02', end: '2026-05-02', color: '#F97316' },
+            { title: 'Trancamento Curso', start: '2026-05-11', end: '2026-05-15', color: '#3B82F6' },
+            { title: 'Aproveitamento (Veteranos)', start: '2026-05-18', end: '2026-05-29', color: '#3B82F6' },
+            { title: 'Validação Ativ. Complementares', start: '2026-05-18', end: '2026-05-31', color: '#3B82F6' },
+            // Junho
+            { title: 'Semana Meio Ambiente', start: '2026-06-03', end: '2026-06-06', color: '#EC4899' },
+            { title: 'Corpus Christi', start: '2026-06-04', end: '2026-06-04', color: '#EF4444' },
+            { title: 'Envio Horários', start: '2026-06-12', end: '2026-06-12', color: '#3B82F6' },
+            { title: 'Reabertura Matrícula Trancada', start: '2026-06-22', end: '2026-06-26', color: '#3B82F6' },
+            { title: 'Matrícula Isoladas', start: '2026-06-22', end: '2026-06-26', color: '#3B82F6' },
+            { title: 'Mulheres na Engenharia', start: '2026-06-23', end: '2026-06-23', color: '#EC4899' },
+            // Julho
+            { title: 'Procedimentos Internos', start: '2026-07-02', end: '2026-07-16', color: '#3B82F6' },
+            { title: 'Consolidação SIGAA', start: '2026-07-13', end: '2026-07-13', color: '#3B82F6' },
+            { title: 'Retificação Notas', start: '2026-07-14', end: '2026-07-16', color: '#3B82F6' },
+            { title: 'Término 2026.1', start: '2026-07-16', end: '2026-07-16', color: '#7C3AED' },
+            { title: 'Férias Docentes', start: '2026-07-17', end: '2026-07-31', color: '#F97316' },
+            { title: '1ª Inscrição em disciplinas', start: '2026-07-18', end: '2026-07-26', color: '#22C55E' },
+            { title: 'Resultado 1ª Inscrição', start: '2026-07-28', end: '2026-07-28', color: '#22C55E' },
+            { title: '2ª Inscrição em disciplinas', start: '2026-07-29', end: '2026-07-30', color: '#22C55E' },
+            // Agosto
+            { title: 'Resultado 2ª Etapa Inscrição', start: '2026-08-03', end: '2026-08-03', color: '#22C55E' },
+            { title: 'Planejamento Letivo', start: '2026-08-03', end: '2026-08-03', color: '#3B82F6' },
+            { title: 'Início do Semestre 2026.2', start: '2026-08-04', end: '2026-08-04', color: '#7C3AED' },
+            { title: 'Resultado Disciplinas Isoladas', start: '2026-08-13', end: '2026-08-13', color: '#3B82F6' },
+            { title: 'Trancamento Disciplina', start: '2026-08-14', end: '2026-08-18', color: '#3B82F6' },
+            { title: 'Aproveitamento (Ingressantes)', start: '2026-08-17', end: '2026-08-21', color: '#3B82F6' },
+            { title: 'Resultado Aproveitamento', start: '2026-08-18', end: '2026-08-18', color: '#3B82F6' },
+            // Setembro
+            { title: 'Independência', start: '2026-09-07', end: '2026-09-07', color: '#EF4444' },
+            // Outubro
+            { title: 'Semana ETC 10 Anos', start: '2026-10-05', end: '2026-10-08', color: '#EC4899' },
+            { title: 'Conselhos de Classe', start: '2026-10-05', end: '2026-10-06', color: '#3B82F6' },
+            { title: 'N.S Aparecida', start: '2026-10-12', end: '2026-10-12', color: '#EF4444' },
+            { title: 'Dia do Professor', start: '2026-10-15', end: '2026-10-15', color: '#EF4444' },
+            { title: 'Trancamento de Curso', start: '2026-10-19', end: '2026-10-23', color: '#3B82F6' },
+            { title: 'Início Aproveit. (Veteranos)', start: '2026-10-26', end: '2026-10-26', color: '#3B82F6' },
+            { title: 'Valid. Atividades Complem.', start: '2026-10-26', end: '2026-10-26', color: '#3B82F6' },
+            { title: 'Dia do Servidor', start: '2026-10-28', end: '2026-10-28', color: '#EF4444' },
+            // Novembro
+            { title: 'Finados', start: '2026-11-02', end: '2026-11-02', color: '#EF4444' },
+            { title: 'Fim Aproveit. (Veteranos)', start: '2026-11-06', end: '2026-11-06', color: '#3B82F6' },
+            { title: 'Fim Valid. Atividades', start: '2026-11-13', end: '2026-11-13', color: '#3B82F6' },
+            { title: 'Consciência Negra', start: '2026-11-20', end: '2026-11-20', color: '#EF4444' },
+            { title: 'Recesso', start: '2026-11-21', end: '2026-11-21', color: '#F97316' },
+            // Dezembro
+            { title: 'Procedimentos Internos', start: '2026-12-07', end: '2026-12-23', color: '#3B82F6' },
+            { title: 'Dia do Engenheiro', start: '2026-12-11', end: '2026-12-11', color: '#EC4899' },
+            { title: 'Consolidação SIGAA', start: '2026-12-21', end: '2026-12-21', color: '#3B82F6' },
+            { title: 'Retificação Notas', start: '2026-12-22', end: '2026-12-23', color: '#3B82F6' },
+            { title: 'Fim do Ano Letivo 2026', start: '2026-12-23', end: '2026-12-23', color: '#7C3AED' },
+            { title: 'Natal', start: '2026-12-25', end: '2026-12-25', color: '#EF4444' },
+            { title: 'Recesso', start: '2026-12-26', end: '2026-12-31', color: '#F97316' }
         ];
 
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-        if(currentYear < 2026) { currentYear = 2026; currentMonth = 1; }
+        let adminEvents = [];
+        let allEvents = [];
+        let currentYear = 2026; 
+        
+        // Auto-abre no mês atual, ou em Agosto caso PC não esteja em 2026
+        const todayReal = new Date();
+        let currentMonth = todayReal.getFullYear() === 2026 ? todayReal.getMonth() : 7; 
 
-        const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const grid = document.getElementById('calendarGrid');
+        const monthLabel = document.getElementById('currentMonthLabel');
+        const monthEventsList = document.getElementById('monthEventsList');
 
         async function init() {
             lucide.createIcons();
             try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                await fetchDynamicEvents();
-                document.getElementById('btnPrevMonth').onclick = () => changeMonth(-1);
-                document.getElementById('btnNextMonth').onclick = () => changeMonth(1);
-                renderCalendar();
-            } catch (e) {
-                console.error(e);
-                document.getElementById('loader').innerText = "Erro ao acessar.";
-            }
-        }
-
-        async function fetchDynamicEvents() {
-            try {
                 const snap = await getDocs(collection(db, 'events'));
-                adminEvents = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            } catch(e) { console.error(e); }
-        }
-
-        function changeMonth(dir) {
-            currentMonth += dir;
-            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-            else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+                adminEvents = snap.docs.map(d => ({id: d.id, color: '#7C3AED', ...d.data()})); 
+            } catch(e) { console.error("Sem eventos remotos"); }
+            
+            allEvents = [...hardcodedEvents, ...adminEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate, color: e.color, iconUrl: e.iconUrl }))];
             renderCalendar();
         }
 
-        function formatDt(y, m, d) { return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
-        function formatBr(ds) { if(!ds) return ''; const [y,m,d] = ds.split('-'); return `${d}/${m}`; }
-        function inRange(d, s, e) { return d >= s && d <= e; }
+        function getDatesInRange(startStr, endStr) {
+            const arr = [];
+            let curr = new Date(startStr + 'T12:00:00Z');
+            let end = new Date(endStr + 'T12:00:00Z');
+            while(curr <= end) { arr.push(curr.toISOString().split('T')[0]); curr.setDate(curr.getDate()+1); }
+            return arr;
+        }
 
         function renderCalendar() {
-            const grid = document.getElementById('calendarGrid');
-            document.getElementById('calendarMonthYear').innerText = `${monthNames[currentMonth]} ${currentYear}`;
             grid.innerHTML = '';
-            
+            monthEventsList.innerHTML = '';
             const firstDay = new Date(currentYear, currentMonth, 1).getDay();
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const today = new Date();
-            const isCM = today.getMonth() === currentMonth && today.getFullYear() === currentYear;
-            const cd = today.getDate();
+            const monthNames = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+            monthLabel.innerText = `${monthNames[currentMonth]} ${currentYear}`;
 
-            for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div class="aspect-square rounded-xl bg-white/5 opacity-50"></div>`;
+            const todayStr = `${todayReal.getFullYear()}-${String(todayReal.getMonth()+1).padStart(2,'0')}-${String(todayReal.getDate()).padStart(2,'0')}`;
 
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dt = formatDt(currentYear, currentMonth, i);
-                let dayEvents = [];
-                pdfEvents.forEach(e => { if(inRange(dt, e.start, e.end)) dayEvents.push(e); });
-                adminEvents.forEach(e => { if(inRange(dt, e.startDate, e.endDate)) dayEvents.push({...e, color:'bg-[#8A2BE2]'}); });
+            const daysMap = {};
+            const eventsInThisMonth = [];
+            
+            allEvents.forEach(evt => {
+                if(!evt.start || !evt.end) return;
+                const dates = getDatesInRange(evt.start, evt.end);
+                let addedToList = false;
                 
-                let extra = "aspect-square rounded-xl glass-panel flex flex-col p-2 relative overflow-hidden transition-all";
-                if (isCM && i === cd) extra += " calendar-today scale-105 z-10 font-bold";
-                
-                let barHTML = '';
-                let iconsHTML = '';
-                
-                if (dayEvents.length > 0) {
-                    const uColors = [...new Set(dayEvents.map(ev => ev.color.split(' ')[0]))]; 
-                    barHTML = `<div class="absolute bottom-0 left-0 w-full h-2 flex">`;
-                    uColors.forEach(color => barHTML += `<div class="flex-1 h-full ${color}"></div>`);
-                    barHTML += `</div>`;
-
-                    const dIcons = dayEvents.filter(ev => ev.iconUrl);
-                    if (dIcons.length > 0) {
-                        iconsHTML = `<div class="flex gap-1 flex-wrap justify-end">`;
-                        dIcons.forEach(ev => iconsHTML += `<img src="${ev.iconUrl}" class="w-4 h-4 sm:w-5 sm:h-5 object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">`);
-                        iconsHTML += `</div>`;
+                dates.forEach(dateStr => {
+                    if(dateStr.startsWith(`${currentYear}-${String(currentMonth+1).padStart(2,'0')}`)) {
+                        if(!daysMap[dateStr]) daysMap[dateStr] = [];
+                        daysMap[dateStr].push(evt);
+                        if(!addedToList) { eventsInThisMonth.push(evt); addedToList = true; }
                     }
-                }
+                });
+            });
+
+            if(eventsInThisMonth.length === 0) {
+                monthEventsList.innerHTML = '<div class="text-themeMuted p-2 text-center">Nenhum evento neste mês.</div>';
+            } else {
+                eventsInThisMonth.sort((a,b) => a.start.localeCompare(b.start));
+                eventsInThisMonth.forEach(evt => {
+                    const startArr = evt.start.split('-');
+                    const endArr = evt.end.split('-');
+                    let dateDisplay = `${startArr[2]}/${startArr[1]}`;
+                    if(evt.start !== evt.end) dateDisplay += ` a ${endArr[2]}/${endArr[1]}`;
+                    
+                    monthEventsList.innerHTML += `
+                        <div class="flex items-start border-l-2 pl-3 py-1" style="border-color: ${evt.color}">
+                            <div class="flex-1">
+                                <div class="font-bold text-textMain">${evt.title}</div>
+                                <div class="text-themeMuted text-xs mt-1">${dateDisplay}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            for(let i=0; i<firstDay; i++) grid.innerHTML += `<div class="aspect-square bg-transparent rounded-xl border border-transparent"></div>`;
+
+            for(let i=1; i<=daysInMonth; i++) {
+                const dayStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                const evts = daysMap[dayStr] || [];
+                const isToday = dayStr === todayStr;
+                
+                const uniqueColors = [...new Set(evts.map(e => e.color))];
+                const icons = evts.filter(e => e.iconUrl).map(e => e.iconUrl);
+
+                let iconsHtml = '';
+                if(icons.length > 0) iconsHtml = `<div class="absolute top-1 right-1 flex gap-1">${icons.map(url => `<img src="${url}" class="w-4 h-4 rounded-full object-cover shadow-sm bg-white">`).join('')}</div>`;
+
+                let colorBarHtml = '';
+                if(uniqueColors.length > 0) colorBarHtml = `<div class="absolute bottom-0 left-0 w-full h-1.5 flex">${uniqueColors.map(c => `<div class="flex-1" style="background-color: ${c}"></div>`).join('')}</div>`;
+
+                const todayClass = isToday ? 'ring-2 ring-cyanAccent shadow-[0_0_15px_rgba(2,132,199,0.2)] bg-white dark:bg-[#111]' : 'border border-[var(--glass-border)] hover:border-purpleAccent/50 bg-white/50 dark:bg-black/50';
 
                 grid.innerHTML += `
-                    <div class="${extra}">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-sm sm:text-base font-mono ${isCM && i === cd ? 'text-purpleAccent' : 'text-slate-300'}">${i}</span>
-                            ${iconsHTML}
-                        </div>
-                        ${barHTML}
+                    <div class="aspect-square rounded-xl ${todayClass} relative overflow-hidden flex items-center justify-center cursor-default transition-all">
+                        <span class="${isToday ? 'font-bold text-cyanAccent' : 'font-semibold text-themeMuted'}">${i}</span>
+                        ${iconsHtml}
+                        ${colorBarHtml}
                     </div>
                 `;
             }
-            renderMonthlyList();
         }
 
-        function renderMonthlyList() {
-            const list = document.getElementById('monthEventsList');
-            document.getElementById('selectedMonthDisplay').innerText = `Visualizando: ${monthNames[currentMonth]}`;
-            list.innerHTML = '';
-
-            const sMonth = formatDt(currentYear, currentMonth, 1);
-            const eMonth = formatDt(currentYear, currentMonth, new Date(currentYear, currentMonth + 1, 0).getDate());
-
-            let monthEvents = [];
-            pdfEvents.forEach(e => { if (e.start <= eMonth && e.end >= sMonth) monthEvents.push({...e, s:'PDF'}); });
-            adminEvents.forEach(e => { if (e.startDate <= eMonth && e.endDate >= sMonth) monthEvents.push({...e, color:'bg-[#8A2BE2]', s:'Admin', start:e.startDate, end:e.endDate}); });
-
-            monthEvents.sort((a, b) => a.start.localeCompare(b.start));
-
-            if (monthEvents.length === 0) {
-                list.innerHTML = `<div class="flex flex-col items-center p-8 opacity-50"><i data-lucide="calendar-x" class="w-12 h-12 mb-4"></i><p class="font-mono text-sm text-center">Nenhum evento acadêmico neste período.</p></div>`;
-                lucide.createIcons(); return;
-            }
-
-            monthEvents.forEach(ev => {
-                const dFmt = (ev.start === ev.end) ? formatBr(ev.start) : `${formatBr(ev.start)} a ${formatBr(ev.end)}`;
-                list.innerHTML += `
-                    <div class="glass-panel p-4 rounded-xl border-l-4 group hover:bg-white/5 transition-colors border-transparent hover:border-current" style="color: ${ev.color.includes('bg-[#8A2BE2]') ? '#8A2BE2' : ''}">
-                        <div class="flex items-start gap-3">
-                            <div class="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 ${ev.color} shadow-sm group-hover:scale-110"></div>
-                            <div class="w-full">
-                                <p class="font-bold text-sm sm:text-base leading-tight text-white mb-2">${ev.title}</p>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-mono text-cyanAccent"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>${dFmt}</span>
-                                    <span class="text-[10px] font-mono font-bold uppercase opacity-60">${ev.s === 'Admin' ? 'Personalizado' : 'Grade Oficial'}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            lucide.createIcons();
-        }
+        document.getElementById('prevMonth').addEventListener('click', () => { currentMonth--; if(currentMonth<0){currentMonth=11;currentYear--;} renderCalendar(); });
+        document.getElementById('nextMonth').addEventListener('click', () => { currentMonth++; if(currentMonth>11){currentMonth=0;currentYear++;} renderCalendar(); });
 
         init();
     </script>
