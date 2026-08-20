@@ -10,12 +10,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <script>
+        const theme = localStorage.getItem('theme') || 'system';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: { bgDark: '#050505', cyanAccent: '#00F0FF', pinkAccent: '#EC4899', slateMuted: '#A1A1AA' },
+                    colors: { 
+                        themeBg: 'var(--bg-color)', 
+                        textMain: 'var(--text-main)',
+                        themeMuted: 'var(--text-muted)',
+                        cyanAccent: 'var(--cyan-accent)', 
+                        purpleAccent: 'var(--purple-accent)', 
+                        pinkAccent: 'var(--pink-accent)' 
+                    },
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
                 }
             }
@@ -23,59 +38,90 @@
     </script>
 
     <style>
-        body { background-color: #050505; color: #FFFFFF; overflow-x: hidden; }
-        .bg-grid {
-            background-size: 50px 50px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        :root {
+            --bg-color: #F8FAFC; --text-main: #0F172A; --text-muted: #64748B;
+            --cyan-accent: #0284C7; --purple-accent: #7C3AED; --pink-accent: #DB2777;
+            --glass-bg: rgba(255, 255, 255, 0.6); --glass-border: rgba(0, 0, 0, 0.05);
+            --glass-hover-bg: rgba(255, 255, 255, 0.9); --glass-shadow: rgba(0, 0, 0, 0.03);
+            --input-bg: rgba(255, 255, 255, 0.8); --input-border: rgba(0, 0, 0, 0.1); --input-focus-bg: #FFFFFF;
+            --grid-line: rgba(0, 0, 0, 0.04); --scroll-track: #F8FAFC; --scroll-thumb: #CBD5E1; --scroll-thumb-hover: #DB2777;
         }
-        .glass-panel { background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease; }
-        .glass-input:focus { outline: none; border-color: #EC4899; background: rgba(255, 255, 255, 0.05); box-shadow: 0 0 15px rgba(236, 72, 153, 0.2); }
-        .glass-card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-        .glass-card-hover:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.03); box-shadow: 0 20px 40px -15px rgba(236, 72, 153, 0.1); border-color: rgba(236, 72, 153, 0.3); }
-        .text-gradient { background: linear-gradient(to right, #FFFFFF, #A1A1AA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .dark {
+            --bg-color: #050505; --text-main: #FFFFFF; --text-muted: #A1A1AA;
+            --cyan-accent: #00F0FF; --purple-accent: #8A2BE2; --pink-accent: #FF1493;
+            --glass-bg: rgba(20, 20, 20, 0.4); --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.03); --glass-shadow: rgba(0, 0, 0, 0.3);
+            --input-bg: rgba(255, 255, 255, 0.03); --input-border: rgba(255, 255, 255, 0.1); --input-focus-bg: rgba(255, 255, 255, 0.05);
+            --grid-line: rgba(255, 255, 255, 0.03); --scroll-track: #050505; --scroll-thumb: #27272a; --scroll-thumb-hover: #FF1493;
+        }
+
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%); }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 4px 30px var(--glass-shadow); transition: background-color 0.3s, border-color 0.3s; }
+        .glass-input { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); transition: all 0.3s ease; }
+        .glass-input:focus { outline: none; border-color: var(--pink-accent); background: var(--input-focus-bg); box-shadow: 0 0 15px rgba(219, 39, 119, 0.15); }
+        .dark .glass-input:focus { box-shadow: 0 0 15px rgba(255, 20, 147, 0.2); }
+        
+        .glass-card-hover { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s, border-color 0.3s; position: relative; }
+        .glass-card-hover:hover { transform: translateY(-8px); background: var(--glass-hover-bg); box-shadow: 0 20px 40px -15px rgba(219, 39, 119, 0.15); border-color: var(--pink-accent); }
+        .dark .glass-card-hover:hover { box-shadow: 0 20px 40px -15px rgba(255, 20, 147, 0.15); }
+        .text-gradient { background: linear-gradient(to right, var(--text-main), var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
         @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
         .animate-float { animation: float 6s ease-in-out infinite; }
+        
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #EC4899; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="antialiased selection:bg-pinkAccent selection:text-white relative pb-20 min-h-screen">
 
-    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none"></div>
-    <div class="fixed top-[-10%] left-[-5%] w-[600px] h-[600px] bg-pinkAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyanAccent rounded-full blur-[150px] opacity-[0.05] pointer-events-none -z-10 animate-float" style="animation-delay: 2s;"></div>
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+    <div class="fixed top-[-10%] left-[-5%] w-[600px] h-[600px] bg-pinkAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float transition-colors duration-500"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyanAccent rounded-full blur-[150px] opacity-[0.05] pointer-events-none -z-10 animate-float transition-colors duration-500" style="animation-delay: 2s;"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 relative z-10">
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 relative z-10 border-b border-white/10 pb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 relative z-10 border-b border-[var(--glass-border)] pb-8">
             <div class="flex items-center group cursor-default">
-                <div class="p-3 bg-white/5 rounded-2xl mr-4 border border-white/10 group-hover:scale-105 transition-transform">
-                    <i data-lucide="store" class="w-8 h-8 text-pinkAccent drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]"></i>
+                <div class="p-3 bg-white dark:bg-black/40 rounded-2xl mr-4 border border-[var(--glass-border)] shadow-sm group-hover:scale-105 transition-transform">
+                    <i data-lucide="store" class="w-8 h-8 text-pinkAccent"></i>
                 </div>
                 <div>
                     <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Comércios Locais</h1>
-                    <p class="font-mono text-sm text-slateMuted mt-1">IFRJ Niterói /// Alunos e Serviços</p>
+                    <p class="font-mono text-sm text-themeMuted mt-1">IFRJ Niterói /// Alunos e Serviços</p>
                 </div>
             </div>
             
             <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-                <a href="index.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-cyanAccent hover:bg-cyanAccent hover:text-bgDark transition-all shadow-[0_0_15px_rgba(0,240,255,0.1)] w-full sm:w-auto justify-center">
+                <a href="index.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-cyanAccent hover:bg-cyanAccent hover:text-white transition-all shadow-sm w-full sm:w-auto justify-center">
                     <i data-lucide="database" class="w-4 h-4"></i> Acervo
                 </a>
-                <a href="calendario.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-[#8A2BE2] hover:bg-[#8A2BE2] hover:text-white transition-all shadow-[0_0_15px_rgba(138,43,226,0.1)] w-full sm:w-auto justify-center">
+                <a href="calendario.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-purpleAccent hover:bg-purpleAccent hover:text-white transition-all shadow-sm w-full sm:w-auto justify-center">
                     <i data-lucide="calendar-days" class="w-4 h-4"></i> Calendário
                 </a>
-                <div class="relative w-full md:w-72">
+                
+                <div class="relative w-full md:w-64">
                     <input type="text" id="searchInput" placeholder="Buscar doces, xerox..." class="w-full glass-input rounded-full py-3 pl-12 pr-4 font-mono text-sm">
-                    <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-slateMuted"></i>
+                    <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-themeMuted"></i>
+                </div>
+
+                <!-- Botão Seletor -->
+                <div class="relative group z-50">
+                    <button class="glass-panel p-3 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-11 h-11 shadow-sm">
+                        <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="sun" class="w-4 h-4 mr-2"></i> Claro</button>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="moon" class="w-4 h-4 mr-2"></i> Escuro</button>
+                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="monitor" class="w-4 h-4 mr-2"></i> Sistema</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,9 +131,9 @@
         <div id="loader" class="text-center py-20 font-mono text-pinkAccent animate-pulse hidden">Buscando lojas do campus...</div>
 
         <div id="emptyState" class="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto mt-20 hidden relative z-10">
-            <i data-lucide="store" class="w-12 h-12 text-slateMuted mx-auto mb-4"></i>
-            <h3 class="text-xl font-bold mb-2">Nenhum comércio cadastrado</h3>
-            <p class="text-slateMuted font-mono text-sm">Ainda não há lojinhas ou serviços ativos registrados para esta categoria.</p>
+            <i data-lucide="store" class="w-12 h-12 text-themeMuted mx-auto mb-4"></i>
+            <h3 class="text-xl font-bold text-textMain mb-2">Nenhum comércio cadastrado</h3>
+            <p class="text-themeMuted font-mono text-sm">Ainda não há lojinhas ou serviços ativos registrados para esta categoria.</p>
         </div>
 
         <div id="regularSection" class="hidden relative z-10">
@@ -95,27 +141,35 @@
         </div>
     </div>
 
-    <div id="blogModal" class="fixed inset-0 z-50 hidden bg-bgDark/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8">
-        <div class="max-w-4xl mx-auto glass-panel rounded-3xl overflow-hidden relative shadow-2xl border-pinkAccent/20">
-            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/60 p-3 rounded-full text-white hover:text-pinkAccent hover:scale-110 transition-all z-10 backdrop-blur-md">
+    <div id="blogModal" class="fixed inset-0 z-50 hidden bg-white/90 dark:bg-[#050505]/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto bg-themeBg rounded-3xl overflow-hidden relative shadow-2xl border border-[var(--glass-border)]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/10 dark:bg-white/10 p-3 rounded-full text-textMain hover:text-pinkAccent hover:scale-110 transition-all z-10 shadow-md">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
-            <img id="modalImg" class="w-full h-64 md:h-96 object-cover border-b border-white/10" src="" alt="Capa">
+            <img id="modalImg" class="w-full h-64 md:h-96 object-cover border-b border-[var(--glass-border)]" src="" alt="Capa">
             <div class="p-8 md:p-12">
                 <div class="flex items-center gap-3 mb-6">
-                    <span id="modalCategory" class="text-xs font-mono text-white bg-pinkAccent px-3 py-1 rounded-full font-bold">Categoria</span>
-                    <span id="modalDate" class="text-xs font-mono text-slateMuted"></span>
+                    <span id="modalCategory" class="text-xs font-mono text-white bg-pinkAccent px-3 py-1 rounded-full font-bold"></span>
+                    <span id="modalDate" class="text-xs font-mono text-themeMuted"></span>
                 </div>
-                <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight"></h2>
-                <p id="modalDesc" class="text-xl md:text-2xl text-pinkAccent/90 font-light mb-10 border-l-4 border-pinkAccent pl-4"></p>
-                
-                <div id="modalContent" class="text-slate-300 leading-relaxed font-sans text-lg whitespace-pre-wrap"></div>
+                <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold text-textMain mb-6 leading-tight"></h2>
+                <p id="modalDesc" class="text-xl md:text-2xl text-pinkAccent font-light mb-10 border-l-4 border-pinkAccent pl-4"></p>
+                <div id="modalContent" class="text-slate-700 dark:text-slate-300 leading-relaxed font-sans text-lg whitespace-pre-wrap"></div>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
-
+    <script>
+        window.setTheme = function(mode) { localStorage.setItem('theme', mode); updateTheme(); };
+        function updateTheme() {
+            const mode = localStorage.getItem('theme') || 'system';
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
+    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -137,25 +191,18 @@
 
         const searchInput = document.getElementById('searchInput');
         const categoriesContainer = document.getElementById('categoriesContainer');
-        const loader = document.getElementById('loader');
         const emptyState = document.getElementById('emptyState');
-        const regularSection = document.getElementById('regularSection');
         const regularGrid = document.getElementById('regularGrid');
 
         async function init() {
             lucide.createIcons();
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                await fetchData();
-            } catch (error) {
-                console.error("Erro ao inicializar:", error);
-                showEmptyState();
-            }
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            await fetchData();
         }
 
         async function fetchData() {
-            loader.classList.remove('hidden');
+            document.getElementById('loader').classList.remove('hidden');
             try {
                 const catSnapshot = await getDocs(query(collection(db, 'comercioCategories'), orderBy('name')));
                 allCategories = catSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -165,23 +212,21 @@
 
                 renderCategories();
                 filterAndRenderStores();
-            } catch (error) {
-                console.error("Erro ao buscar:", error);
-                showEmptyState();
-            } finally { loader.classList.add('hidden'); }
+            } catch (error) { showEmptyState(); }
+            finally { document.getElementById('loader').classList.add('hidden'); }
         }
 
         function renderCategories() {
             categoriesContainer.innerHTML = '';
             const btnAll = document.createElement('button');
-            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-pinkAccent text-white' : 'glass-panel text-slateMuted hover:text-white'}`;
+            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-pinkAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
             btnAll.innerText = '[Todas]';
             btnAll.onclick = () => { activeCategory = 'Todas'; renderCategories(); filterAndRenderStores(); };
             categoriesContainer.appendChild(btnAll);
 
             allCategories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === cat.id ? 'bg-pinkAccent text-white' : 'glass-panel text-slateMuted hover:text-white'}`;
+                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === cat.id ? 'bg-pinkAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
                 btn.innerText = cat.name;
                 btn.onclick = () => { activeCategory = cat.id; renderCategories(); filterAndRenderStores(); };
                 categoriesContainer.appendChild(btn);
@@ -197,39 +242,32 @@
 
             if (filtered.length === 0) { showEmptyState(); return; }
             emptyState.classList.add('hidden');
-
+            document.getElementById('regularSection').classList.remove('hidden');
             regularGrid.innerHTML = filtered.map(p => createStoreHTML(p)).join('');
-            regularSection.classList.remove('hidden');
-
             lucide.createIcons();
         }
 
         function createStoreHTML(store) {
             const catName = allCategories.find(c => c.id === store.categoryId)?.name || 'Geral';
-            const defaultImg = 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&q=80&w=800'; // Default Store Img
-            
-            // Verifica se é Blog interno ou Link Externo
+            const defaultImg = 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&q=80&w=800';
             const isBlog = store.postType === 'blog';
-            const actionTag = isBlog ? 
-                `<div onclick="openModal('${store.id}')" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer">` : 
-                `<a href="${store.redirectUrl}" target="_blank" rel="noopener" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">`;
+            const actionTag = isBlog ? `<div onclick="openModal('${store.id}')"` : `<a href="${store.redirectUrl}" target="_blank" rel="noopener"`;
             const closeTag = isBlog ? `</div>` : `</a>`;
-            const iconType = isBlog ? 'book-open' : 'external-link';
 
             return `
-                ${actionTag}
-                    <div class="relative h-48 rounded-2xl overflow-hidden">
-                        <div class="absolute inset-0 bg-bgDark/40 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                ${actionTag} class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">
+                    <div class="relative h-48 rounded-2xl overflow-hidden border border-[var(--glass-border)]">
+                        <div class="absolute inset-0 bg-black/10 dark:bg-white/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
                         <img src="${store.imageUrl || defaultImg}" alt="${store.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
-                        ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-black/60 px-3 py-1 rounded-full text-xs font-mono text-pinkAccent backdrop-blur-sm border border-pinkAccent/30 flex items-center"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Detalhes</div>' : ''}
+                        ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-themeBg/80 px-3 py-1 rounded-full text-xs font-mono text-pinkAccent backdrop-blur-sm border border-[var(--glass-border)] flex items-center shadow-sm"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Detalhes</div>' : ''}
                     </div>
                     <div class="p-5 flex flex-col flex-grow">
                         <div class="flex items-start justify-between mb-3">
-                            <h3 class="text-xl font-bold text-white group-hover:text-pinkAccent transition-colors leading-tight">${store.title}</h3>
-                            <i data-lucide="${iconType}" class="w-5 h-5 text-slateMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
+                            <h3 class="text-xl font-bold text-textMain group-hover:text-pinkAccent transition-colors leading-tight">${store.title}</h3>
+                            <i data-lucide="${isBlog ? 'book-open' : 'external-link'}" class="w-5 h-5 text-themeMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
                         </div>
-                        <p class="text-slateMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${store.description}</p>
-                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                        <p class="text-themeMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${store.description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-[var(--glass-border)]">
                             <span class="text-xs font-mono text-pinkAccent bg-pinkAccent/10 px-3 py-1 rounded-full">${catName}</span>
                         </div>
                     </div>
@@ -238,13 +276,13 @@
         }
 
         function showEmptyState() {
-            regularSection.classList.add('hidden'); emptyState.classList.remove('hidden');
+            document.getElementById('regularSection').classList.add('hidden'); 
+            emptyState.classList.remove('hidden');
         }
 
         window.openModal = (id) => {
             const store = allStores.find(p => p.id === id);
             if(!store) return;
-            
             document.getElementById('modalImg').src = store.imageUrl || '';
             document.getElementById('modalTitle').innerText = store.title;
             document.getElementById('modalDesc').innerText = store.description;
