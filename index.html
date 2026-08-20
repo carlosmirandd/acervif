@@ -5,23 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AcervIF | Repositório Público</title>
     
+    <!-- Favicon IFRJ -->
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { bgDark: '#050505', cyanAccent: '#00F0FF', pinkAccent: '#EC4899', purpleAccent: '#8A2BE2', slateMuted: '#A1A1AA' },
+                    colors: { bgDark: '#050505', cyanAccent: '#00F0FF', purpleAccent: '#8A2BE2', slateMuted: '#A1A1AA' },
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
                 }
             }
         }
     </script>
 
+    <!-- Custom CSS -->
     <style>
         body { background-color: #050505; color: #FFFFFF; overflow-x: hidden; }
         .bg-grid {
@@ -127,7 +132,6 @@
                 <div class="w-2 h-2 rounded-full bg-cyanAccent animate-ping mr-3"></div>
                 <h2 class="text-2xl font-bold">Em Destaque</h2>
             </div>
-            <!-- O JS injetará as classes do grid dinamicamente aqui baseadas na quantidade -->
             <div id="priorityGrid"></div>
         </div>
 
@@ -164,7 +168,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Config original do usuário
         const firebaseConfig = {
             apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
             authDomain: "acervif12.firebaseapp.com",
@@ -248,18 +251,18 @@
             const priority = filtered.filter(p => p.isPriority);
             const regular = filtered.filter(p => !p.isPriority);
 
-            // RENDERIZAÇÃO INTELIGENTE DE DESTAQUES
+            // RENDERIZAÇÃO INTELIGENTE DE DESTAQUES (Tamanhos dinâmicos baseados na quantidade)
             if (priority.length > 0) {
                 if (priority.length === 1) {
-                    // 1 Destaque: Ocupa tudo, fonte enorme
+                    // 1 Destaque: Layout Cinematic (Texto dentro, Borda infinita, Grande)
                     priorityGrid.className = "grid grid-cols-1 gap-6";
                     priorityGrid.innerHTML = priority.map(p => createPostHTML(p, 'large')).join('');
                 } else if (priority.length === 2) {
-                    // 2 Destaques: Divide tela, fonte média
+                    // 2 Destaques: Layout Cinematic Dividido (Texto dentro, Borda infinita, Médio/Largo)
                     priorityGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-6";
                     priorityGrid.innerHTML = priority.map(p => createPostHTML(p, 'medium')).join('');
                 } else {
-                    // 3+ Destaques: Grade normal
+                    // 3+ Destaques: Layout Padrão (Texto embaixo, Menor)
                     priorityGrid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
                     priorityGrid.innerHTML = priority.map(p => createPostHTML(p, 'normal')).join('');
                 }
@@ -285,51 +288,82 @@
                 dateStr = post.createdAt.toDate().toLocaleDateString('pt-BR');
             }
 
-            // Verifica se é um Post Blog (abre modal) ou Link (abre aba nova)
             const isBlog = post.postType === 'blog';
-            const actionTag = isBlog ? 
-                `<div onclick="openModal('${post.id}')" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer">` : 
-                `<a href="${post.redirectUrl}" target="_blank" rel="noopener" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">`;
-            const closeTag = isBlog ? `</div>` : `</a>`;
             const iconType = isBlog ? 'book-open' : 'external-link';
 
-            // Classes baseadas no Tamanho Dinâmico
-            let heightClass = 'h-48';
-            let titleClass = 'text-xl';
-            let descClass = 'line-clamp-3 text-sm';
-            
-            if (size === 'large') {
-                heightClass = 'h-64 md:h-[400px] lg:h-[500px]';
-                titleClass = 'text-2xl md:text-5xl';
-                descClass = 'line-clamp-4 md:line-clamp-none text-base md:text-lg';
-            } else if (size === 'medium') {
-                heightClass = 'h-56 md:h-72 lg:h-80';
-                titleClass = 'text-xl md:text-3xl';
-                descClass = 'line-clamp-3 text-sm md:text-base';
-            }
+            // ESTILO CINEMÁTICO (TEXTO DENTRO DA IMAGEM)
+            if (size === 'large' || size === 'medium') {
+                const actionClasses = "rounded-3xl overflow-hidden group cursor-pointer block w-full relative transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,240,255,0.2)] border border-white/10 hover:border-cyanAccent/30";
+                const actionTag = isBlog ? `<div onclick="openModal('${post.id}')" class="${actionClasses}">` : `<a href="${post.redirectUrl}" target="_blank" rel="noopener" class="${actionClasses}">`;
+                const closeTag = isBlog ? `</div>` : `</a>`;
 
-            return `
-                ${actionTag}
-                    <div class="relative ${heightClass} rounded-2xl overflow-hidden flex-shrink-0">
-                        <div class="absolute inset-0 bg-bgDark/40 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                        <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
-                        ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-black/60 px-3 py-1 rounded-full text-xs font-mono text-cyanAccent backdrop-blur-sm border border-cyanAccent/30 flex items-center"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Artigo</div>' : ''}
-                    </div>
-                    <div class="p-5 flex flex-col flex-grow">
-                        <div class="flex items-start justify-between mb-3">
-                            <h3 class="${titleClass} font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight">${post.title}</h3>
-                            <i data-lucide="${iconType}" class="w-5 h-5 text-slateMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
+                // Altura moderada: largo o suficiente para PC, mas não gigante.
+                let heightClass = size === 'large' ? 'h-[300px] md:h-[400px]' : 'h-[280px] md:h-[350px]';
+                let titleClass = size === 'large' ? 'text-3xl md:text-5xl mb-3' : 'text-2xl md:text-3xl mb-2';
+                let descClass = size === 'large' ? 'line-clamp-3 text-base md:text-lg' : 'line-clamp-2 text-sm md:text-base';
+                
+                return `
+                    ${actionTag}
+                        <div class="relative ${heightClass} w-full flex flex-col justify-end">
+                            <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" onerror="this.src='${defaultImg}'">
+                            
+                            <!-- Degrade escuro sobre a imagem -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-bgDark via-bgDark/80 to-transparent z-10 transition-colors duration-500"></div>
+                            
+                            <!-- Tag Blog canto superior -->
+                            ${isBlog ? '<div class="absolute top-5 right-5 z-20 bg-black/60 px-3 py-1.5 rounded-full text-xs font-mono text-cyanAccent backdrop-blur-md border border-cyanAccent/30 flex items-center shadow-lg"><i data-lucide="align-left" class="w-3 h-3 mr-1.5"></i> Artigo Interno</div>' : ''}
+                            
+                            <!-- Conteúdo (Texto) -->
+                            <div class="relative z-20 p-6 md:p-10 w-full mt-auto">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="text-xs font-mono text-bgDark bg-cyanAccent px-3 py-1.5 rounded-full font-bold shadow-[0_0_10px_rgba(0,240,255,0.3)]">${catName}</span>
+                                    <span class="flex items-center text-xs font-mono text-slate-300">
+                                        <i data-lucide="calendar" class="w-3 h-3 mr-1.5"></i> ${dateStr}
+                                    </span>
+                                </div>
+                                <div class="flex items-end justify-between gap-4">
+                                    <div class="flex-grow">
+                                        <h3 class="${titleClass} font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight drop-shadow-lg">${post.title}</h3>
+                                        <p class="text-slate-300 ${descClass} leading-relaxed max-w-3xl drop-shadow-md">${post.description}</p>
+                                    </div>
+                                    <i data-lucide="${iconType}" class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 drop-shadow-md"></i>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-slateMuted ${descClass} mb-6 flex-grow leading-relaxed">${post.description}</p>
-                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                            <span class="text-xs font-mono text-purpleAccent bg-purpleAccent/10 px-3 py-1 rounded-full">${catName}</span>
-                            <span class="flex items-center text-xs font-mono text-slateMuted">
-                                <i data-lucide="calendar" class="w-3 h-3 mr-1"></i> ${dateStr}
-                            </span>
+                    ${closeTag}
+                `;
+            } 
+            
+            // ESTILO PADRÃO (TEXTO EMBAIXO DA IMAGEM)
+            else {
+                const actionTag = isBlog ? 
+                    `<div onclick="openModal('${post.id}')" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer">` : 
+                    `<a href="${post.redirectUrl}" target="_blank" rel="noopener" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">`;
+                const closeTag = isBlog ? `</div>` : `</a>`;
+
+                return `
+                    ${actionTag}
+                        <div class="relative h-48 rounded-2xl overflow-hidden flex-shrink-0">
+                            <div class="absolute inset-0 bg-bgDark/40 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                            <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
+                            ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-black/60 px-3 py-1 rounded-full text-xs font-mono text-cyanAccent backdrop-blur-sm border border-cyanAccent/30 flex items-center"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Artigo</div>' : ''}
                         </div>
-                    </div>
-                ${closeTag}
-            `;
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex items-start justify-between mb-3">
+                                <h3 class="text-xl font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight">${post.title}</h3>
+                                <i data-lucide="${iconType}" class="w-5 h-5 text-slateMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
+                            </div>
+                            <p class="text-slateMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${post.description}</p>
+                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                                <span class="text-xs font-mono text-purpleAccent bg-purpleAccent/10 px-3 py-1 rounded-full">${catName}</span>
+                                <span class="flex items-center text-xs font-mono text-slateMuted">
+                                    <i data-lucide="calendar" class="w-3 h-3 mr-1"></i> ${dateStr}
+                                </span>
+                            </div>
+                        </div>
+                    ${closeTag}
+                `;
+            }
         }
 
         function showEmptyState() {
@@ -338,7 +372,7 @@
             emptyState.classList.remove('hidden');
         }
 
-        // Funções para controle do Modal de Leitura
+        // Funções para controle do Modal de Leitura (Blog)
         window.openModal = (id) => {
             const post = allPosts.find(p => p.id === id);
             if(!post) return;
