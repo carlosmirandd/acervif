@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcervIF | Terminal Protegido</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { bgDark: '#050505', cyanAccent: '#00F0FF', pinkAccent: '#EC4899', purpleAccent: '#8A2BE2', slateMuted: '#A1A1AA' },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #050505; color: #FFFFFF; overflow-x: hidden; }
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+        .glass-panel { background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease; }
+        .glass-input:focus { outline: none; border-color: #8A2BE2; background: rgba(255, 255, 255, 0.05); box-shadow: 0 0 15px rgba(138, 43, 226, 0.2); }
+        .text-gradient { background: linear-gradient(to right, #FFFFFF, #A1A1AA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+    </style>
+</head>
+<body class="antialiased selection:bg-purpleAccent selection:text-white relative pb-20 min-h-screen flex items-center justify-center">
+
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none"></div>
+
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-10">
+        
+        <div id="loginSection" class="max-w-md mx-auto glass-panel rounded-3xl p-8 md:p-12 transition-all duration-500">
+            <div class="text-center mb-8">
+                <i data-lucide="lock" class="w-10 h-10 text-purpleAccent mx-auto mb-4"></i>
+                <h2 class="text-2xl font-bold text-gradient">Acesso Restrito</h2>
+                <p class="font-mono text-sm text-slateMuted mt-2">Identifique-se, chefe.</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="text-sm font-mono text-slateMuted mb-2 block">Credencial (E-mail)</label>
+                    <input type="email" id="loginEmail" required class="w-full glass-input rounded-xl p-3" placeholder="admin@acervif.com">
+                </div>
+                <div>
+                    <label class="text-sm font-mono text-slateMuted mb-2 block">Senha de Acesso</label>
+                    <input type="password" id="loginPass" required class="w-full glass-input rounded-xl p-3" placeholder="••••••••">
+                </div>
+                <div id="loginError" class="hidden text-red-500 font-mono text-xs text-center p-2 bg-red-500/10 rounded-lg border border-red-500/20"></div>
+                <button type="submit" id="btnLogin" class="w-full mt-6 bg-purpleAccent text-white font-bold py-3 rounded-xl hover:scale-[1.02] shadow-[0_0_20px_rgba(138,43,226,0.3)]">
+                    Desbloquear Terminal
+                </button>
+            </form>
+        </div>
+
+        <!-- Painel Admin -->
+        <div id="adminSection" class="hidden glass-panel rounded-3xl p-8 md:p-12 transition-all duration-500">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 border-b border-white/10 pb-6 gap-4">
+                <div class="flex items-center">
+                    <i data-lucide="settings-2" class="w-8 h-8 text-purpleAccent mr-4"></i>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gradient">Terminal de Controle Admin</h2>
+                        <p class="font-mono text-sm text-slateMuted mt-1">AcervIF - Gestão de Acervo, Comércios e Calendário.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <a href="index.html" class="flex items-center text-sm font-mono text-slateMuted hover:text-cyanAccent transition-colors glass-panel px-4 py-2 rounded-lg">Home</a>
+                    <button id="btnLogout" class="flex items-center text-sm font-mono text-slateMuted hover:text-red-500 transition-colors glass-panel px-4 py-2 rounded-lg">
+                        <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Sair
+                    </button>
+                </div>
+            </div>
+
+            <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl font-mono text-sm font-bold border transition-all"></div>
+
+            <div class="flex gap-4 mb-8 border-b border-white/10 pb-4 overflow-x-auto scrollbar-hide">
+                <button id="tabAcervo" class="px-6 py-2 rounded-full font-mono text-sm font-bold bg-cyanAccent text-bgDark transition-all whitespace-nowrap shadow-[0_0_15px_rgba(0,240,255,0.2)]">1. Acervo</button>
+                <button id="tabComercios" class="px-6 py-2 rounded-full font-mono text-sm font-bold glass-panel text-slateMuted hover:text-white transition-all whitespace-nowrap">2. Comércios</button>
+                <button id="tabCalendario" class="px-6 py-2 rounded-full font-mono text-sm font-bold glass-panel text-slateMuted hover:text-white transition-all whitespace-nowrap">3. Calendário</button>
+            </div>
+
+            <!-- ================= ABA 1: ACERVO ================= -->
+            <div id="viewAcervo" class="grid grid-cols-1 lg:grid-cols-3 gap-12 pb-8">
+                <div class="lg:col-span-1">
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i data-lucide="plus" class="w-5 h-5 text-cyanAccent mr-2"></i> Categoria Acervo</h3>
+                    <form id="acervoCatForm" class="space-y-4">
+                        <input type="text" id="acervoCatName" required class="w-full glass-input rounded-xl p-3" placeholder="Nome da Categoria">
+                        <div class="flex gap-2">
+                            <button type="submit" id="btnAcervoCat" class="w-full bg-white/10 hover:bg-cyanAccent hover:text-bgDark text-white font-bold py-3 rounded-xl">Registrar</button>
+                            <button type="button" id="btnCancelAcervoCat" class="hidden w-1/3 bg-red-500/10 text-red-500 font-bold py-3 rounded-xl">Cancela</button>
+                        </div>
+                    </form>
+                    <div id="acervoCatList" class="mt-8 flex flex-col gap-2 text-slateMuted text-sm">Carregando...</div>
+                </div>
+
+                <div class="lg:col-span-2 border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-12">
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i data-lucide="database" class="w-5 h-5 text-cyanAccent mr-2"></i> Novo Artefato Acadêmico</h3>
+                    <form id="acervoPostForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="acervoPostTitle" required class="w-full glass-input rounded-xl p-3" placeholder="Título">
+                            <select id="acervoPostCategory" required class="w-full glass-input rounded-xl p-3 [&>option]:bg-bgDark text-white"></select>
+                        </div>
+                        <input type="url" id="acervoPostImg" required class="w-full glass-input rounded-xl p-3" placeholder="URL da Capa (Imagem)">
+                        <textarea id="acervoPostDesc" required class="w-full glass-input rounded-xl p-3 resize-none" rows="2" placeholder="Resumo curto..."></textarea>
+                        
+                        <div class="glass-panel p-4 rounded-xl border border-white/10">
+                            <label class="text-sm font-mono text-cyanAccent mb-3 block">Tipo de Destino do Artefato:</label>
+                            <div class="flex gap-6 mb-4">
+                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="acervoType" value="link" checked class="mr-2 accent-cyanAccent"> Link Externo</label>
+                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="acervoType" value="blog" class="mr-2 accent-cyanAccent"> Postagem Interna (Blog)</label>
+                            </div>
+                            <input type="url" id="acervoPostLink" class="w-full glass-input rounded-xl p-3" placeholder="https://exemplo.com">
+                            <textarea id="acervoPostBlog" class="w-full glass-input rounded-xl p-3 resize-none hidden h-40" placeholder="Escreva o texto completo do blog aqui (Aceita quebras de linha)..."></textarea>
+                        </div>
+
+                        <label class="flex items-center mt-2 cursor-pointer">
+                            <input type="checkbox" id="acervoPostPriority" class="w-5 h-5 accent-cyanAccent mr-2">
+                            <span class="font-mono text-sm text-slateMuted">Destaque (Prioridade)</span>
+                        </label>
+                        
+                        <div class="flex gap-2">
+                            <button type="submit" id="btnAcervoPost" class="w-full bg-cyanAccent text-bgDark font-bold py-4 rounded-xl hover:scale-[1.02]">Fazer Deploy</button>
+                            <button type="button" id="btnCancelAcervoPost" class="hidden w-1/3 bg-red-500/10 text-red-500 font-bold py-4 rounded-xl">Cancelar</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-8 max-h-60 overflow-y-auto rounded-xl border border-white/10 glass-panel">
+                        <table class="w-full text-left font-mono text-sm text-slateMuted">
+                            <tbody id="acervoPostList" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= ABA 2: COMÉRCIOS ================= -->
+            <div id="viewComercios" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-12 pb-8">
+                <div class="lg:col-span-1">
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i data-lucide="plus" class="w-5 h-5 text-pinkAccent mr-2"></i> Categoria Comércio</h3>
+                    <form id="comercioCatForm" class="space-y-4">
+                        <input type="text" id="comercioCatName" required class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent" placeholder="Ex: Doces, Xeróx...">
+                        <div class="flex gap-2">
+                            <button type="submit" id="btnComercioCat" class="w-full bg-white/10 hover:bg-pinkAccent hover:text-white text-white font-bold py-3 rounded-xl">Registrar</button>
+                            <button type="button" id="btnCancelComercioCat" class="hidden w-1/3 bg-red-500/10 text-red-500 font-bold py-3 rounded-xl">Cancela</button>
+                        </div>
+                    </form>
+                    <div id="comercioCatList" class="mt-8 flex flex-col gap-2 text-slateMuted text-sm">Carregando...</div>
+                </div>
+
+                <div class="lg:col-span-2 border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-12">
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i data-lucide="store" class="w-5 h-5 text-pinkAccent mr-2"></i> Cadastrar Comércio</h3>
+                    <form id="comercioPostForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="comercioPostTitle" required class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent" placeholder="Nome do Comércio">
+                            <select id="comercioPostCategory" required class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent [&>option]:bg-bgDark text-white"></select>
+                        </div>
+                        <input type="url" id="comercioPostImg" required class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent" placeholder="URL da Capa (Imagem)">
+                        <textarea id="comercioPostDesc" required class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent resize-none" rows="2" placeholder="Resumo curto..."></textarea>
+                        
+                        <div class="glass-panel p-4 rounded-xl border border-white/10">
+                            <label class="text-sm font-mono text-pinkAccent mb-3 block">Tipo de Destino:</label>
+                            <div class="flex gap-6 mb-4">
+                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="comercioType" value="link" checked class="mr-2 accent-pinkAccent"> WhatsApp / Instagram Externo</label>
+                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="comercioType" value="blog" class="mr-2 accent-pinkAccent"> Cardápio/Detalhes Interno</label>
+                            </div>
+                            <input type="url" id="comercioPostLink" class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent" placeholder="https://instagram.com/...">
+                            <textarea id="comercioPostBlog" class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent resize-none hidden h-40" placeholder="Escreva os detalhes, cardápio, precos (Aceita quebras de linha)..."></textarea>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button type="submit" id="btnComercioPost" class="w-full bg-pinkAccent text-white font-bold py-4 rounded-xl hover:scale-[1.02]">Cadastrar Loja</button>
+                            <button type="button" id="btnCancelComercioPost" class="hidden w-1/3 bg-red-500/10 text-red-500 font-bold py-4 rounded-xl">Cancelar</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-8 max-h-60 overflow-y-auto rounded-xl border border-white/10 glass-panel">
+                        <table class="w-full text-left font-mono text-sm text-slateMuted">
+                            <tbody id="comercioPostList" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= ABA 3: CALENDÁRIO ================= -->
+            <div id="viewCalendario" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-1">
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i data-lucide="calendar-plus" class="w-5 h-5 text-[#8A2BE2] mr-2"></i> Evento de Calendário</h3>
+                    <form id="eventForm" class="space-y-4">
+                        <input type="text" id="eventTitle" required class="w-full glass-input rounded-xl p-3 focus:border-[#8A2BE2]" placeholder="Título do Evento">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-sm font-mono text-slateMuted mb-2 block">Início</label>
+                                <input type="date" id="eventStart" required class="w-full glass-input rounded-xl p-3 focus:border-[#8A2BE2] [color-scheme:dark]">
+                            </div>
+                            <div>
+                                <label class="text-sm font-mono text-slateMuted mb-2 block">Fim</label>
+                                <input type="date" id="eventEnd" required class="w-full glass-input rounded-xl p-3 focus:border-[#8A2BE2] [color-scheme:dark]">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-sm font-mono text-slateMuted mb-2 block">Mini Ícone (URL PNG) - Opcional</label>
+                            <input type="url" id="eventIcon" class="w-full glass-input rounded-xl p-3 focus:border-[#8A2BE2]" placeholder="https://exemplo.com/icone.png">
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit" id="btnEvent" class="w-full bg-[#8A2BE2] text-white font-bold py-3 rounded-xl hover:scale-[1.02]">Inserir na Grade</button>
+                            <button type="button" id="btnCancelEvent" class="hidden w-1/3 bg-red-500/10 text-red-500 font-bold py-3 rounded-xl">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="lg:col-span-2 border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-12">
+                    <h3 class="text-xl font-bold mb-6 flex items-center"><i data-lucide="table-2" class="w-5 h-5 text-slateMuted mr-2"></i> Eventos Customizados no Banco</h3>
+                    <div class="max-h-80 overflow-y-auto rounded-xl border border-white/10 glass-panel border-l-4 border-l-[#8A2BE2]">
+                        <table class="w-full text-left font-mono text-sm text-slateMuted">
+                            <tbody id="adminEventList" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
+            authDomain: "acervif12.firebaseapp.com",
+            projectId: "acervif12",
+            storageBucket: "acervif12.firebasestorage.app",
+            messagingSenderId: "698647384488",
+            appId: "1:698647384488:web:c45b99428d9767fe04cd9d",
+            measurementId: "G-9C095VDTBG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let memory = {
+            a_cat: [], a_post: [],
+            c_cat: [], c_post: [],
+            events: []
+        };
+        let edits = { a_cat:null, a_post:null, c_cat:null, c_post:null, event:null };
+
+        // UI Tabs
+        const tabs = {
+            'tabAcervo': { view: 'viewAcervo', color: 'bg-cyanAccent text-bgDark shadow-[0_0_15px_rgba(0,240,255,0.2)]' },
+            'tabComercios': { view: 'viewComercios', color: 'bg-pinkAccent text-white shadow-[0_0_15px_rgba(236,72,153,0.2)]' },
+            'tabCalendario': { view: 'viewCalendario', color: 'bg-[#8A2BE2] text-white shadow-[0_0_15px_rgba(138,43,226,0.2)]' }
+        };
+
+        Object.keys(tabs).forEach(btnId => {
+            document.getElementById(btnId).onclick = () => {
+                Object.keys(tabs).forEach(k => {
+                    document.getElementById(k).className = "px-6 py-2 rounded-full font-mono text-sm font-bold glass-panel text-slateMuted hover:text-white transition-all whitespace-nowrap";
+                    document.getElementById(tabs[k].view).classList.add('hidden');
+                });
+                document.getElementById(btnId).className = `px-6 py-2 rounded-full font-mono text-sm font-bold transition-all whitespace-nowrap ${tabs[btnId].color}`;
+                document.getElementById(tabs[btnId].view).classList.remove('hidden');
+            }
+        });
+
+        // Toggle Type UI (Link / Blog)
+        const setupTypeToggle = (radioName, linkId, blogId) => {
+            document.querySelectorAll(`input[name="${radioName}"]`).forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if(e.target.value === 'link') {
+                        document.getElementById(linkId).classList.remove('hidden');
+                        document.getElementById(blogId).classList.add('hidden');
+                        document.getElementById(linkId).required = true;
+                        document.getElementById(blogId).required = false;
+                    } else {
+                        document.getElementById(linkId).classList.add('hidden');
+                        document.getElementById(blogId).classList.remove('hidden');
+                        document.getElementById(linkId).required = false;
+                        document.getElementById(blogId).required = true;
+                    }
+                });
+            });
+        };
+        setupTypeToggle('acervoType', 'acervoPostLink', 'acervoPostBlog');
+        setupTypeToggle('comercioType', 'comercioPostLink', 'comercioPostBlog');
+
+        // Auth
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('adminSection').classList.remove('hidden');
+                await loadAllData();
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('adminSection').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            document.getElementById('btnLogin').innerText = "Autenticando...";
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (error) {
+                document.getElementById('loginError').innerText = "Acesso Negado.";
+                document.getElementById('loginError').classList.remove('hidden');
+            } finally { document.getElementById('btnLogin').innerText = "Desbloquear Terminal"; }
+        });
+        document.getElementById('btnLogout').onclick = () => signOut(auth);
+
+        async function loadAllData() {
+            try {
+                // Fetch categories
+                memory.a_cat = (await getDocs(query(collection(db, 'categories'), orderBy('name')))).docs.map(d=>({id:d.id, ...d.data()}));
+                memory.c_cat = (await getDocs(query(collection(db, 'comercioCategories'), orderBy('name')))).docs.map(d=>({id:d.id, ...d.data()}));
+                // Fetch items
+                memory.a_post = (await getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc')))).docs.map(d=>({id:d.id, ...d.data()}));
+                memory.c_post = (await getDocs(query(collection(db, 'comercios'), orderBy('createdAt', 'desc')))).docs.map(d=>({id:d.id, ...d.data()}));
+                // Fetch events
+                memory.events = (await getDocs(collection(db, 'events'))).docs.map(d=>({id:d.id, ...d.data()}));
+                
+                renderUI();
+            } catch(e) { console.error("Error loading DB", e); showStatus("Erro ao carregar banco", true); }
+        }
+
+        function renderUI() {
+            const buildCatList = (targetDiv, selectId, memArray, colorClass, editFn, delFn) => {
+                const div = document.getElementById(targetDiv);
+                const sel = document.getElementById(selectId);
+                div.innerHTML = ''; sel.innerHTML = '<option value="">Selecione...</option>';
+                memArray.forEach(c => {
+                    sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                    div.innerHTML += `
+                        <div class="glass-panel px-3 py-2 rounded-lg flex items-center justify-between w-full mb-2">
+                            <span class="truncate pr-2">${c.name}</span>
+                            <div class="flex gap-3">
+                                <button type="button" class="text-${colorClass} hover:text-white" onclick="window.${editFn}('${c.id}')"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                <button type="button" class="text-red-500 hover:text-white" onclick="window.${delFn}('${c.id}')"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>`;
+                });
+            };
+
+            buildCatList('acervoCatList', 'acervoPostCategory', memory.a_cat, 'cyanAccent', 'editACat', 'delACat');
+            buildCatList('comercioCatList', 'comercioPostCategory', memory.c_cat, 'pinkAccent', 'editCCat', 'delCCat');
+
+            const buildPostList = (targetTbody, memArray, catMemArray, colorClass, editFn, delFn) => {
+                const tbody = document.getElementById(targetTbody);
+                tbody.innerHTML = '';
+                if(memArray.length===0) tbody.innerHTML = '<tr><td class="p-4 text-center">Vazio.</td></tr>';
+                memArray.forEach(p => {
+                    const cName = catMemArray.find(c=>c.id===p.categoryId)?.name || 'N/A';
+                    const tpe = p.postType === 'blog' ? 'Blog' : 'Link';
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="p-3 text-white truncate max-w-[150px]">${p.title}</td>
+                            <td class="p-3 text-${colorClass}">${cName}</td>
+                            <td class="p-3 opacity-50">${tpe}</td>
+                            <td class="p-3 text-right whitespace-nowrap">
+                                <button type="button" class="text-${colorClass} hover:text-white mr-3" onclick="window.${editFn}('${p.id}')"><i data-lucide="edit-2" class="w-4 h-4 inline"></i></button>
+                                <button type="button" class="text-red-500 hover:text-white" onclick="window.${delFn}('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
+                            </td>
+                        </tr>`;
+                });
+            };
+
+            buildPostList('acervoPostList', memory.a_post, memory.a_cat, 'cyanAccent', 'editAPost', 'delAPost');
+            buildPostList('comercioPostList', memory.c_post, memory.c_cat, 'pinkAccent', 'editCPost', 'delCPost');
+
+            // Render Events
+            const eTbody = document.getElementById('adminEventList');
+            eTbody.innerHTML = '';
+            if(memory.events.length===0) eTbody.innerHTML='<tr><td class="p-3">Sem eventos inseridos.</td></tr>';
+            memory.events.forEach(e => {
+                eTbody.innerHTML += `
+                    <tr class="hover:bg-white/5 transition-colors border-l-4 border-transparent hover:border-[#8A2BE2]">
+                        <td class="p-3 text-white truncate max-w-[200px]">${e.title}</td>
+                        <td class="p-3 text-slateMuted font-mono text-xs">${e.startDate}</td>
+                        <td class="p-3 text-right whitespace-nowrap">
+                            <button type="button" class="text-[#8A2BE2] hover:text-white mr-3" onclick="window.editEvent('${e.id}')"><i data-lucide="edit-2" class="w-4 h-4 inline"></i></button>
+                            <button type="button" class="text-red-500 hover:text-white" onclick="window.delEvent('${e.id}')"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            lucide.createIcons();
+        }
+
+        const createFormHandler = (formId, isCat, collectionName, memKey, editKey, fieldsMap, statusMsgPrefix) => {
+            document.getElementById(formId).onsubmit = async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button[type="submit"]');
+                const origText = btn.innerText;
+                btn.disabled = true; btn.innerText = "Aguarde...";
+                
+                try {
+                    const data = {};
+                    Object.keys(fieldsMap).forEach(k => {
+                        const el = document.getElementById(fieldsMap[k]);
+                        if(el.type === 'checkbox') data[k] = el.checked;
+                        else if(el.type === 'radio') {
+                            const selected = document.querySelector(`input[name="${el.name}"]:checked`);
+                            data[k] = selected ? selected.value : 'link';
+                        }
+                        else data[k] = el.value.trim();
+                    });
+
+                    if(edits[editKey]) {
+                        await updateDoc(doc(db, collectionName, edits[editKey]), data);
+                        showStatus(`${statusMsgPrefix} atualizado!`, false);
+                    } else {
+                        if(!isCat) data.createdAt = serverTimestamp();
+                        await addDoc(collection(db, collectionName), data);
+                        showStatus(`${statusMsgPrefix} criado!`, false);
+                    }
+                    
+                    e.target.reset();
+                    edits[editKey] = null;
+                    e.target.querySelector('button[type="button"]').classList.add('hidden');
+                    
+                    // Reset radio toggles to defaults natively
+                    if(!isCat && formId.includes('acervo')) { document.getElementById('acervoPostLink').classList.remove('hidden'); document.getElementById('acervoPostBlog').classList.add('hidden'); }
+                    if(!isCat && formId.includes('comercio')) { document.getElementById('comercioPostLink').classList.remove('hidden'); document.getElementById('comercioPostBlog').classList.add('hidden'); }
+                    
+                    await loadAllData();
+                } catch(er) { console.error(er); showStatus("Falha ao salvar", true); }
+                finally { btn.disabled = false; btn.innerText = origText; }
+            };
+        };
+
+        // Initialize Forms
+        createFormHandler('acervoCatForm', true, 'categories', 'a_cat', 'a_cat', {name: 'acervoCatName'}, "Categoria Acervo");
+        createFormHandler('comercioCatForm', true, 'comercioCategories', 'c_cat', 'c_cat', {name: 'comercioCatName'}, "Categoria Comércio");
+        createFormHandler('eventForm', true, 'events', 'events', 'event', {title:'eventTitle', startDate:'eventStart', endDate:'eventEnd', iconUrl:'eventIcon'}, "Evento de Calendário");
+        
+        createFormHandler('acervoPostForm', false, 'posts', 'a_post', 'a_post', {
+            title: 'acervoPostTitle', categoryId: 'acervoPostCategory', imageUrl: 'acervoPostImg', description: 'acervoPostDesc',
+            postType: 'acervoPostLink', // Uses radio name mapped later
+            redirectUrl: 'acervoPostLink', blogContent: 'acervoPostBlog', isPriority: 'acervoPostPriority'
+        }, "Artefato Acervo");
+        // Fix for radio
+        document.getElementById('acervoPostForm').onsubmit = (e) => {
+            document.getElementById('acervoPostLink').name = 'acervoType'; // Hack for mapping
+        };
+
+        createFormHandler('comercioPostForm', false, 'comercios', 'c_post', 'c_post', {
+            title: 'comercioPostTitle', categoryId: 'comercioPostCategory', imageUrl: 'comercioPostImg', description: 'comercioPostDesc',
+            postType: 'comercioPostLink', redirectUrl: 'comercioPostLink', blogContent: 'comercioPostBlog'
+        }, "Comércio");
+        document.getElementById('comercioPostForm').onsubmit = (e) => {
+            document.getElementById('comercioPostLink').name = 'comercioType';
+        };
+
+
+        const setupEdit = (id, memArray, editKey, formId, fieldMap, typeRadioName) => {
+            const item = memory[memArray].find(x => x.id === id);
+            edits[editKey] = id;
+            Object.keys(fieldMap).forEach(k => {
+                const el = document.getElementById(fieldMap[k]);
+                if(el && el.type === 'checkbox') el.checked = item[k];
+                else if (el) el.value = item[k] || '';
+            });
+            if(typeRadioName) {
+                const r = document.querySelector(`input[name="${typeRadioName}"][value="${item.postType || 'link'}"]`);
+                if(r) { r.checked = true; r.dispatchEvent(new Event('change')); }
+            }
+            document.querySelector(`#${formId} button[type="button"]`).classList.remove('hidden');
+            document.querySelector(`#${formId} button[type="submit"]`).innerText = "Atualizar";
+        };
+
+        window.editACat = id => setupEdit(id, 'a_cat', 'a_cat', 'acervoCatForm', {name:'acervoCatName'});
+        window.editCCat = id => setupEdit(id, 'c_cat', 'c_cat', 'comercioCatForm', {name:'comercioCatName'});
+        window.editEvent = id => setupEdit(id, 'events', 'event', 'eventForm', {title:'eventTitle',startDate:'eventStart',endDate:'eventEnd',iconUrl:'eventIcon'});
+        window.editAPost = id => setupEdit(id, 'a_post', 'a_post', 'acervoPostForm', {
+            title:'acervoPostTitle', categoryId:'acervoPostCategory', imageUrl:'acervoPostImg', description:'acervoPostDesc',
+            redirectUrl:'acervoPostLink', blogContent:'acervoPostBlog', isPriority:'acervoPostPriority'
+        }, 'acervoType');
+        window.editCPost = id => setupEdit(id, 'c_post', 'c_post', 'comercioPostForm', {
+            title:'comercioPostTitle', categoryId:'comercioPostCategory', imageUrl:'comercioPostImg', description:'comercioPostDesc',
+            redirectUrl:'comercioPostLink', blogContent:'comercioPostBlog'
+        }, 'comercioType');
+
+        const setupDel = async (id, collName) => {
+            if(confirm('Excluir este registro permanentemente?')) {
+                try {
+                    await deleteDoc(doc(db, collName, id));
+                    showStatus('Removido com sucesso.', false);
+                    await loadAllData();
+                } catch(e) { showStatus('Erro ao deletar.', true); }
+            }
+        }
+        window.delACat = id => setupDel(id, 'categories');
+        window.delCCat = id => setupDel(id, 'comercioCategories');
+        window.delEvent = id => setupDel(id, 'events');
+        window.delAPost = id => setupDel(id, 'posts');
+        window.delCPost = id => setupDel(id, 'comercios');
+
+        function showStatus(msg, isError) {
+            const el = document.getElementById('statusMessage');
+            el.innerText = msg;
+            el.className = `mb-6 p-4 rounded-xl font-mono text-sm font-bold border transition-all ${isError ? 'text-red-500 bg-red-500/10 border-red-500' : 'text-cyanAccent bg-cyanAccent/10 border-cyanAccent'}`;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 4000);
+        }
+
+        // Cancel buttons
+        document.querySelectorAll('button[type="button"]').forEach(btn => {
+            btn.onclick = (e) => {
+                const form = e.target.closest('form');
+                form.reset();
+                if(form.id === 'acervoPostForm') { document.querySelector('input[name="acervoType"][value="link"]').click(); edits.a_post=null; }
+                if(form.id === 'comercioPostForm') { document.querySelector('input[name="comercioType"][value="link"]').click(); edits.c_post=null; }
+                if(form.id === 'acervoCatForm') edits.a_cat=null;
+                if(form.id === 'comercioCatForm') edits.c_cat=null;
+                if(form.id === 'eventForm') edits.event=null;
+                form.querySelector('button[type="submit"]').innerText = "Salvar";
+                e.target.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
