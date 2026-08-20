@@ -5,164 +5,224 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AcervIF | Repositório Público</title>
     
-    <!-- Favicon IFRJ -->
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
+    <script>
+        const theme = localStorage.getItem('theme') || 'system';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: { bgDark: '#050505', cyanAccent: '#00F0FF', purpleAccent: '#8A2BE2', slateMuted: '#A1A1AA' },
+                    colors: { 
+                        themeBg: 'var(--bg-color)', 
+                        textMain: 'var(--text-main)',
+                        themeMuted: 'var(--text-muted)',
+                        cyanAccent: 'var(--cyan-accent)', 
+                        purpleAccent: 'var(--purple-accent)', 
+                        pinkAccent: 'var(--pink-accent)' 
+                    },
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
                 }
             }
         }
     </script>
 
-    <!-- Custom CSS -->
     <style>
-        body { background-color: #050505; color: #FFFFFF; overflow-x: hidden; }
+        :root {
+            --bg-color: #F8FAFC;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --cyan-accent: #0284C7;
+            --purple-accent: #7C3AED;
+            --pink-accent: #DB2777;
+            
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --glass-hover-bg: rgba(255, 255, 255, 0.9);
+            --glass-shadow: rgba(0, 0, 0, 0.03);
+            
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --input-border: rgba(0, 0, 0, 0.1);
+            --input-focus-bg: #FFFFFF;
+            
+            --grid-line: rgba(0, 0, 0, 0.04);
+            --scroll-track: #F8FAFC;
+            --scroll-thumb: #CBD5E1;
+            --scroll-thumb-hover: #0284C7;
+        }
+
+        .dark {
+            --bg-color: #050505;
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --cyan-accent: #00F0FF;
+            --purple-accent: #8A2BE2;
+            --pink-accent: #FF1493;
+            
+            --glass-bg: rgba(20, 20, 20, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.03);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            
+            --input-bg: rgba(255, 255, 255, 0.03);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --input-focus-bg: rgba(255, 255, 255, 0.05);
+            
+            --grid-line: rgba(255, 255, 255, 0.03);
+            --scroll-track: #050505;
+            --scroll-thumb: #27272a;
+            --scroll-thumb-hover: #00F0FF;
+        }
+
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
         .bg-grid {
             background-size: 50px 50px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                              linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
             mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
         }
-        .glass-panel { background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease; }
-        .glass-input:focus { outline: none; border-color: #00F0FF; background: rgba(255, 255, 255, 0.05); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
-        .glass-card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-        .glass-card-hover:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.03); box-shadow: 0 20px 40px -15px rgba(0, 240, 255, 0.1); border-color: rgba(0, 240, 255, 0.3); }
-        .text-gradient { background: linear-gradient(to right, #FFFFFF, #A1A1AA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 4px 30px var(--glass-shadow); transition: background-color 0.3s, border-color 0.3s; }
+        .glass-input { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); transition: all 0.3s ease; }
+        .glass-input:focus { outline: none; border-color: var(--cyan-accent); background: var(--input-focus-bg); box-shadow: 0 0 15px rgba(2, 132, 199, 0.15); }
+        .dark .glass-input:focus { box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+        
+        .glass-card-hover { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s, border-color 0.3s, box-shadow 0.3s; position: relative; }
+        .glass-card-hover:hover { transform: translateY(-8px); background: var(--glass-hover-bg); box-shadow: 0 20px 40px -15px rgba(2, 132, 199, 0.15); border-color: var(--cyan-accent); }
+        .dark .glass-card-hover:hover { box-shadow: 0 20px 40px -15px rgba(0, 240, 255, 0.15); }
+
+        .text-gradient { background: linear-gradient(to right, var(--text-main), var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
         .animate-float { animation: float 6s ease-in-out infinite; }
         
-        /* Trajetórias de Voo Orbitais Decorativas */
-        @keyframes traverse-1 { 0% { transform: translate(0, 0) scale(1); opacity: 0.8; } 50% { transform: translate(30vw, 90vh) scale(0.9); opacity: 0.7; } 100% { transform: translate(0, 0) scale(1); opacity: 0.8; } }
-        @keyframes traverse-2 { 0% { transform: translate(0, 0) scale(1); opacity: 0.7; } 50% { transform: translate(100vw, -20vh) scale(0.9); opacity: 0.8; } 100% { transform: translate(0, 0) scale(1); opacity: 0.7; } }
-        @keyframes traverse-3 { 0% { transform: translate(0, 0) scale(1); opacity: 0.8; } 50% { transform: translate(-30vw, -100vh) scale(0.8); opacity: 0.9; } 100% { transform: translate(0, 0) scale(1); opacity: 0.8; } }
-        
-        .animate-traverse-1 { animation: traverse-1 38s ease-in-out infinite; }
-        .animate-traverse-2 { animation: traverse-2 45s ease-in-out infinite; }
-        .animate-traverse-3 { animation: traverse-3 42s ease-in-out infinite; }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00F0FF; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="antialiased selection:bg-cyanAccent selection:text-bgDark relative pb-20 min-h-screen">
+<body class="antialiased selection:bg-cyanAccent selection:text-white relative pb-20">
 
-    <!-- Fundo base -->
-    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none"></div>
-    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-cyanAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float"></div>
-    <div class="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purpleAccent rounded-full blur-[150px] opacity-[0.08] pointer-events-none -z-10 animate-float" style="animation-delay: 2s;"></div>
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-cyanAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float transition-colors duration-500"></div>
+    <div class="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purpleAccent rounded-full blur-[150px] opacity-[0.08] pointer-events-none -z-10 animate-float transition-colors duration-500" style="animation-delay: 2s;"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 relative z-10">
         
-        <!-- Elementos Flutuantes (Decorativos) -->
-        <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 hidden lg:block">
-            <div class="absolute top-10 left-10 inline-flex items-center space-x-2 px-4 py-1.5 rounded-full glass-panel border border-cyanAccent/20 animate-traverse-1">
-                <span class="relative flex h-2.5 w-2.5">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyanAccent opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyanAccent"></span>
-                </span>
-                <span class="text-xs font-mono text-cyanAccent uppercase tracking-widest font-semibold">Sistema Online</span>
-            </div>
-            <div class="absolute bottom-20 left-20 glass-panel rounded-xl p-3 border border-purpleAccent/20 animate-traverse-2">
-                <div class="flex items-center space-x-2 text-purpleAccent font-mono text-xs font-bold"><i data-lucide="terminal" class="w-4 h-4"></i><span>~/O(n log n)</span></div>
-            </div>
-            <div class="absolute bottom-1/4 right-20 glass-panel rounded-xl p-3 border border-cyanAccent/20 animate-traverse-3">
-                <div class="flex items-center space-x-2 text-cyanAccent font-mono text-xs font-bold"><i data-lucide="trending-up" class="w-4 h-4"></i><span>Six Sigma</span></div>
-            </div>
-        </div>
-
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 relative z-10 border-b border-white/10 pb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 relative z-10 border-b border-[var(--glass-border)] pb-8">
             <div class="flex items-center group cursor-default">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png" alt="Logo IFRJ" class="w-10 h-10 mr-4 group-hover:scale-110 transition-transform duration-500 drop-shadow-[0_0_8px_rgba(0,240,255,0.3)]">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png" alt="Logo IFRJ" class="w-12 h-12 mr-4 group-hover:scale-110 transition-transform duration-500 drop-shadow-sm">
                 <div>
                     <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">AcervIF</h1>
-                    <p class="font-mono text-sm text-slateMuted mt-1">IFRJ Niterói /// Repositório Público</p>
+                    <p class="font-mono text-sm text-themeMuted mt-1">IFRJ Niterói /// Repositório Público</p>
                 </div>
             </div>
-
-            <!-- Botões de Navegação & Busca -->
+            
             <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-                <a href="comercios.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-pinkAccent hover:bg-pinkAccent hover:text-white transition-all shadow-[0_0_15px_rgba(236,72,153,0.1)] w-full sm:w-auto justify-center">
+                <a href="comercios.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-pinkAccent hover:bg-pinkAccent hover:text-white transition-all shadow-sm w-full sm:w-auto justify-center">
                     <i data-lucide="store" class="w-4 h-4"></i> Comércios
                 </a>
-                <a href="calendario.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-[#8A2BE2] hover:bg-[#8A2BE2] hover:text-white transition-all shadow-[0_0_15px_rgba(138,43,226,0.1)] w-full sm:w-auto justify-center">
+                <a href="calendario.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-purpleAccent hover:bg-purpleAccent hover:text-white transition-all shadow-sm w-full sm:w-auto justify-center">
                     <i data-lucide="calendar-days" class="w-4 h-4"></i> Calendário
                 </a>
-                <div class="relative w-full md:w-72">
-                    <input type="text" id="searchInput" placeholder="Buscar algoritmos, projetos..." class="w-full glass-input rounded-full py-3 pl-12 pr-4 font-mono text-sm">
-                    <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-slateMuted"></i>
+                
+                <div class="relative w-full md:w-64">
+                    <input type="text" id="searchInput" placeholder="Buscar algoritmos..." class="w-full glass-input rounded-full py-3 pl-12 pr-4 font-mono text-sm">
+                    <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-themeMuted"></i>
+                </div>
+
+                <!-- Botão Seletor de Tema -->
+                <div class="relative group z-50">
+                    <button class="glass-panel p-3 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-11 h-11 shadow-sm">
+                        <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="sun" class="w-4 h-4 mr-2"></i> Claro</button>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="moon" class="w-4 h-4 mr-2"></i> Escuro</button>
+                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="monitor" class="w-4 h-4 mr-2"></i> Sistema</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Categorias -->
         <div class="flex space-x-3 overflow-x-auto pb-6 mb-8 scrollbar-hide relative z-10" id="categoriesContainer"></div>
 
-        <!-- Estados -->
-        <div id="loader" class="text-center py-20 font-mono text-cyanAccent animate-pulse hidden">Acessando banco de dados do núcleo...</div>
-        
-        <div id="emptyState" class="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto mt-20 hidden relative z-10">
-            <i data-lucide="shield-alert" class="w-12 h-12 text-slateMuted mx-auto mb-4"></i>
-            <h3 class="text-xl font-bold mb-2">Acervo Vazio</h3>
-            <p class="text-slateMuted font-mono text-sm">Nenhum registro encontrado para esta busca.</p>
+        <div id="loader" class="text-center py-20 font-mono text-cyanAccent animate-pulse hidden">
+            Acessando banco de dados do núcleo...
         </div>
 
-        <!-- Destaques -->
+        <div id="emptyState" class="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto mt-20 hidden relative z-10">
+            <i data-lucide="shield-alert" class="w-12 h-12 text-themeMuted mx-auto mb-4"></i>
+            <h3 class="text-xl font-bold text-textMain mb-2">Acervo Vazio ou Não Encontrado</h3>
+            <p class="text-themeMuted font-mono text-sm">Nenhum registro encontrado para esta busca.</p>
+        </div>
+
         <div id="prioritySection" class="mb-16 hidden relative z-10">
             <div class="flex items-center mb-6">
                 <div class="w-2 h-2 rounded-full bg-cyanAccent animate-ping mr-3"></div>
-                <h2 class="text-2xl font-bold">Em Destaque</h2>
+                <h2 class="text-2xl font-bold text-textMain">Em Destaque</h2>
             </div>
-            <div id="priorityGrid"></div>
+            <div id="priorityGrid" class="grid gap-6"></div>
         </div>
 
-        <!-- Acervo Regular -->
         <div id="regularSection" class="hidden relative z-10">
-            <h2 class="text-2xl font-bold mb-6 text-slateMuted flex items-center"><i data-lucide="archive" class="w-5 h-5 mr-3"></i>Acervo Cronológico</h2>
+            <h2 class="text-2xl font-bold mb-6 text-themeMuted">Acervo Cronológico</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="regularGrid"></div>
         </div>
     </div>
 
-    <!-- MODAL DO BLOG INTERNO -->
-    <div id="blogModal" class="fixed inset-0 z-50 hidden bg-bgDark/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8">
-        <div class="max-w-4xl mx-auto glass-panel rounded-3xl overflow-hidden relative shadow-2xl border-cyanAccent/20">
-            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/60 p-3 rounded-full text-white hover:text-cyanAccent hover:scale-110 transition-all z-10 backdrop-blur-md">
+    <div id="blogModal" class="fixed inset-0 z-50 hidden bg-white/90 dark:bg-[#050505]/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto bg-themeBg rounded-3xl overflow-hidden relative shadow-2xl border border-[var(--glass-border)]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/10 dark:bg-white/10 p-3 rounded-full text-textMain hover:text-cyanAccent hover:scale-110 transition-all z-10 shadow-md">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
-            <img id="modalImg" class="w-full h-64 md:h-[400px] object-cover border-b border-white/10" src="" alt="Capa do Artigo">
+            <img id="modalImg" class="w-full h-64 md:h-96 object-cover border-b border-[var(--glass-border)]" src="" alt="Capa">
             <div class="p-8 md:p-12">
                 <div class="flex items-center gap-3 mb-6">
-                    <span id="modalCategory" class="text-xs font-mono text-bgDark bg-cyanAccent px-3 py-1 rounded-full font-bold">Categoria</span>
-                    <span id="modalDate" class="text-xs font-mono text-slateMuted"></span>
+                    <span id="modalCategory" class="text-xs font-mono text-white bg-cyanAccent px-3 py-1 rounded-full font-bold"></span>
+                    <span id="modalDate" class="text-xs font-mono text-themeMuted"></span>
                 </div>
-                <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight"></h2>
-                <p id="modalDesc" class="text-xl md:text-2xl text-cyanAccent/90 font-light mb-10 border-l-4 border-cyanAccent pl-4"></p>
-                
-                <div id="modalContent" class="text-slate-300 leading-relaxed font-sans text-lg whitespace-pre-wrap"></div>
+                <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold text-textMain mb-6 leading-tight"></h2>
+                <p id="modalDesc" class="text-xl md:text-2xl text-cyanAccent font-light mb-10 border-l-4 border-cyanAccent pl-4"></p>
+                <div id="modalContent" class="text-slate-700 dark:text-slate-300 leading-relaxed font-sans text-lg whitespace-pre-wrap"></div>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        window.setTheme = function(mode) {
+            localStorage.setItem('theme', mode);
+            updateTheme();
+        };
+
+        function updateTheme() {
+            const mode = localStorage.getItem('theme') || 'system';
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -185,8 +245,6 @@
 
         const searchInput = document.getElementById('searchInput');
         const categoriesContainer = document.getElementById('categoriesContainer');
-        const loader = document.getElementById('loader');
-        const emptyState = document.getElementById('emptyState');
         const prioritySection = document.getElementById('prioritySection');
         const regularSection = document.getElementById('regularSection');
         const priorityGrid = document.getElementById('priorityGrid');
@@ -200,38 +258,41 @@
                 await fetchData();
             } catch (error) {
                 console.error("Erro Firebase:", error);
-                showEmptyState();
+                document.getElementById('emptyState').classList.remove('hidden');
             }
         }
 
         async function fetchData() {
-            loader.classList.remove('hidden');
+            document.getElementById('loader').classList.remove('hidden');
             try {
-                const catSnapshot = await getDocs(query(collection(db, 'categories'), orderBy('name')));
+                const catQuery = query(collection(db, 'categories'), orderBy('name'));
+                const catSnapshot = await getDocs(catQuery);
                 allCategories = catSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                const postSnapshot = await getDocs(query(collection(db, 'posts'), orderBy('createdAt', 'desc')));
+                const postQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+                const postSnapshot = await getDocs(postQuery);
                 allPosts = postSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
                 renderCategories();
                 filterAndRenderPosts();
             } catch (error) {
-                console.error(error);
-                showEmptyState();
-            } finally { loader.classList.add('hidden'); }
+                console.error("Erro dados:", error);
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
+            }
         }
 
         function renderCategories() {
             categoriesContainer.innerHTML = '';
             const btnAll = document.createElement('button');
-            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-cyanAccent text-bgDark' : 'glass-panel text-slateMuted hover:text-white'}`;
+            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
             btnAll.innerText = '[Todas]';
             btnAll.onclick = () => { activeCategory = 'Todas'; renderCategories(); filterAndRenderPosts(); };
             categoriesContainer.appendChild(btnAll);
 
             allCategories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === cat.id ? 'bg-purpleAccent text-white' : 'glass-panel text-slateMuted hover:text-white'}`;
+                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === cat.id ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
                 btn.innerText = cat.name;
                 btn.onclick = () => { activeCategory = cat.id; renderCategories(); filterAndRenderPosts(); };
                 categoriesContainer.appendChild(btn);
@@ -240,143 +301,112 @@
 
         function filterAndRenderPosts() {
             const searchTerm = searchInput.value.toLowerCase();
-            const filtered = allPosts.filter(p => {
-                return (activeCategory === 'Todas' || p.categoryId === activeCategory) && 
-                       (p.title.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm));
+            const filtered = allPosts.filter(post => {
+                const matchesSearch = post.title.toLowerCase().includes(searchTerm) || post.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = activeCategory === 'Todas' || post.categoryId === activeCategory;
+                return matchesSearch && matchesCategory;
             });
 
-            if (filtered.length === 0) { showEmptyState(); return; }
-            emptyState.classList.add('hidden');
+            if (filtered.length === 0) {
+                prioritySection.classList.add('hidden'); regularSection.classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden'); return;
+            }
 
+            document.getElementById('emptyState').classList.add('hidden');
             const priority = filtered.filter(p => p.isPriority);
             const regular = filtered.filter(p => !p.isPriority);
 
-            // RENDERIZAÇÃO INTELIGENTE DE DESTAQUES (Tamanhos dinâmicos baseados na quantidade)
+            // Dinâmica dos Destaques Cinemáticos
             if (priority.length > 0) {
                 if (priority.length === 1) {
-                    // 1 Destaque: Layout Cinematic (Texto dentro, Borda infinita, Grande)
                     priorityGrid.className = "grid grid-cols-1 gap-6";
-                    priorityGrid.innerHTML = priority.map(p => createPostHTML(p, 'large')).join('');
+                    priorityGrid.innerHTML = priority.map(p => createFullBleedHTML(p, 'h-[400px] md:h-[500px]')).join('');
                 } else if (priority.length === 2) {
-                    // 2 Destaques: Layout Cinematic Dividido (Texto dentro, Borda infinita, Médio/Largo)
                     priorityGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-6";
-                    priorityGrid.innerHTML = priority.map(p => createPostHTML(p, 'medium')).join('');
+                    priorityGrid.innerHTML = priority.map(p => createFullBleedHTML(p, 'h-[350px] md:h-[450px]')).join('');
                 } else {
-                    // 3+ Destaques: Layout Padrão (Texto embaixo, Menor)
                     priorityGrid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
-                    priorityGrid.innerHTML = priority.map(p => createPostHTML(p, 'normal')).join('');
+                    priorityGrid.innerHTML = priority.map(p => createStandardHTML(p)).join('');
                 }
                 prioritySection.classList.remove('hidden');
             } else {
                 prioritySection.classList.add('hidden');
             }
 
-            // RENDERIZAÇÃO DO ACERVO REGULAR (Sempre Grade Tripla)
-            regularGrid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
-            regularGrid.innerHTML = regular.map(p => createPostHTML(p, 'normal')).join('');
-            regularSection.classList.toggle('hidden', regular.length === 0);
+            if (regular.length > 0) {
+                regularGrid.innerHTML = regular.map(p => createStandardHTML(p)).join('');
+                regularSection.classList.remove('hidden');
+            } else {
+                regularSection.classList.add('hidden');
+            }
 
             lucide.createIcons();
         }
 
-        function createPostHTML(post, size = 'normal') {
+        function createFullBleedHTML(post, heightClass) {
             const catName = allCategories.find(c => c.id === post.categoryId)?.name || 'Geral';
+            let dateStr = post.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Recente';
             const defaultImg = 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800';
             
-            let dateStr = 'Recente';
-            if (post.createdAt && post.createdAt.toDate) {
-                dateStr = post.createdAt.toDate().toLocaleDateString('pt-BR');
-            }
-
             const isBlog = post.postType === 'blog';
-            const iconType = isBlog ? 'book-open' : 'external-link';
+            const actionTag = isBlog ? `<div onclick="openModal('${post.id}')"` : `<a href="${post.redirectUrl}" target="_blank" rel="noopener"`;
+            const closeTag = isBlog ? `</div>` : `</a>`;
 
-            // ESTILO CINEMÁTICO (TEXTO DENTRO DA IMAGEM)
-            if (size === 'large' || size === 'medium') {
-                const actionClasses = "rounded-3xl overflow-hidden group cursor-pointer block w-full relative transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,240,255,0.2)] border border-white/10 hover:border-cyanAccent/30";
-                const actionTag = isBlog ? `<div onclick="openModal('${post.id}')" class="${actionClasses}">` : `<a href="${post.redirectUrl}" target="_blank" rel="noopener" class="${actionClasses}">`;
-                const closeTag = isBlog ? `</div>` : `</a>`;
+            return `
+                ${actionTag} class="relative w-full ${heightClass} rounded-3xl overflow-hidden group cursor-pointer block shadow-lg border border-[var(--glass-border)]">
+                    <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000" onerror="this.src='${defaultImg}'">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10"></div>
+                    
+                    ${isBlog ? '<div class="absolute top-4 right-4 z-20 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-xs font-mono text-white border border-white/30 flex items-center shadow-lg"><i data-lucide="align-left" class="w-4 h-4 mr-2"></i> Postagem Interna</div>' : ''}
 
-                // Altura moderada: largo o suficiente para PC, mas não gigante.
-                let heightClass = size === 'large' ? 'h-[300px] md:h-[400px]' : 'h-[280px] md:h-[350px]';
-                let titleClass = size === 'large' ? 'text-3xl md:text-5xl mb-3' : 'text-2xl md:text-3xl mb-2';
-                let descClass = size === 'large' ? 'line-clamp-3 text-base md:text-lg' : 'line-clamp-2 text-sm md:text-base';
-                
-                return `
-                    ${actionTag}
-                        <div class="relative ${heightClass} w-full flex flex-col justify-end">
-                            <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" onerror="this.src='${defaultImg}'">
-                            
-                            <!-- Degrade escuro sobre a imagem -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-bgDark via-bgDark/80 to-transparent z-10 transition-colors duration-500"></div>
-                            
-                            <!-- Tag Blog canto superior -->
-                            ${isBlog ? '<div class="absolute top-5 right-5 z-20 bg-black/60 px-3 py-1.5 rounded-full text-xs font-mono text-cyanAccent backdrop-blur-md border border-cyanAccent/30 flex items-center shadow-lg"><i data-lucide="align-left" class="w-3 h-3 mr-1.5"></i> Artigo Interno</div>' : ''}
-                            
-                            <!-- Conteúdo (Texto) -->
-                            <div class="relative z-20 p-6 md:p-10 w-full mt-auto">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <span class="text-xs font-mono text-bgDark bg-cyanAccent px-3 py-1.5 rounded-full font-bold shadow-[0_0_10px_rgba(0,240,255,0.3)]">${catName}</span>
-                                    <span class="flex items-center text-xs font-mono text-slate-300">
-                                        <i data-lucide="calendar" class="w-3 h-3 mr-1.5"></i> ${dateStr}
-                                    </span>
-                                </div>
-                                <div class="flex items-end justify-between gap-4">
-                                    <div class="flex-grow">
-                                        <h3 class="${titleClass} font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight drop-shadow-lg">${post.title}</h3>
-                                        <p class="text-slate-300 ${descClass} leading-relaxed max-w-3xl drop-shadow-md">${post.description}</p>
-                                    </div>
-                                    <i data-lucide="${iconType}" class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 drop-shadow-md"></i>
-                                </div>
-                            </div>
+                    <div class="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full">
+                        <div class="mb-4"><span class="text-xs font-mono text-themeBg bg-cyanAccent px-3 py-1 rounded-full font-bold shadow-md">${catName}</span></div>
+                        <h3 class="text-3xl md:text-4xl font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight mb-3 drop-shadow-md">${post.title}</h3>
+                        <p class="text-slate-300 text-sm md:text-base leading-relaxed line-clamp-2 md:line-clamp-3 mb-4 max-w-3xl">${post.description}</p>
+                        <div class="flex items-center text-sm font-mono text-slate-400">
+                            <i data-lucide="calendar" class="w-4 h-4 mr-2"></i> ${dateStr}
+                            ${!isBlog ? '<i data-lucide="external-link" class="w-4 h-4 ml-4 opacity-0 group-hover:opacity-100 transition-opacity"></i>' : ''}
                         </div>
-                    ${closeTag}
-                `;
-            } 
+                    </div>
+                ${closeTag}
+            `;
+        }
+
+        function createStandardHTML(post) {
+            const catName = allCategories.find(c => c.id === post.categoryId)?.name || 'Geral';
+            let dateStr = post.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Recente';
+            const defaultImg = 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800';
             
-            // ESTILO PADRÃO (TEXTO EMBAIXO DA IMAGEM)
-            else {
-                const actionTag = isBlog ? 
-                    `<div onclick="openModal('${post.id}')" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer">` : 
-                    `<a href="${post.redirectUrl}" target="_blank" rel="noopener" class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">`;
-                const closeTag = isBlog ? `</div>` : `</a>`;
+            const isBlog = post.postType === 'blog';
+            const actionTag = isBlog ? `<div onclick="openModal('${post.id}')"` : `<a href="${post.redirectUrl}" target="_blank" rel="noopener"`;
+            const closeTag = isBlog ? `</div>` : `</a>`;
 
-                return `
-                    ${actionTag}
-                        <div class="relative h-48 rounded-2xl overflow-hidden flex-shrink-0">
-                            <div class="absolute inset-0 bg-bgDark/40 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                            <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
-                            ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-black/60 px-3 py-1 rounded-full text-xs font-mono text-cyanAccent backdrop-blur-sm border border-cyanAccent/30 flex items-center"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Artigo</div>' : ''}
+            return `
+                ${actionTag} class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">
+                    <div class="relative h-48 rounded-2xl overflow-hidden border border-[var(--glass-border)]">
+                        <div class="absolute inset-0 bg-black/10 dark:bg-white/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                        <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
+                        ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-themeBg/80 px-3 py-1 rounded-full text-xs font-mono text-cyanAccent backdrop-blur-sm border border-[var(--glass-border)] flex items-center shadow-sm"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Ler</div>' : ''}
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="text-xl font-bold text-textMain group-hover:text-cyanAccent transition-colors leading-tight">${post.title}</h3>
+                            <i data-lucide="${isBlog ? 'book-open' : 'external-link'}" class="w-5 h-5 text-themeMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
                         </div>
-                        <div class="p-5 flex flex-col flex-grow">
-                            <div class="flex items-start justify-between mb-3">
-                                <h3 class="text-xl font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight">${post.title}</h3>
-                                <i data-lucide="${iconType}" class="w-5 h-5 text-slateMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
-                            </div>
-                            <p class="text-slateMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${post.description}</p>
-                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                                <span class="text-xs font-mono text-purpleAccent bg-purpleAccent/10 px-3 py-1 rounded-full">${catName}</span>
-                                <span class="flex items-center text-xs font-mono text-slateMuted">
-                                    <i data-lucide="calendar" class="w-3 h-3 mr-1"></i> ${dateStr}
-                                </span>
-                            </div>
+                        <p class="text-themeMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${post.description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-[var(--glass-border)]">
+                            <span class="text-xs font-mono text-cyanAccent bg-cyanAccent/10 px-3 py-1 rounded-full">${catName}</span>
+                            <span class="flex items-center text-xs font-mono text-themeMuted"><i data-lucide="calendar" class="w-3 h-3 mr-1"></i> ${dateStr}</span>
                         </div>
-                    ${closeTag}
-                `;
-            }
+                    </div>
+                ${closeTag}
+            `;
         }
 
-        function showEmptyState() {
-            prioritySection.classList.add('hidden');
-            regularSection.classList.add('hidden');
-            emptyState.classList.remove('hidden');
-        }
-
-        // Funções para controle do Modal de Leitura (Blog)
         window.openModal = (id) => {
             const post = allPosts.find(p => p.id === id);
             if(!post) return;
-            
             document.getElementById('modalImg').src = post.imageUrl || '';
             document.getElementById('modalTitle').innerText = post.title;
             document.getElementById('modalDesc').innerText = post.description;
@@ -385,7 +415,7 @@
             document.getElementById('modalDate').innerText = post.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Recente';
             
             document.getElementById('blogModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Evita scroll do fundo
+            document.body.style.overflow = 'hidden';
             lucide.createIcons();
         };
 
