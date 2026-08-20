@@ -120,7 +120,7 @@
                         <div class="glass-panel p-4 rounded-xl border border-white/10">
                             <label class="text-sm font-mono text-cyanAccent mb-3 block">Tipo de Destino do Artefato:</label>
                             <div class="flex gap-6 mb-4">
-                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="acervoType" value="link" checked class="mr-2 accent-cyanAccent"> Link Externo</label>
+                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" id="acervoTypeRadio" name="acervoType" value="link" checked class="mr-2 accent-cyanAccent"> Link Externo</label>
                                 <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="acervoType" value="blog" class="mr-2 accent-cyanAccent"> Postagem Interna (Blog)</label>
                             </div>
                             <input type="url" id="acervoPostLink" class="w-full glass-input rounded-xl p-3" placeholder="https://exemplo.com">
@@ -173,7 +173,7 @@
                         <div class="glass-panel p-4 rounded-xl border border-white/10">
                             <label class="text-sm font-mono text-pinkAccent mb-3 block">Tipo de Destino:</label>
                             <div class="flex gap-6 mb-4">
-                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="comercioType" value="link" checked class="mr-2 accent-pinkAccent"> WhatsApp / Instagram Externo</label>
+                                <label class="flex items-center text-sm cursor-pointer"><input type="radio" id="comercioTypeRadio" name="comercioType" value="link" checked class="mr-2 accent-pinkAccent"> WhatsApp / Instagram Externo</label>
                                 <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="comercioType" value="blog" class="mr-2 accent-pinkAccent"> Cardápio/Detalhes Interno</label>
                             </div>
                             <input type="url" id="comercioPostLink" class="w-full glass-input rounded-xl p-3 focus:border-pinkAccent" placeholder="https://instagram.com/...">
@@ -452,22 +452,15 @@
         
         createFormHandler('acervoPostForm', false, 'posts', 'a_post', 'a_post', {
             title: 'acervoPostTitle', categoryId: 'acervoPostCategory', imageUrl: 'acervoPostImg', description: 'acervoPostDesc',
-            postType: 'acervoPostLink', // Uses radio name mapped later
+            postType: 'acervoTypeRadio', 
             redirectUrl: 'acervoPostLink', blogContent: 'acervoPostBlog', isPriority: 'acervoPostPriority'
         }, "Artefato Acervo");
-        // Fix for radio
-        document.getElementById('acervoPostForm').onsubmit = (e) => {
-            document.getElementById('acervoPostLink').name = 'acervoType'; // Hack for mapping
-        };
 
         createFormHandler('comercioPostForm', false, 'comercios', 'c_post', 'c_post', {
             title: 'comercioPostTitle', categoryId: 'comercioPostCategory', imageUrl: 'comercioPostImg', description: 'comercioPostDesc',
-            postType: 'comercioPostLink', redirectUrl: 'comercioPostLink', blogContent: 'comercioPostBlog'
+            postType: 'comercioTypeRadio', 
+            redirectUrl: 'comercioPostLink', blogContent: 'comercioPostBlog'
         }, "Comércio");
-        document.getElementById('comercioPostForm').onsubmit = (e) => {
-            document.getElementById('comercioPostLink').name = 'comercioType';
-        };
-
 
         const setupEdit = (id, memArray, editKey, formId, fieldMap, typeRadioName) => {
             const item = memory[memArray].find(x => x.id === id);
