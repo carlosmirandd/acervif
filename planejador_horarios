@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcervIF | Planejador de Horários</title>
+    
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Theme Script -->
+    <script>
+        const theme = localStorage.getItem('theme') || 'system';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { 
+                        themeBg: 'var(--bg-color)', 
+                        textMain: 'var(--text-main)',
+                        themeMuted: 'var(--text-muted)',
+                        cyanAccent: 'var(--cyan-accent)', 
+                        purpleAccent: 'var(--purple-accent)', 
+                        pinkAccent: 'var(--pink-accent)',
+                        ifGreen: '#2E7D32',
+                        ifGreenHover: '#1B5E20'
+                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- External Export Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Custom CSS Design Tokens -->
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --cyan-accent: #0284C7;
+            --purple-accent: #7C3AED;
+            --pink-accent: #DB2777;
+            
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-shadow: rgba(0, 0, 0, 0.04);
+            
+            --input-bg: rgba(255, 255, 255, 0.85);
+            --input-border: rgba(0, 0, 0, 0.15);
+            --input-focus-bg: #FFFFFF;
+            
+            --grid-line: rgba(0, 0, 0, 0.04);
+            --scroll-track: #F8FAFC;
+            --scroll-thumb: #CBD5E1;
+            --scroll-thumb-hover: #16A34A;
+        }
+
+        .dark {
+            --bg-color: #050505;
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --cyan-accent: #00F0FF;
+            --purple-accent: #8A2BE2;
+            --pink-accent: #FF1493;
+            
+            --glass-bg: rgba(20, 20, 20, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: rgba(0, 0, 0, 0.35);
+            
+            --input-bg: rgba(255, 255, 255, 0.04);
+            --input-border: rgba(255, 255, 255, 0.15);
+            --input-focus-bg: rgba(255, 255, 255, 0.08);
+            
+            --grid-line: rgba(255, 255, 255, 0.03);
+            --scroll-track: #050505;
+            --scroll-thumb: #27272a;
+            --scroll-thumb-hover: #22c55e;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            transition: background-color 0.3s, color 0.3s; 
+        }
+
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                              linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+        }
+
+        .glass-panel { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid var(--glass-border); 
+            box-shadow: 0 4px 30px var(--glass-shadow); 
+            transition: all 0.3s ease; 
+        }
+
+        .glass-input { 
+            background: var(--input-bg); 
+            border: 1px solid var(--input-border); 
+            color: var(--text-main); 
+            transition: all 0.3s ease; 
+        }
+        
+        .glass-input:focus { 
+            outline: none; 
+            border-color: #16A34A; 
+            background: var(--input-focus-bg); 
+            box-shadow: 0 0 15px rgba(22, 163, 74, 0.2); 
+        }
+
+        .text-gradient { 
+            background: linear-gradient(to right, var(--text-main), var(--text-muted)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        /* IFRJ Schedule Card Styling */
+        .schedule-card {
+            background: rgba(240, 253, 244, 0.85);
+            border-left: 4px solid #16a34a;
+            transition: all 0.2s ease-in-out;
+        }
+        .dark .schedule-card {
+            background: rgba(20, 83, 45, 0.25);
+            border-left: 4px solid #22c55e;
+        }
+        .schedule-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(22, 163, 74, 0.15);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+    </style>
+</head>
+<body class="antialiased selection:bg-green-600 selection:text-white relative pb-20 min-h-screen flex flex-col">
+
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+    <div class="fixed top-[-10%] right-[15%] w-[550px] h-[550px] bg-green-600 rounded-full blur-[180px] opacity-[0.08] pointer-events-none -z-10 transition-colors duration-500"></div>
+    <div class="fixed bottom-[-5%] left-[-5%] w-[450px] h-[450px] bg-emerald-500 rounded-full blur-[150px] opacity-[0.06] pointer-events-none -z-10 transition-colors duration-500"></div>
+
+    <!-- Main Container -->
+    <div class="max-w-[1500px] mx-auto px-3 sm:px-6 lg:px-8 pt-6 sm:pt-10 w-full flex-1 relative z-10">
+        
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 border-b border-[var(--glass-border)] pb-6">
+            <div class="flex items-center group cursor-default">
+                <div class="p-3 bg-white dark:bg-black/40 rounded-2xl mr-4 border border-[var(--glass-border)] shadow-sm group-hover:scale-105 transition-transform">
+                    <i data-lucide="clock" class="w-8 h-8 text-green-600 dark:text-green-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Planejador de Horários</h1>
+                    <p class="font-mono text-xs sm:text-sm text-themeMuted mt-1">IFRJ Niterói /// Organização Semestral</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <a href="index.html" class="glass-panel px-4 py-2.5 rounded-full font-mono text-xs font-bold text-cyanAccent hover:bg-cyanAccent hover:text-white transition-all shadow-sm flex items-center">
+                    <i data-lucide="database" class="w-4 h-4 mr-1.5"></i>Acervo
+                </a>
+                <a href="comercios.html" class="glass-panel px-4 py-2.5 rounded-full font-mono text-xs font-bold text-pinkAccent hover:bg-pinkAccent hover:text-white transition-all shadow-sm flex items-center">
+                    <i data-lucide="store" class="w-4 h-4 mr-1.5"></i>Comércios
+                </a>
+                <a href="calendario.html" class="glass-panel px-4 py-2.5 rounded-full font-mono text-xs font-bold text-purpleAccent hover:bg-purpleAccent hover:text-white transition-all shadow-sm flex items-center">
+                    <i data-lucide="calendar-days" class="w-4 h-4 mr-1.5"></i>Calendário
+                </a>
+                <a href="fluxograma.html" class="glass-panel px-4 py-2.5 rounded-full font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm flex items-center">
+                    <i data-lucide="git-branch" class="w-4 h-4 mr-1.5"></i>Fluxograma
+                </a>
+                
+                <!-- Theme Switcher -->
+                <div class="relative group z-50 ml-auto md:ml-0">
+                    <button class="glass-panel p-2.5 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-10 h-10 shadow-sm">
+                        <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="sun" class="w-4 h-4 mr-2"></i> Claro</button>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="moon" class="w-4 h-4 mr-2"></i> Escuro</button>
+                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="monitor" class="w-4 h-4 mr-2"></i> Sistema</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="bg-[#2E7D32] dark:bg-[#1B5E20] text-white rounded-2xl p-4 sm:p-6 mb-6 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xl sm:text-2xl font-bold tracking-wide uppercase font-sans" id="displayCourseName">ENGENHARIA DE COMPUTAÇÃO</span>
+                    <span class="text-xs sm:text-sm font-mono bg-white/20 px-2.5 py-1 rounded-full font-semibold" id="displaySemester">2026/2</span>
+                    <button onclick="openCourseModal()" class="p-1.5 hover:bg-white/20 rounded-lg transition-colors text-white/80 hover:text-white" title="Editar Informações do Curso">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <p class="text-xs sm:text-sm font-mono text-green-100 mt-1" id="displaySummaryStats">
+                    7 disciplinas em que você está inscrito · 26 aulas na semana
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <button onclick="openBatchModal()" class="flex-1 md:flex-none bg-white text-green-800 hover:bg-green-50 font-mono text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center justify-center">
+                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Adicionar Disciplina
+                </button>
+                <button onclick="openExportModal()" class="flex-1 md:flex-none bg-green-900/40 hover:bg-green-900/60 text-white border border-white/20 font-mono text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center justify-center">
+                    <i data-lucide="download" class="w-4 h-4 mr-2"></i> Exportar Horário
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-4 mb-6 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
+            
+            <!-- Shift Filter Buttons -->
+            <div class="flex items-center bg-black/5 dark:bg-white/5 p-1 rounded-xl overflow-x-auto scrollbar-hide">
+                <span class="text-xs font-mono text-themeMuted px-3 hidden sm:inline">Turnos:</span>
+                <button onclick="setShiftFilter('all')" id="btnShiftAll" class="shift-btn active px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all bg-green-600 text-white shadow-sm">Todos</button>
+                <button onclick="setShiftFilter('tarde')" id="btnShiftTarde" class="shift-btn px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all">Tarde (13:10 - 18:00)</button>
+                <button onclick="setShiftFilter('noite')" id="btnShiftNoite" class="shift-btn px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all">Noite (18:00 - 21:00)</button>
+            </div>
+
+            <!-- View Mode Switcher -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-themeMuted hidden sm:inline">Visualização:</span>
+                <div class="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl w-full sm:w-auto">
+                    <button onclick="setViewMode('auto')" id="btnViewAuto" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all bg-green-600 text-white shadow-sm flex-1 sm:flex-none flex items-center justify-center">
+                        <i data-lucide="smartphone" class="w-3.5 h-3.5 mr-1.5 sm:hidden"></i>
+                        <i data-lucide="monitor" class="w-3.5 h-3.5 mr-1.5 hidden sm:inline"></i> Auto (Padrão)
+                    </button>
+                    <button onclick="setViewMode('table')" id="btnViewTable" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all flex-1 sm:flex-none flex items-center justify-center">
+                        <i data-lucide="table" class="w-3.5 h-3.5 mr-1.5"></i> Planilha
+                    </button>
+                    <button onclick="setViewMode('lines')" id="btnViewLines" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all flex-1 sm:flex-none flex items-center justify-center">
+                        <i data-lucide="list" class="w-3.5 h-3.5 mr-1.5"></i> Sequência (Linhas)
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-1">
+                    <button onclick="restoreExampleData()" class="p-2 glass-panel hover:bg-black/5 dark:hover:bg-white/5 text-themeMuted hover:text-green-600 rounded-xl transition-all" title="Restaurar Exemplo">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="confirmClearSchedule()" class="p-2 glass-panel hover:bg-red-500/10 text-themeMuted hover:text-red-500 rounded-xl transition-all" title="Limpar Toda a Grade">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="spreadsheetView" class="glass-panel rounded-2xl overflow-hidden shadow-xl mb-8">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr class="bg-[#2E7D32] dark:bg-[#1B5E20] text-white text-xs font-mono uppercase tracking-wider">
+                            <th class="p-3.5 w-32 border-r border-green-700 dark:border-green-800 text-center font-bold">Horário</th>
+                            <th class="p-3.5 w-1/5 border-r border-green-700 dark:border-green-800 font-bold">Segunda</th>
+                            <th class="p-3.5 w-1/5 border-r border-green-700 dark:border-green-800 font-bold">Terça</th>
+                            <th class="p-3.5 w-1/5 border-r border-green-700 dark:border-green-800 font-bold">Quarta</th>
+                            <th class="p-3.5 w-1/5 border-r border-green-700 dark:border-green-800 font-bold">Quinta</th>
+                            <th class="p-3.5 w-1/5 font-bold">Sexta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-[var(--glass-border)] text-xs font-sans">
+                        <!-- Dynamic spreadsheet rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="linesView" class="hidden space-y-6 mb-8">
+            <!-- Dynamic vertical day blocks -->
+        </div>
+
+    </div>
+
+
+    <!-- Modal 1: Quick Cell Editor -->
+    <div id="cellModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel bg-themeBg rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-[var(--glass-border)] relative">
+            <button onclick="closeModal('cellModal')" class="absolute top-4 right-4 text-themeMuted hover:text-textMain p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 bg-green-500/10 text-green-600 dark:text-green-400 rounded-xl">
+                    <i data-lucide="edit-3" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-textMain" id="cellModalTitle">Editar Horário</h3>
+                    <p class="text-xs font-mono text-themeMuted" id="cellModalSub"></p>
+                </div>
+            </div>
+
+            <form id="cellForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Nome da Matéria</label>
+                    <input type="text" id="inputMateria" placeholder="Ex: Arquitetura e Organização de Computadores" required class="w-full glass-input rounded-xl p-3 text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Sala / Local</label>
+                        <input type="text" id="inputSala" placeholder="Ex: Sala 05 ou ead" required class="w-full glass-input rounded-xl p-3 text-sm">
+                        <span class="text-[10px] font-mono text-themeMuted mt-1 block">* Digite "ead" para destacar como EAD</span>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Turma</label>
+                        <input type="text" id="inputTurma" placeholder="Ex: T01 ou EngComp" class="w-full glass-input rounded-xl p-3 text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Professor(a)</label>
+                    <input type="text" id="inputProfessor" placeholder="Ex: Alexandre Domingues" class="w-full glass-input rounded-xl p-3 text-sm">
+                </div>
+
+                <div class="pt-4 flex gap-2">
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl text-xs font-mono flex-1 shadow-md transition-all">
+                        Salvar
+                    </button>
+                    <button type="button" onclick="clearCurrentCell()" class="bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 font-bold py-3 px-4 rounded-xl text-xs font-mono transition-all">
+                        Limpar Horário
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Batch Creator (Add Subject to Multiple Slots) -->
+    <div id="batchModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel bg-themeBg rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-[var(--glass-border)] relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('batchModal')" class="absolute top-4 right-4 text-themeMuted hover:text-textMain p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-green-500/10 text-green-600 dark:text-green-400 rounded-xl">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-textMain">Adicionar Disciplina em Lote</h3>
+                    <p class="text-xs font-mono text-themeMuted">Preencha os dados e selecione os horários de aula</p>
+                </div>
+            </div>
+
+            <form id="batchForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Nome da Matéria</label>
+                    <input type="text" id="batchMateria" placeholder="Ex: Banco de Dados II" required class="w-full glass-input rounded-xl p-3 text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Sala</label>
+                        <input type="text" id="batchSala" placeholder="Ex: Lab Info 02 ou ead" required class="w-full glass-input rounded-xl p-3 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Turma</label>
+                        <input type="text" id="batchTurma" placeholder="Ex: T01" class="w-full glass-input rounded-xl p-3 text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Professor(a)</label>
+                    <input type="text" id="batchProfessor" placeholder="Ex: Helvio Junior" class="w-full glass-input rounded-xl p-3 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-2">Selecione os Dias da Semana</label>
+                    <div class="flex flex-wrap gap-2" id="batchDaysContainer">
+                        <label class="cursor-pointer bg-black/5 dark:bg-white/5 border border-[var(--glass-border)] px-3 py-2 rounded-xl text-xs font-mono font-bold flex items-center">
+                            <input type="checkbox" name="batchDay" value="seg" class="mr-2 accent-green-600"> Segunda
+                        </label>
+                        <label class="cursor-pointer bg-black/5 dark:bg-white/5 border border-[var(--glass-border)] px-3 py-2 rounded-xl text-xs font-mono font-bold flex items-center">
+                            <input type="checkbox" name="batchDay" value="ter" class="mr-2 accent-green-600"> Terça
+                        </label>
+                        <label class="cursor-pointer bg-black/5 dark:bg-white/5 border border-[var(--glass-border)] px-3 py-2 rounded-xl text-xs font-mono font-bold flex items-center">
+                            <input type="checkbox" name="batchDay" value="qua" class="mr-2 accent-green-600"> Quarta
+                        </label>
+                        <label class="cursor-pointer bg-black/5 dark:bg-white/5 border border-[var(--glass-border)] px-3 py-2 rounded-xl text-xs font-mono font-bold flex items-center">
+                            <input type="checkbox" name="batchDay" value="qui" class="mr-2 accent-green-600"> Quinta
+                        </label>
+                        <label class="cursor-pointer bg-black/5 dark:bg-white/5 border border-[var(--glass-border)] px-3 py-2 rounded-xl text-xs font-mono font-bold flex items-center">
+                            <input type="checkbox" name="batchDay" value="sex" class="mr-2 accent-green-600"> Sexta
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-2">Selecione os Tempos de Aula</label>
+                    <div class="grid grid-cols-2 gap-2" id="batchSlotsContainer">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="pt-4 flex gap-2">
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl text-xs font-mono shadow-md transition-all">
+                        Aplicar às Células Selecionadas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Course Info Settings -->
+    <div id="courseModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel bg-themeBg rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-[var(--glass-border)] relative">
+            <button onclick="closeModal('courseModal')" class="absolute top-4 right-4 text-themeMuted hover:text-textMain p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-green-500/10 text-green-600 dark:text-green-400 rounded-xl">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-textMain">Informações do Curso</h3>
+                    <p class="text-xs font-mono text-themeMuted">Personalize o cabeçalho oficial</p>
+                </div>
+            </div>
+
+            <form id="courseForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Nome do Curso / Programa</label>
+                    <input type="text" id="courseNameInput" placeholder="Ex: ENGENHARIA DE COMPUTAÇÃO" required class="w-full glass-input rounded-xl p-3 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-1">Semestre Letivo</label>
+                    <input type="text" id="semesterInput" placeholder="Ex: 2026/2" required class="w-full glass-input rounded-xl p-3 text-sm">
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl text-xs font-mono shadow-md transition-all">
+                        Atualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4: Export Options Modal -->
+    <div id="exportModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel bg-themeBg rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-[var(--glass-border)] relative">
+            <button onclick="closeModal('exportModal')" class="absolute top-4 right-4 text-themeMuted hover:text-textMain p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-green-500/10 text-green-600 dark:text-green-400 rounded-xl">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-textMain">Exportar Horários</h3>
+                    <p class="text-xs font-mono text-themeMuted">Escolha o formato e estilo de visualização</p>
+                </div>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-2">1. Estilo de Layout para Exportar</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer border-2 border-green-600 bg-green-500/10 rounded-2xl p-3 text-center transition-all flex flex-col items-center" id="exportLayoutSpreadsheet">
+                            <input type="radio" name="exportLayout" value="table" checked class="hidden" onchange="updateExportLayoutUI()">
+                            <i data-lucide="table" class="w-6 h-6 text-green-600 mb-1"></i>
+                            <span class="text-xs font-bold font-mono text-textMain">Planilha / Tabela</span>
+                        </label>
+                        <label class="cursor-pointer border-2 border-[var(--glass-border)] bg-black/5 dark:bg-white/5 rounded-2xl p-3 text-center transition-all flex flex-col items-center" id="exportLayoutLines">
+                            <input type="radio" name="exportLayout" value="lines" class="hidden" onchange="updateExportLayoutUI()">
+                            <i data-lucide="list" class="w-6 h-6 text-themeMuted mb-1"></i>
+                            <span class="text-xs font-bold font-mono text-textMain">Sequência (Linhas)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold text-themeMuted mb-2">2. Formato de Arquivo</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="processExport('png')" class="glass-panel hover:border-green-600 hover:bg-green-500/10 p-3 rounded-2xl flex flex-col items-center text-center transition-all">
+                            <i data-lucide="image" class="w-6 h-6 text-green-600 mb-1"></i>
+                            <span class="text-xs font-bold font-mono">PNG (Imagem)</span>
+                        </button>
+                        <button onclick="processExport('pdf')" class="glass-panel hover:border-green-600 hover:bg-green-500/10 p-3 rounded-2xl flex flex-col items-center text-center transition-all">
+                            <i data-lucide="file-text" class="w-6 h-6 text-red-500 mb-1"></i>
+                            <span class="text-xs font-bold font-mono">PDF</span>
+                        </button>
+                        <button onclick="processExport('xlsx')" class="glass-panel hover:border-green-600 hover:bg-green-500/10 p-3 rounded-2xl flex flex-col items-center text-center transition-all">
+                            <i data-lucide="sheet" class="w-6 h-6 text-emerald-600 mb-1"></i>
+                            <span class="text-xs font-bold font-mono">XLSX (Excel)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Export Render Sandbox container -->
+    <div id="exportSandbox" class="fixed top-[-9999px] left-[-9999px] w-[1100px] bg-white text-slate-900 p-8 rounded-xl"></div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        window.setTheme = function(mode) { 
+            localStorage.setItem('theme', mode); 
+            updateTheme(); 
+        };
+
+        function updateTheme() {
+            const mode = localStorage.getItem('theme') || 'system';
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+
+        // Constant Time Slots Configuration
+        const TIME_SLOTS = [
+            { id: 't1', shift: 'tarde', label: '13:10 - 13:55' },
+            { id: 't2', shift: 'tarde', label: '13:55 - 14:40' },
+            { id: 't3', shift: 'tarde', label: '14:40 - 15:25' },
+            { id: 't4', shift: 'tarde', label: '15:25 - 16:10' },
+            { id: 't5', shift: 'tarde', label: '16:30 - 17:15' },
+            { id: 't6', shift: 'tarde', label: '17:15 - 18:00' },
+            { id: 'n1', shift: 'noite', label: '18:00 - 18:45' },
+            { id: 'n2', shift: 'noite', label: '18:45 - 19:30' },
+            { id: 'n3', shift: 'noite', label: '19:30 - 20:15' },
+            { id: 'n4', shift: 'noite', label: '20:15 - 21:00' }
+        ];
+
+        const DAYS = [
+            { id: 'seg', label: 'Segunda' },
+            { id: 'ter', label: 'Terça' },
+            { id: 'qua', label: 'Quarta' },
+            { id: 'qui', label: 'Quinta' },
+            { id: 'sex', label: 'Sexta' }
+        ];
+
+        // Default Mock Data from IFRJ EngComp 2026/2 Screenshot
+        const DEFAULT_SCHEDULE = {
+            'qua_t3': { materia: 'Arquitetura e Organização de Computadores', professor: 'Alexandre Domingues', sala: 'ead', turma: 'T01' },
+            'qua_t4': { materia: 'Arquitetura e Organização de Computadores', professor: 'Alexandre Domingues', sala: 'ead', turma: 'T01' },
+            'qua_t5': { materia: 'Arquitetura e Organização de Computadores', professor: 'Alexandre Domingues', sala: 'ead', turma: 'T01' },
+            'qua_t6': { materia: 'Arquitetura e Organização de Computadores', professor: 'Alexandre Domingues', sala: 'ead', turma: 'T01' },
+            
+            'ter_t5': { materia: 'Ciência, Tecnologia e Sociedade', professor: 'Diones Motta', sala: 'Sala 03', turma: 'T01' },
+            'ter_t6': { materia: 'Ciência, Tecnologia e Sociedade', professor: 'Diones Motta', sala: 'Sala 03', turma: 'T01' },
+            
+            'seg_n1': { materia: 'Eletricidade e Eletrônica Analógica', professor: 'Alexandre Barcellos', sala: 'Sala 05', turma: 'T01' },
+            'seg_n2': { materia: 'Eletricidade e Eletrônica Analógica', professor: 'Alexandre Barcellos', sala: 'Sala 05', turma: 'T01' },
+            'seg_n3': { materia: 'Eletricidade e Eletrônica Analógica', professor: 'Alexandre Barcellos', sala: 'Sala 05', turma: 'T01' },
+            'seg_n4': { materia: 'Eletricidade e Eletrônica Analógica', professor: 'Alexandre Barcellos', sala: 'Sala 05', turma: 'T01' },
+            
+            'ter_n1': { materia: 'Sistemas Operacionais', professor: 'Francisco Soares', sala: 'Lab Info 02', turma: 'T01' },
+            'ter_n2': { materia: 'Sistemas Operacionais', professor: 'Francisco Soares', sala: 'Lab Info 02', turma: 'T01' },
+            'ter_n3': { materia: 'Sistemas Operacionais', professor: 'Francisco Soares', sala: 'Lab Info 02', turma: 'T01' },
+            'ter_n4': { materia: 'Sistemas Operacionais', professor: 'Francisco Soares', sala: 'Lab Info 02', turma: 'T01' },
+            
+            'qua_n1': { materia: 'Ciência e Tecnologia dos Materiais', professor: 'André Leal', sala: 'Sala 12', turma: 'T01' },
+            'qua_n2': { materia: 'Ciência e Tecnologia dos Materiais', professor: 'André Leal', sala: 'Sala 12', turma: 'T01' },
+            'qua_n3': { materia: 'Ciência e Tecnologia dos Materiais', professor: 'André Leal', sala: 'Sala 12', turma: 'T01' },
+            'qua_n4': { materia: 'Ciência e Tecnologia dos Materiais', professor: 'André Leal', sala: 'Sala 12', turma: 'T01' },
+            
+            'qui_n1': { materia: 'Engenharia de Software', professor: 'Helvio Junior', sala: 'Lab Info 02', turma: 'T01' },
+            'qui_n2': { materia: 'Engenharia de Software', professor: 'Helvio Junior', sala: 'Lab Info 02', turma: 'T01' },
+            'qui_n3': { materia: 'Engenharia de Software', professor: 'Helvio Junior', sala: 'Lab Info 02', turma: 'T01' },
+            'qui_n4': { materia: 'Engenharia de Software', professor: 'Helvio Junior', sala: 'Lab Info 02', turma: 'T01' },
+            
+            'sex_n1': { materia: 'Banco de Dados II', professor: 'Helvio Junior', sala: 'ead', turma: 'T01' },
+            'sex_n2': { materia: 'Banco de Dados II', professor: 'Helvio Junior', sala: 'ead', turma: 'T01' },
+            'sex_n3': { materia: 'Banco de Dados II', professor: 'Helvio Junior', sala: 'ead', turma: 'T01' },
+            'sex_n4': { materia: 'Banco de Dados II', professor: 'Helvio Junior', sala: 'ead', turma: 'T01' }
+        };
+
+        // App State
+        let currentSchedule = {};
+        let courseInfo = { name: "ENGENHARIA DE COMPUTAÇÃO", semester: "2026/2" };
+        let currentShiftFilter = "all";
+        let currentViewMode = "auto";
+        let activeEditingKey = null;
+
+        function initApp() {
+            loadFromCache();
+            renderBatchSlotsOptions();
+            renderViews();
+            lucide.createIcons();
+        }
+
+        function loadFromCache() {
+            const savedSchedule = localStorage.getItem('acervif_schedule_data');
+            const savedCourse = localStorage.getItem('acervif_course_info');
+            
+            if (savedSchedule) {
+                try { currentSchedule = JSON.parse(savedSchedule); } catch(e) { currentSchedule = { ...DEFAULT_SCHEDULE }; }
+            } else {
+                currentSchedule = { ...DEFAULT_SCHEDULE };
+            }
+
+            if (savedCourse) {
+                try { courseInfo = JSON.parse(savedCourse); } catch(e) {}
+            }
+
+            updateCourseHeaderUI();
+        }
+
+        function saveToCache() {
+            localStorage.setItem('acervif_schedule_data', JSON.stringify(currentSchedule));
+            localStorage.setItem('acervif_course_info', JSON.stringify(courseInfo));
+            updateSummaryStats();
+        }
+
+        function updateCourseHeaderUI() {
+            document.getElementById('displayCourseName').innerText = courseInfo.name || 'ENGENHARIA DE COMPUTAÇÃO';
+            document.getElementById('displaySemester').innerText = courseInfo.semester || '2026/2';
+            document.getElementById('courseNameInput').value = courseInfo.name;
+            document.getElementById('semesterInput').value = courseInfo.semester;
+            updateSummaryStats();
+        }
+
+        function updateSummaryStats() {
+            const filledKeys = Object.keys(currentSchedule).filter(k => currentSchedule[k] && currentSchedule[k].materia.trim() !== '');
+            const uniqueSubjects = new Set();
+            filledKeys.forEach(k => uniqueSubjects.add(currentSchedule[k].materia.trim().toLowerCase()));
+
+            const totalAulas = filledKeys.length;
+            const totalDisc = uniqueSubjects.size;
+
+            document.getElementById('displaySummaryStats').innerText = `${totalDisc} disciplina${totalDisc !== 1 ? 's' : ''} em que você está inscrito · ${totalAulas} aula${totalAulas !== 1 ? 's' : ''} na semana`;
+        }
+
+        function renderViews() {
+            renderSpreadsheet();
+            renderLinesView();
+            updateViewVisibility();
+            lucide.createIcons();
+        }
+
+        function renderSpreadsheet() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const filteredSlots = TIME_SLOTS.filter(s => currentShiftFilter === 'all' || s.shift === currentShiftFilter);
+
+            filteredSlots.forEach(slot => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-black/5 dark:hover:bg-white/5 transition-colors border-b border-[var(--glass-border)]";
+
+                // Time Slot Header Cell
+                let tdTime = `<td class="p-3 font-mono font-bold text-center text-green-700 dark:text-green-400 bg-green-500/5 border-r border-[var(--glass-border)] whitespace-nowrap">${slot.label}</td>`;
+                tr.innerHTML = tdTime;
+
+                // 5 Days Cells
+                DAYS.forEach(day => {
+                    const key = `${day.id}_${slot.id}`;
+                    const data = currentSchedule[key];
+
+                    const td = document.createElement('td');
+                    td.className = "p-2 border-r border-[var(--glass-border)] cursor-pointer align-top hover:bg-green-500/10 transition-all";
+                    td.onclick = () => openCellModal(key, day.label, slot.label);
+
+                    if (data && data.materia && data.materia.trim() !== '') {
+                        const isEad = (data.sala || '').toLowerCase().includes('ead');
+                        const salaFormatted = isEad 
+                            ? `<span class="font-bold text-green-800 dark:text-green-300">ead</span>` 
+                            : (data.sala || '');
+
+                        td.innerHTML = `
+                            <div class="schedule-card p-2.5 rounded-xl text-left h-full flex flex-col justify-between">
+                                <div>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm leading-snug">${escapeHtml(data.materia)}</h4>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-300 font-sans mt-1">
+                                        ${escapeHtml(data.materia)} · ${escapeHtml(data.professor || 'Sem prof.')} · ${salaFormatted}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        td.innerHTML = `
+                            <div class="h-full min-h-[50px] flex items-center justify-center text-themeMuted hover:text-green-600 text-sm font-mono opacity-50 hover:opacity-100">
+                                -
+                            </div>
+                        `;
+                    }
+                    tr.appendChild(td);
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderLinesView() {
+            const container = document.getElementById('linesView');
+            container.innerHTML = '';
+
+            const filteredSlots = TIME_SLOTS.filter(s => currentShiftFilter === 'all' || s.shift === currentShiftFilter);
+
+            DAYS.forEach(day => {
+                // Collect entries for this day
+                const dayEntries = [];
+                filteredSlots.forEach(slot => {
+                    const key = `${day.id}_${slot.id}`;
+                    const data = currentSchedule[key];
+                    if (data && data.materia && data.materia.trim() !== '') {
+                        dayEntries.push({ slot, key, data });
+                    }
+                });
+
+                const dayBlock = document.createElement('div');
+                dayBlock.className = "glass-panel rounded-2xl overflow-hidden shadow-md";
+
+                // Day Banner Header
+                const dayHeader = `
+                    <div class="bg-[#2E7D32] dark:bg-[#1B5E20] text-white p-3 sm:p-4 font-bold text-lg font-sans flex justify-between items-center">
+                        <span>${day.label}</span>
+                        <span class="text-xs font-mono bg-white/20 px-2.5 py-1 rounded-full">${dayEntries.length} aula${dayEntries.length !== 1 ? 's' : ''}</span>
+                    </div>
+                `;
+
+                let dayContent = `<div class="p-3 sm:p-4 space-y-3">`;
+
+                if (dayEntries.length === 0) {
+                    dayContent += `<p class="text-center font-mono text-xs text-themeMuted py-4">Sem aulas programadas neste dia.</p>`;
+                } else {
+                    dayEntries.forEach(entry => {
+                        const isEad = (entry.data.sala || '').toLowerCase().includes('ead');
+                        const salaFormatted = isEad 
+                            ? `<span class="font-bold text-green-800 dark:text-green-300">ead</span>` 
+                            : (entry.data.sala || '');
+
+                        dayContent += `
+                            <div onclick="openCellModal('${entry.key}', '${day.label}', '${entry.slot.label}')" class="flex gap-3 sm:gap-4 items-center cursor-pointer group">
+                                <div class="w-24 sm:w-28 text-right flex-shrink-0">
+                                    <span class="font-mono text-xs sm:text-sm font-bold text-green-700 dark:text-green-400 block">${entry.slot.label.split('-')[0].trim()}</span>
+                                    <span class="font-mono text-[11px] text-themeMuted block">${entry.slot.label.split('-')[1].trim()}</span>
+                                </div>
+                                <div class="flex-1 schedule-card p-3 rounded-xl">
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug group-hover:text-green-600 transition-colors">${escapeHtml(entry.data.materia)}</h4>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300 font-sans mt-1">
+                                        ${escapeHtml(entry.data.materia)} · ${escapeHtml(entry.data.professor || 'Sem prof.')} · ${salaFormatted}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                dayContent += `</div>`;
+                dayBlock.innerHTML = dayHeader + dayContent;
+                container.appendChild(dayBlock);
+            });
+        }
+
+        function setShiftFilter(shift) {
+            currentShiftFilter = shift;
+            document.querySelectorAll('.shift-btn').forEach(btn => {
+                btn.classList.remove('bg-green-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-themeMuted');
+            });
+            const activeBtn = shift === 'all' ? 'btnShiftAll' : shift === 'tarde' ? 'btnShiftTarde' : 'btnShiftNoite';
+            document.getElementById(activeBtn).classList.add('bg-green-600', 'text-white', 'shadow-sm');
+            document.getElementById(activeBtn).classList.remove('text-themeMuted');
+
+            renderViews();
+        }
+
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('bg-green-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-themeMuted');
+            });
+
+            const activeBtn = mode === 'auto' ? 'btnViewAuto' : mode === 'table' ? 'btnViewTable' : 'btnViewLines';
+            document.getElementById(activeBtn).classList.add('bg-green-600', 'text-white', 'shadow-sm');
+            document.getElementById(activeBtn).classList.remove('text-themeMuted');
+
+            updateViewVisibility();
+        }
+
+        function updateViewVisibility() {
+            const spreadsheet = document.getElementById('spreadsheetView');
+            const lines = document.getElementById('linesView');
+
+            if (currentViewMode === 'table') {
+                spreadsheet.classList.remove('hidden');
+                lines.classList.add('hidden');
+            } else if (currentViewMode === 'lines') {
+                spreadsheet.classList.add('hidden');
+                lines.classList.remove('hidden');
+            } else {
+                // Auto mode: Table on md/desktop, lines on mobile
+                if (window.innerWidth < 768) {
+                    spreadsheet.classList.add('hidden');
+                    lines.classList.remove('hidden');
+                } else {
+                    spreadsheet.classList.remove('hidden');
+                    lines.classList.add('hidden');
+                }
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (currentViewMode === 'auto') updateViewVisibility();
+        });
+
+        function openCellModal(key, dayLabel, slotLabel) {
+            activeEditingKey = key;
+            const data = currentSchedule[key] || { materia: '', sala: '', professor: '', turma: '' };
+
+            document.getElementById('cellModalTitle').innerText = `${dayLabel} — ${slotLabel}`;
+            document.getElementById('cellModalSub').innerText = `ID do Horário: ${key}`;
+            
+            document.getElementById('inputMateria').value = data.materia || '';
+            document.getElementById('inputSala').value = data.sala || '';
+            document.getElementById('inputProfessor').value = data.professor || '';
+            document.getElementById('inputTurma').value = data.turma || '';
+
+            document.getElementById('cellModal').classList.remove('hidden');
+            document.getElementById('inputMateria').focus();
+        }
+
+        document.getElementById('cellForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!activeEditingKey) return;
+
+            currentSchedule[activeEditingKey] = {
+                materia: document.getElementById('inputMateria').value,
+                sala: document.getElementById('inputSala').value,
+                professor: document.getElementById('inputProfessor').value,
+                turma: document.getElementById('inputTurma').value
+            };
+
+            saveToCache();
+            renderViews();
+            closeModal('cellModal');
+        });
+
+        function clearCurrentCell() {
+            if (activeEditingKey && currentSchedule[activeEditingKey]) {
+                delete currentSchedule[activeEditingKey];
+                saveToCache();
+                renderViews();
+            }
+            closeModal('cellModal');
+        }
+
+        // Batch Modal Logic
+        function renderBatchSlotsOptions() {
+            const container = document.getElementById('batchSlotsContainer');
+            container.innerHTML = TIME_SLOTS.map(slot => `
+                <label class="cursor-pointer bg-black/5 dark:bg-white/5 border border-[var(--glass-border)] p-2 rounded-xl text-xs font-mono font-bold flex items-center">
+                    <input type="checkbox" name="batchSlot" value="${slot.id}" class="mr-2 accent-green-600"> 
+                    <span>[${slot.shift.toUpperCase()}] ${slot.label}</span>
+                </label>
+            `).join('');
+        }
+
+        function openBatchModal() {
+            document.getElementById('batchForm').reset();
+            document.getElementById('batchModal').classList.remove('hidden');
+        }
+
+        document.getElementById('batchForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const materia = document.getElementById('batchMateria').value;
+            const sala = document.getElementById('batchSala').value;
+            const professor = document.getElementById('batchProfessor').value;
+            const turma = document.getElementById('batchTurma').value;
+
+            const selectedDays = Array.from(document.querySelectorAll('input[name="batchDay"]:checked')).map(el => el.value);
+            const selectedSlots = Array.from(document.querySelectorAll('input[name="batchSlot"]:checked')).map(el => el.value);
+
+            if (selectedDays.length === 0 || selectedSlots.length === 0) {
+                alert('Por favor, selecione ao menos um dia da semana e um tempo de aula.');
+                return;
+            }
+
+            selectedDays.forEach(dayId => {
+                selectedSlots.forEach(slotId => {
+                    const key = `${dayId}_${slotId}`;
+                    currentSchedule[key] = { materia, sala, professor, turma };
+                });
+            });
+
+            saveToCache();
+            renderViews();
+            closeModal('batchModal');
+        });
+
+        // Course Info Modal
+        function openCourseModal() {
+            document.getElementById('courseModal').classList.remove('hidden');
+        }
+
+        document.getElementById('courseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            courseInfo.name = document.getElementById('courseNameInput').value;
+            courseInfo.semester = document.getElementById('semesterInput').value;
+            saveToCache();
+            updateCourseHeaderUI();
+            closeModal('courseModal');
+        });
+
+        function confirmClearSchedule() {
+            if (confirm('Deseja realmente limpar toda a grade de horários?')) {
+                currentSchedule = {};
+                saveToCache();
+                renderViews();
+            }
+        }
+
+        function restoreExampleData() {
+            if (confirm('Restaurar o exemplo padrão de horários?')) {
+                currentSchedule = { ...DEFAULT_SCHEDULE };
+                courseInfo = { name: "ENGENHARIA DE COMPUTAÇÃO", semester: "2026/2" };
+                saveToCache();
+                updateCourseHeaderUI();
+                renderViews();
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function openExportModal() {
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+
+        function updateExportLayoutUI() {
+            const layout = document.querySelector('input[name="exportLayout"]:checked').value;
+            const spreadsheetLabel = document.getElementById('exportLayoutSpreadsheet');
+            const linesLabel = document.getElementById('exportLayoutLines');
+
+            if (layout === 'table') {
+                spreadsheetLabel.className = "cursor-pointer border-2 border-green-600 bg-green-500/10 rounded-2xl p-3 text-center transition-all flex flex-col items-center";
+                linesLabel.className = "cursor-pointer border-2 border-[var(--glass-border)] bg-black/5 dark:bg-white/5 rounded-2xl p-3 text-center transition-all flex flex-col items-center";
+            } else {
+                linesLabel.className = "cursor-pointer border-2 border-green-600 bg-green-500/10 rounded-2xl p-3 text-center transition-all flex flex-col items-center";
+                spreadsheetLabel.className = "cursor-pointer border-2 border-[var(--glass-border)] bg-black/5 dark:bg-white/5 rounded-2xl p-3 text-center transition-all flex flex-col items-center";
+            }
+        }
+
+        function processExport(format) {
+            const layout = document.querySelector('input[name="exportLayout"]:checked').value;
+            closeModal('exportModal');
+
+            if (format === 'xlsx') {
+                exportToXLSX();
+                return;
+            }
+
+            // Create export sandbox representation
+            const sandbox = document.getElementById('exportSandbox');
+            sandbox.innerHTML = '';
+
+            const headerHTML = `
+                <div style="background-color: #2E7D32; color: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif;">
+                    <div style="font-size: 22px; font-weight: bold;">${escapeHtml(courseInfo.name)} — ${escapeHtml(courseInfo.semester)}</div>
+                    <div style="font-size: 13px; margin-top: 4px; opacity: 0.9;">AcervIF /// IFRJ Niterói — Grade Curricular</div>
+                </div>
+            `;
+
+            let contentHTML = '';
+
+            if (layout === 'table') {
+                contentHTML = `
+                    <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px; border: 1px solid #e2e8f0;">
+                        <thead>
+                            <tr style="background-color: #1B5E20; color: #ffffff;">
+                                <th style="padding: 10px; border: 1px solid #16a34a; width: 120px; text-align: center;">Horário</th>
+                                ${DAYS.map(d => `<th style="padding: 10px; border: 1px solid #16a34a; text-align: left;">${d.label}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${TIME_SLOTS.map(slot => `
+                                <tr>
+                                    <td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: bold; background: #f0fdf4; color: #166534; text-align: center;">${slot.label}</td>
+                                    ${DAYS.map(day => {
+                                        const key = `${day.id}_${slot.id}`;
+                                        const data = currentSchedule[key];
+                                        if (data && data.materia && data.materia.trim() !== '') {
+                                            const isEad = (data.sala || '').toLowerCase().includes('ead');
+                                            const salaFormatted = isEad ? '<strong>ead</strong>' : escapeHtml(data.sala || '');
+                                            return `
+                                                <td style="padding: 8px; border: 1px solid #e2e8f0; background-color: #f0fdf4; border-left: 4px solid #16a34a;">
+                                                    <div style="font-weight: bold; color: #0f172a; font-size: 11px;">${escapeHtml(data.materia)}</div>
+                                                    <div style="color: #475569; font-size: 10px; margin-top: 2px;">
+                                                        ${escapeHtml(data.materia)} · ${escapeHtml(data.professor || '')} · ${salaFormatted}
+                                                    </div>
+                                                </td>
+                                            `;
+                                        } else {
+                                            return `<td style="padding: 8px; border: 1px solid #e2e8f0; text-align: center; color: #cbd5e1;">-</td>`;
+                                        }
+                                    }).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                // Lines layout
+                contentHTML = `<div style="display: flex; flex-direction: column; gap: 16px; font-family: sans-serif;">`;
+                DAYS.forEach(day => {
+                    const dayEntries = TIME_SLOTS.map(slot => {
+                        const key = `${day.id}_${slot.id}`;
+                        return { slot, data: currentSchedule[key] };
+                    }).filter(item => item.data && item.data.materia && item.data.materia.trim() !== '');
+
+                    contentHTML += `
+                        <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+                            <div style="background-color: #2E7D32; color: #ffffff; padding: 10px 16px; font-weight: bold; font-size: 15px;">
+                                ${day.label} (${dayEntries.length} aulas)
+                            </div>
+                            <div style="padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    `;
+
+                    if (dayEntries.length === 0) {
+                        contentHTML += `<div style="color: #94a3b8; font-size: 12px; text-align: center;">Sem aulas neste dia</div>`;
+                    } else {
+                        dayEntries.forEach(entry => {
+                            const isEad = (entry.data.sala || '').toLowerCase().includes('ead');
+                            const salaFormatted = isEad ? '<strong>ead</strong>' : escapeHtml(entry.data.sala || '');
+                            contentHTML += `
+                                <div style="display: flex; gap: 12px; align-items: center; border-bottom: 1px border-dashed #f1f5f9; padding-bottom: 6px;">
+                                    <div style="width: 100px; font-size: 11px; font-weight: bold; color: #166534;">${entry.slot.label}</div>
+                                    <div style="flex: 1; background: #f0fdf4; border-left: 3px solid #16a34a; padding: 6px 10px; border-radius: 6px;">
+                                        <div style="font-bold; font-size: 12px; color: #0f172a;">${escapeHtml(entry.data.materia)}</div>
+                                        <div style="font-size: 10px; color: #475569;">${escapeHtml(entry.data.materia)} · ${escapeHtml(entry.data.professor || '')} · ${salaFormatted}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    contentHTML += `</div></div>`;
+                });
+                contentHTML += `</div>`;
+            }
+
+            sandbox.innerHTML = headerHTML + contentHTML;
+
+            if (format === 'png') {
+                html2canvas(sandbox, { scale: 2 }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'planejador_horarios.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            } else if (format === 'pdf') {
+                const opt = {
+                    margin: 10,
+                    filename: 'planejador_horarios.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: layout === 'table' ? 'landscape' : 'portrait' }
+                };
+                html2pdf().set(opt).from(sandbox).save();
+            }
+        }
+
+        function exportToXLSX() {
+            const data = [];
+            data.push([courseInfo.name, courseInfo.semester, 'AcervIF — IFRJ Niterói']);
+            data.push([]);
+            data.push(['Horário', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']);
+
+            TIME_SLOTS.forEach(slot => {
+                const row = [slot.label];
+                DAYS.forEach(day => {
+                    const key = `${day.id}_${slot.id}`;
+                    const entry = currentSchedule[key];
+                    if (entry && entry.materia) {
+                        row.push(`${entry.materia} (${entry.professor || 'Sem Prof'} - ${entry.sala || 'Sala'})`);
+                    } else {
+                        row.push('-');
+                    }
+                });
+                data.push(row);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Horários');
+            XLSX.writeFile(wb, 'planejador_horarios.xlsx');
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>
