@@ -6,432 +6,458 @@
     <title>AcervIF | Malhas e Fluxogramas</title>
     
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { bgLight: '#F8FAFC', textMain: '#0F172A', cyanAccent: '#0284C7', emeraldAccent: '#10B981', slateMuted: '#64748B' },
-                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
-                }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+    const theme = localStorage.getItem('theme') || 'system';
+    if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: { 
+                    themeBg: 'var(--bg-color)', 
+                    textMain: 'var(--text-main)',
+                    themeMuted: 'var(--text-muted)',
+                    cyanAccent: '#0284C7', 
+                    emeraldAccent: '#10B981', 
+                    slateMuted: '#64748B' 
+                },
+                fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
             }
         }
-    </script>
+    }
+</script>
 
-    <style>
-        body { background-color: var(--bg-color, #F8FAFC); color: var(--text-color, #0F172A); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
-        .dark body { --bg-color: #050505; --text-color: #FFFFFF; }
-        
-        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px); }
-        .dark .bg-grid { background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px); }
-        
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: all 0.3s; }
-        .dark .glass-panel { background: rgba(20, 20, 20, 0.4); border-color: rgba(255,255,255,0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+<style>
+    :root {
+        --bg-color: #F8FAFC; 
+        --text-main: #0F172A; 
+        --text-muted: #64748B;
+    }
 
-        .text-gradient { background: linear-gradient(to right, #0F172A, #64748B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .dark .text-gradient { background: linear-gradient(to right, #FFFFFF, #A1A1AA); }
+    .dark {
+        --bg-color: #050505; 
+        --text-main: #FFFFFF; 
+        --text-muted: #A1A1AA;
+    }
 
-        ::-webkit-scrollbar { width: 8px; height: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
-        ::-webkit-scrollbar-thumb:hover { background: #10B981; }
+    body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    
+    .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px); }
+    .dark .bg-grid { background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px); }
+    
+    .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: all 0.3s; }
+    .dark .glass-panel { background: rgba(20, 20, 20, 0.4); border-color: rgba(255,255,255,0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
 
-        /* Estilização Cards Kanban */
-        .card-subject { transition: opacity 0.3s ease, transform 0.2s, box-shadow 0.2s; position: relative; }
-        .card-subject:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); z-index: 10; }
-        .inactive-card { opacity: 0.15 !important; filter: grayscale(100%); pointer-events: none; }
-        
-        .kanban-scroll::-webkit-scrollbar { height: 12px; }
-        .kanban-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
-        .dark .kanban-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-    </style>
-</head>
-<body class="antialiased selection:bg-emerald-500 selection:text-white relative pb-10 min-h-screen flex flex-col">
+    .text-gradient { 
+        background: linear-gradient(to right, var(--text-main), var(--text-muted)); 
+        -webkit-background-clip: text; 
+        background-clip: text;
+        -webkit-text-fill-color: transparent; 
+    }
 
-    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
-    <div class="fixed top-[-5%] left-[10%] w-[500px] h-[500px] bg-emerald-500 rounded-full blur-[180px] opacity-[0.1] dark:opacity-[0.08] pointer-events-none -z-10 transition-colors duration-500"></div>
+    ::-webkit-scrollbar { width: 8px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+    .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+    ::-webkit-scrollbar-thumb:hover { background: #10B981; }
 
-    <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 w-full flex-1 flex flex-col">
-        
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 border-b border-black/5 dark:border-white/10 pb-8">
-            <div class="flex items-center group cursor-default">
-                <div class="p-3 bg-white dark:bg-black/40 rounded-2xl mr-4 border border-black/5 dark:border-white/10 shadow-sm">
-                    <i data-lucide="git-branch" class="w-8 h-8 text-emerald-500"></i>
-                </div>
-                <div>
-                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Fluxogramas</h1>
-                    <p class="font-mono text-sm text-slate-500 dark:text-slate-400 mt-1">Malhas Curriculares de Engenharia</p>
-                </div>
+    /* Estilização Cards Kanban */
+    .card-subject { transition: opacity 0.3s ease, transform 0.2s, box-shadow 0.2s; position: relative; }
+    .card-subject:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); z-index: 10; }
+    .inactive-card { opacity: 0.15 !important; filter: grayscale(100%); pointer-events: none; }
+    
+    .kanban-scroll::-webkit-scrollbar { height: 12px; }
+    .kanban-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+    .dark .kanban-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+</style>
+
+
+<div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+<div class="fixed top-[-5%] left-[10%] w-[500px] h-[500px] bg-emerald-500 rounded-full blur-[180px] opacity-[0.1] dark:opacity-[0.08] pointer-events-none -z-10 transition-colors duration-500"></div>
+
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 w-full flex-1 flex flex-col">
+    
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 border-b border-black/5 dark:border-white/10 pb-8">
+        <div class="flex items-center group cursor-default">
+            <div class="p-3 bg-white dark:bg-black/40 rounded-2xl mr-4 border border-black/5 dark:border-white/10 shadow-sm">
+                <i data-lucide="git-branch" class="w-8 h-8 text-emerald-500"></i>
             </div>
-            
-            <div class="flex flex-wrap gap-4 items-center">
-                <a href="index.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all shadow-sm flex items-center justify-center flex-1 sm:flex-none"><i data-lucide="database" class="w-4 h-4 mr-2"></i>Acervo</a>
-                <a href="comercios.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-[#DB2777] hover:bg-[#DB2777] hover:text-white transition-all shadow-sm flex items-center justify-center flex-1 sm:flex-none"><i data-lucide="store" class="w-4 h-4 mr-2"></i>Comércios</a>
-                <a href="calendario.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-500 hover:text-white transition-all shadow-sm flex items-center justify-center flex-1 sm:flex-none"><i data-lucide="calendar-days" class="w-4 h-4 mr-2"></i>Calendário</a>
-                
-                <div class="relative group z-50">
-                    <button class="glass-panel p-3 rounded-full text-slate-500 dark:text-slate-400 hover:text-black dark:hover:text-white transition-all flex items-center justify-center w-11 h-11 shadow-sm">
-                        <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
-                        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
-                    </button>
-                    <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all text-slate-600 dark:text-slate-300">
-                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="sun" class="w-4 h-4 inline mr-2"></i> Claro</button>
-                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="moon" class="w-4 h-4 inline mr-2"></i> Escuro</button>
-                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="monitor" class="w-4 h-4 inline mr-2"></i> Sistema</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex flex-col lg:flex-row gap-6 mb-6 items-start lg:items-center justify-between glass-panel p-6 rounded-3xl">
             <div>
-                <h2 class="text-2xl font-bold text-black dark:text-white" id="courseTitleDisplay">Bacharelado em Engenharia de Computação</h2>
-                <div class="flex flex-wrap gap-4 mt-2 text-sm font-mono text-slate-600 dark:text-slate-300" id="courseStats"></div>
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Fluxogramas</h1>
+                <p class="font-mono text-sm text-slate-500 dark:text-slate-400 mt-1">Malhas Curriculares de Engenharia</p>
             </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-4 items-center">
+            <a href="index.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all shadow-sm flex items-center justify-center flex-1 sm:flex-none"><i data-lucide="database" class="w-4 h-4 mr-2"></i>Acervo</a>
+            <a href="comercios.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-[#DB2777] hover:bg-[#DB2777] hover:text-white transition-all shadow-sm flex items-center justify-center flex-1 sm:flex-none"><i data-lucide="store" class="w-4 h-4 mr-2"></i>Comércios</a>
+            <a href="calendario.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-purple-600 dark:text-purple-400 hover:bg-purple-500 hover:text-white transition-all shadow-sm flex items-center justify-center flex-1 sm:flex-none"><i data-lucide="calendar-days" class="w-4 h-4 mr-2"></i>Calendário</a>
             
-            <div class="flex bg-black/5 dark:bg-white/5 p-1.5 rounded-xl flex-shrink-0">
-                <button id="btnComp" onclick="selectCourse('computacao')" class="px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all bg-emerald-500 text-white shadow-md">Eng. Computação</button>
-                <button id="btnProd" onclick="selectCourse('producao')" class="px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white">Eng. Produção</button>
+            <div class="relative group z-50">
+                <button class="glass-panel p-3 rounded-full text-slate-500 dark:text-slate-400 hover:text-black dark:hover:text-white transition-all flex items-center justify-center w-11 h-11 shadow-sm">
+                    <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                    <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                </button>
+                <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all text-slate-600 dark:text-slate-300">
+                    <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="sun" class="w-4 h-4 inline mr-2"></i> Claro</button>
+                    <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="moon" class="w-4 h-4 inline mr-2"></i> Escuro</button>
+                    <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"><i data-lucide="monitor" class="w-4 h-4 inline mr-2"></i> Sistema</button>
+                </div>
             </div>
-        </div>
-
-        <div class="mb-6 glass-panel p-5 rounded-2xl">
-            <div class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3 flex items-center justify-between">
-                <span>LEGENDA E FILTROS (Clique para destacar)</span>
-                <button onclick="setFilter('todos')" class="text-xs font-mono bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition-colors text-black dark:text-white">Limpar Filtros</button>
-            </div>
-            <div class="flex flex-wrap gap-3" id="legendContainer"></div>
-        </div>
-
-        <div class="flex-1 overflow-x-auto pb-6 cursor-grab active:cursor-grabbing kanban-scroll" id="kanbanBoard">
-            <div class="flex gap-4 min-w-max h-full items-start" id="periodsContainer"></div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        window.setTheme = function(mode) { localStorage.setItem('theme', mode); updateTheme(); };
-        function updateTheme() {
-            const mode = localStorage.getItem('theme') || 'system';
-            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
-            else document.documentElement.classList.remove('dark');
+    <div class="flex flex-col lg:flex-row gap-6 mb-6 items-start lg:items-center justify-between glass-panel p-6 rounded-3xl">
+        <div>
+            <h2 class="text-2xl font-bold text-black dark:text-white" id="courseTitleDisplay">Bacharelado em Engenharia de Computação</h2>
+            <div class="flex flex-wrap gap-4 mt-2 text-sm font-mono text-slate-600 dark:text-slate-300" id="courseStats"></div>
+        </div>
+        
+        <div class="flex bg-black/5 dark:bg-white/5 p-1.5 rounded-xl flex-shrink-0">
+            <button id="btnComp" onclick="selectCourse('computacao')" class="px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all bg-emerald-500 text-white shadow-md">Eng. Computação</button>
+            <button id="btnProd" onclick="selectCourse('producao')" class="px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white">Eng. Produção</button>
+        </div>
+    </div>
+
+    <div class="mb-6 glass-panel p-5 rounded-2xl">
+        <div class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3 flex items-center justify-between">
+            <span>LEGENDA E FILTROS (Clique para destacar)</span>
+            <button onclick="setFilter('todos')" class="text-xs font-mono bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition-colors text-black dark:text-white">Limpar Filtros</button>
+        </div>
+        <div class="flex flex-wrap gap-3" id="legendContainer"></div>
+    </div>
+
+    <div class="flex-1 overflow-x-auto pb-6 cursor-grab active:cursor-grabbing kanban-scroll" id="kanbanBoard">
+        <div class="flex gap-4 min-w-max h-full items-start" id="periodsContainer"></div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    window.setTheme = function(mode) { localStorage.setItem('theme', mode); updateTheme(); };
+    function updateTheme() {
+        const mode = localStorage.getItem('theme') || 'system';
+        if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    updateTheme();
+    lucide.createIcons();
+
+    // PALETA EXATA DO PDF
+    const estilosNucleo = {
+        basico: { bg: 'bg-[#CCFFFF] dark:bg-cyan-900/40', border: 'border-[#00BFFF] dark:border-cyan-500/50', text: 'text-slate-900 dark:text-cyan-50' },
+        prof: { bg: 'bg-[#FFDAB9] dark:bg-orange-900/40', border: 'border-[#FF8C00] dark:border-orange-500/50', text: 'text-slate-900 dark:text-orange-50' },
+        espec: { bg: 'bg-[#E6E6FA] dark:bg-purple-900/40', border: 'border-[#9370DB] dark:border-purple-500/50', text: 'text-slate-900 dark:text-purple-50' },
+        ext: { bg: 'bg-[#C1FFC1] dark:bg-green-900/40', border: 'border-[#32CD32] dark:border-green-500/50', text: 'text-slate-900 dark:text-green-50' },
+        estagio: { bg: 'bg-[#D3D3D3] dark:bg-gray-800/80', border: 'border-[#808080] dark:border-gray-500/50', text: 'text-slate-900 dark:text-gray-200' },
+        opt: { bg: 'bg-[#FFFACD] dark:bg-yellow-900/40', border: 'border-[#FFD700] dark:border-yellow-500/50', text: 'text-slate-900 dark:text-yellow-50' }
+    };
+
+    const filtros = [
+        { id: 'basico', label: 'Núcleo Básico', style: estilosNucleo.basico },
+        { id: 'prof', label: 'Núcleo Profissionalizante', style: estilosNucleo.prof },
+        { id: 'espec', label: 'Núcleo Específico', style: estilosNucleo.espec },
+        { id: 'ext', label: 'Extensão', style: estilosNucleo.ext },
+        { id: 'estagio', label: 'Estágio/TCC', style: estilosNucleo.estagio },
+        { id: 'opt', label: 'Optativas', style: estilosNucleo.opt }
+    ];
+
+    // DADOS DOS CURSOS
+    const cursosData = {
+        computacao: {
+            titulo: "Engenharia de Computação", totalHoras: "3600h", resumo: "Obrigatórias: 2997h | Optativas: 162h | AC: 24h | Extensão: 117h | Estágio: 300h",
+            periodos: [
+                [
+                    { nome: "Cálculo I", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
+                    { nome: "Introdução à Engenharia", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
+                    { nome: "Desenho Técnico I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Programação I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Química Geral I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Comunicação e Informação", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Engenharia e Meio Ambiente", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Geometria Analítica", cred: 4, ch: 54, tipo: "T", nucleo: "basico" }
+                ],
+                [
+                    { nome: "Cálculo II", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
+                    { nome: "Física I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Eletric. e Eletrônica Analógica", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Programação II", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Estruturas de Dados", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Ciência, Tec. e Sociedade", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Estatística e Probabilidade", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" }
+                ],
+                [
+                    { nome: "Ciência e Tec. dos Materiais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Automação I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Programação III", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Bancos de Dados I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Introdução à Economia", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Arq. e Org. de Computadores", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Redes de Computadores", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" }
+                ],
+                [
+                    { nome: "Álgebra Linear", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Automação II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Programação IV", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Bancos de Dados II", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Engenharia de Software", cred: 4, ch: 54, tipo: "T/P/E", nucleo: "prof" },
+                    { nome: "Sistemas Operacionais", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Redes Móveis", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
+                ],
+                [
+                    { nome: "Cálculo III", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Sistemas Embarcados I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Programação V", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Met. Extensão aplicada", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Computação Gráfica", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Arq. Paralelas e Distribuídas", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Virtualização e Nuvem", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
+                ],
+                [
+                    { nome: "Equações Diferenciais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Mecânica dos Sólidos", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Sistemas Embarcados II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Metodologia de Pesquisa", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Projetos de Extensão I", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Lab. Comp. Gráfica I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Aprendizado Máquina e IA", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Segurança da Informação", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" }
+                ],
+                [
+                    { nome: "Cálculo Numérico", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Fenômenos do Transporte", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Robótica Industrial I", cred: 4, ch: 54, tipo: "T/P/E", nucleo: "prof" },
+                    { nome: "Projetos de Extensão II", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Lab. Comp. Gráfica II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Análise e Complexidade Alg.", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Lab. Segurança Inf.", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
+                ],
+                [
+                    { nome: "Administração e Empreend.", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
+                    { nome: "Robótica Industrial II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Gestão de Proj. de Software", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Projetos de Extensão III", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Optativa I", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
+                    { nome: "Big Data e Data Science", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
+                ],
+                [
+                    { nome: "Optativa II", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
+                    { nome: "Trabalho de Conclusão I", cred: 4, ch: 54, tipo: "T/P", nucleo: "estagio" },
+                    { nome: "Estágio I", cred: 0, ch: 150, tipo: "P", nucleo: "estagio" }
+                ],
+                [
+                    { nome: "Optativa III", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
+                    { nome: "Trabalho de Conclusão II", cred: 4, ch: 54, tipo: "T/P", nucleo: "estagio" },
+                    { nome: "Estágio II", cred: 0, ch: 150, tipo: "P", nucleo: "estagio" }
+                ]
+            ]
+        },
+        producao: {
+            titulo: "Engenharia de Produção", totalHoras: "3618h", resumo: "Obrigatórias: 2673h | Optativas: 162h | AC: 81h | Extensão: 378h | Estágio: 324h",
+            periodos: [
+                [
+                    { nome: "Cálculo I", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
+                    { nome: "Comunicação e Informação", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Desenho Técnico", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Química Geral", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Engenharia e Meio Ambiente", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Programação", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Geometria Analítica", cred: 4, ch: 54, tipo: "T", nucleo: "basico" }
+                ],
+                [
+                    { nome: "Cálculo II", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
+                    { nome: "Física I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Fundamentos Administração", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Ciência e Tec. Materiais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Estatística e Probabilidade", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Ciência, Tec. e Sociedade", cred: 2, ch: 27, tipo: "T", nucleo: "basico" }
+                ],
+                [
+                    { nome: "Cálculo III", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Álgebra Linear", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Física III", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Empreendedorismo", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Introdução à Economia", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Gestão Ambiental", cred: 4, ch: 54, tipo: "T", nucleo: "prof" }
+                ],
+                [
+                    { nome: "Equações Diferenciais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
+                    { nome: "Eletricidade e Eletrônica", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Sistema de Produção", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Mecânica dos Sólidos", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Gestão de Pessoas", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
+                    { nome: "Noções de Direito Privado", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Psicologia do Trabalho", cred: 2, ch: 27, tipo: "T/P", nucleo: "basico" }
+                ],
+                [
+                    { nome: "Fenômenos do Transporte", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
+                    { nome: "Sistema Inf. Gerencial", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Gestão de Serviços", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Logística e Suprimentos", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
+                    { nome: "Marketing", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
+                    { nome: "Inf. Estatística aplic. EP", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Automação I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" }
+                ],
+                [
+                    { nome: "Cálculo Numérico", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
+                    { nome: "Proj. Int. Extensão I", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Ferramentas aplic. Gestão", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Metodologia Extensionista", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Engenharia Econômica", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Ética e Gestão Reputação", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
+                    { nome: "Instalações Industriais", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" }
+                ],
+                [
+                    { nome: "Pesquisa Operacional I", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Engenharia de Métodos", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Gestão de Custos", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
+                    { nome: "Higiene, Seg. Trabalho", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
+                    { nome: "Proj. Sistema de Produção I", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Layout", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" }
+                ],
+                [
+                    { nome: "Pesquisa Operacional II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Métodos Apoio Decisão", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Proj. Int. Extensão II", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Direito do Trabalho", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
+                    { nome: "Controle Estatístico Proc.", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Big Data e Data Science", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Projeto do Produto", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" }
+                ],
+                [
+                    { nome: "Gestão de Projetos", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Proj. Sistema Produção II", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Planej. e Controle Prod.", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Gestão da Qualidade", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
+                    { nome: "Proj. Sistema Produção III", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
+                    { nome: "Optativa I", cred: 2, ch: 27, tipo: "T/P", nucleo: "opt" }
+                ],
+                [
+                    { nome: "Gestão da Inovação", cred: 2, ch: 27, tipo: "T/P", nucleo: "espec" },
+                    { nome: "Optativa II", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
+                    { nome: "Optativa III", cred: 2, ch: 27, tipo: "T/P", nucleo: "opt" },
+                    { nome: "Estágio Supervisionado I", cred: 0, ch: 162, tipo: "P", nucleo: "estagio" },
+                    { nome: "Estágio Supervisionado II", cred: 0, ch: 162, tipo: "P", nucleo: "estagio" },
+                    { nome: "Trabalho Conclusão I", cred: 2, ch: 27, tipo: "P", nucleo: "estagio" },
+                    { nome: "Trabalho Conclusão II", cred: 2, ch: 27, tipo: "P", nucleo: "estagio" }
+                ]
+            ]
         }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
-        updateTheme();
+    };
+
+    let currentCourse = 'computacao';
+    let currentFilter = 'todos';
+
+    function initFluxograma() { renderLegend(); renderStats(); renderBoard(); }
+
+    function renderLegend() {
+        const container = document.getElementById('legendContainer');
+        container.innerHTML = filtros.map(f => {
+            const isActive = currentFilter === f.id;
+            const activeClasses = isActive ? 'ring-2 ring-offset-2 ring-black dark:ring-white dark:ring-offset-[#050505] scale-105 shadow-md opacity-100' : 'opacity-80 hover:opacity-100 hover:scale-105';
+            
+            return `
+            <button onclick="setFilter('${f.id}')" 
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-200 ${f.style.bg} ${f.style.border} ${f.style.text} ${activeClasses}">
+                <div class="w-3 h-3 rounded-sm border ${f.style.border} bg-white/50"></div>
+                <span class="text-xs font-bold font-mono tracking-tight">${f.label}</span>
+            </button>
+        `}).join('');
+    }
+
+    function setFilter(id) { currentFilter = id; renderLegend(); renderBoard(); }
+
+    function selectCourse(course) {
+        currentCourse = course;
+        const btnComp = document.getElementById('btnComp');
+        const btnProd = document.getElementById('btnProd');
+        
+        if (course === 'computacao') {
+            btnComp.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all bg-emerald-500 text-white shadow-md';
+            btnProd.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white';
+        } else {
+            btnProd.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all bg-emerald-500 text-white shadow-md';
+            btnComp.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white';
+        }
+        renderStats(); renderBoard();
+    }
+
+    function renderStats() {
+        const data = cursosData[currentCourse];
+        document.getElementById('courseTitleDisplay').innerText = data.titulo;
+        document.getElementById('courseStats').innerHTML = `
+            <div class="flex items-center bg-black/5 dark:bg-white/5 px-4 py-2 rounded-lg border border-black/5 dark:border-white/10 shadow-sm"><i data-lucide="clock" class="w-4 h-4 mr-2 text-emerald-500"></i> ${data.totalHoras} Totais</div>
+            <div class="flex items-center px-4 py-2 opacity-80 text-xs text-black dark:text-white">${data.resumo}</div>
+        `;
         lucide.createIcons();
+    }
 
-        // PALETA EXATA DO PDF
-        const estilosNucleo = {
-            basico: { bg: 'bg-[#CCFFFF] dark:bg-cyan-900/40', border: 'border-[#00BFFF] dark:border-cyan-500/50', text: 'text-slate-900 dark:text-cyan-50' },
-            prof: { bg: 'bg-[#FFDAB9] dark:bg-orange-900/40', border: 'border-[#FF8C00] dark:border-orange-500/50', text: 'text-slate-900 dark:text-orange-50' },
-            espec: { bg: 'bg-[#E6E6FA] dark:bg-purple-900/40', border: 'border-[#9370DB] dark:border-purple-500/50', text: 'text-slate-900 dark:text-purple-50' },
-            ext: { bg: 'bg-[#C1FFC1] dark:bg-green-900/40', border: 'border-[#32CD32] dark:border-green-500/50', text: 'text-slate-900 dark:text-green-50' },
-            estagio: { bg: 'bg-[#D3D3D3] dark:bg-gray-800/80', border: 'border-[#808080] dark:border-gray-500/50', text: 'text-slate-900 dark:text-gray-200' },
-            opt: { bg: 'bg-[#FFFACD] dark:bg-yellow-900/40', border: 'border-[#FFD700] dark:border-yellow-500/50', text: 'text-slate-900 dark:text-yellow-50' }
-        };
-
-        const filtros = [
-            { id: 'basico', label: 'Núcleo Básico', style: estilosNucleo.basico },
-            { id: 'prof', label: 'Núcleo Profissionalizante', style: estilosNucleo.prof },
-            { id: 'espec', label: 'Núcleo Específico', style: estilosNucleo.espec },
-            { id: 'ext', label: 'Extensão', style: estilosNucleo.ext },
-            { id: 'estagio', label: 'Estágio/TCC', style: estilosNucleo.estagio },
-            { id: 'opt', label: 'Optativas', style: estilosNucleo.opt }
-        ];
-
-        // DADOS DOS CURSOS
-        const cursosData = {
-            computacao: {
-                titulo: "Engenharia de Computação", totalHoras: "3600h", resumo: "Obrigatórias: 2997h | Optativas: 162h | AC: 24h | Extensão: 117h | Estágio: 300h",
-                periodos: [
-                    [
-                        { nome: "Cálculo I", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
-                        { nome: "Introdução à Engenharia", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
-                        { nome: "Desenho Técnico I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Programação I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Química Geral I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Comunicação e Informação", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Engenharia e Meio Ambiente", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Geometria Analítica", cred: 4, ch: 54, tipo: "T", nucleo: "basico" }
-                    ],
-                    [
-                        { nome: "Cálculo II", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
-                        { nome: "Física I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Eletric. e Eletrônica Analógica", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Programação II", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Estruturas de Dados", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Ciência, Tec. e Sociedade", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Estatística e Probabilidade", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" }
-                    ],
-                    [
-                        { nome: "Ciência e Tec. dos Materiais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Automação I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Programação III", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Bancos de Dados I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Introdução à Economia", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Arq. e Org. de Computadores", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Redes de Computadores", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" }
-                    ],
-                    [
-                        { nome: "Álgebra Linear", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Automação II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Programação IV", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Bancos de Dados II", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Engenharia de Software", cred: 4, ch: 54, tipo: "T/P/E", nucleo: "prof" },
-                        { nome: "Sistemas Operacionais", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Redes Móveis", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
-                    ],
-                    [
-                        { nome: "Cálculo III", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Sistemas Embarcados I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Programação V", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Met. Extensão aplicada", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Computação Gráfica", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Arq. Paralelas e Distribuídas", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Virtualização e Nuvem", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
-                    ],
-                    [
-                        { nome: "Equações Diferenciais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Mecânica dos Sólidos", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Sistemas Embarcados II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Metodologia de Pesquisa", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Projetos de Extensão I", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Lab. Comp. Gráfica I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Aprendizado Máquina e IA", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Segurança da Informação", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" }
-                    ],
-                    [
-                        { nome: "Cálculo Numérico", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Fenômenos do Transporte", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Robótica Industrial I", cred: 4, ch: 54, tipo: "T/P/E", nucleo: "prof" },
-                        { nome: "Projetos de Extensão II", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Lab. Comp. Gráfica II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Análise e Complexidade Alg.", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Lab. Segurança Inf.", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
-                    ],
-                    [
-                        { nome: "Administração e Empreend.", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
-                        { nome: "Robótica Industrial II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Gestão de Proj. de Software", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Projetos de Extensão III", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Optativa I", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
-                        { nome: "Big Data e Data Science", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" }
-                    ],
-                    [
-                        { nome: "Optativa II", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
-                        { nome: "Trabalho de Conclusão I", cred: 4, ch: 54, tipo: "T/P", nucleo: "estagio" },
-                        { nome: "Estágio I", cred: 0, ch: 150, tipo: "P", nucleo: "estagio" }
-                    ],
-                    [
-                        { nome: "Optativa III", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
-                        { nome: "Trabalho de Conclusão II", cred: 4, ch: 54, tipo: "T/P", nucleo: "estagio" },
-                        { nome: "Estágio II", cred: 0, ch: 150, tipo: "P", nucleo: "estagio" }
-                    ]
-                ]
-            },
-            producao: {
-                titulo: "Engenharia de Produção", totalHoras: "3618h", resumo: "Obrigatórias: 2673h | Optativas: 162h | AC: 81h | Extensão: 378h | Estágio: 324h",
-                periodos: [
-                    [
-                        { nome: "Cálculo I", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
-                        { nome: "Comunicação e Informação", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Desenho Técnico", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Química Geral", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Engenharia e Meio Ambiente", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Programação", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Geometria Analítica", cred: 4, ch: 54, tipo: "T", nucleo: "basico" }
-                    ],
-                    [
-                        { nome: "Cálculo II", cred: 6, ch: 81, tipo: "T", nucleo: "basico" },
-                        { nome: "Física I", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Fundamentos Administração", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Ciência e Tec. Materiais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Estatística e Probabilidade", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Ciência, Tec. e Sociedade", cred: 2, ch: 27, tipo: "T", nucleo: "basico" }
-                    ],
-                    [
-                        { nome: "Cálculo III", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Álgebra Linear", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Física III", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Empreendedorismo", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Introdução à Economia", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Gestão Ambiental", cred: 4, ch: 54, tipo: "T", nucleo: "prof" }
-                    ],
-                    [
-                        { nome: "Equações Diferenciais", cred: 4, ch: 54, tipo: "T", nucleo: "basico" },
-                        { nome: "Eletricidade e Eletrônica", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Sistema de Produção", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Mecânica dos Sólidos", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Gestão de Pessoas", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
-                        { nome: "Noções de Direito Privado", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Psicologia do Trabalho", cred: 2, ch: 27, tipo: "T/P", nucleo: "basico" }
-                    ],
-                    [
-                        { nome: "Fenômenos do Transporte", cred: 2, ch: 27, tipo: "T", nucleo: "basico" },
-                        { nome: "Sistema Inf. Gerencial", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Gestão de Serviços", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Logística e Suprimentos", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
-                        { nome: "Marketing", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
-                        { nome: "Inf. Estatística aplic. EP", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Automação I", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" }
-                    ],
-                    [
-                        { nome: "Cálculo Numérico", cred: 4, ch: 54, tipo: "T/P", nucleo: "basico" },
-                        { nome: "Proj. Int. Extensão I", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Ferramentas aplic. Gestão", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Metodologia Extensionista", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Engenharia Econômica", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Ética e Gestão Reputação", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
-                        { nome: "Instalações Industriais", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" }
-                    ],
-                    [
-                        { nome: "Pesquisa Operacional I", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Engenharia de Métodos", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Gestão de Custos", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
-                        { nome: "Higiene, Seg. Trabalho", cred: 4, ch: 54, tipo: "T", nucleo: "prof" },
-                        { nome: "Proj. Sistema de Produção I", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Layout", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" }
-                    ],
-                    [
-                        { nome: "Pesquisa Operacional II", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Métodos Apoio Decisão", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Proj. Int. Extensão II", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Direito do Trabalho", cred: 2, ch: 27, tipo: "T", nucleo: "prof" },
-                        { nome: "Controle Estatístico Proc.", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Big Data e Data Science", cred: 4, ch: 54, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Projeto do Produto", cred: 2, ch: 27, tipo: "T/P", nucleo: "prof" }
-                    ],
-                    [
-                        { nome: "Gestão de Projetos", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Proj. Sistema Produção II", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Planej. e Controle Prod.", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Gestão da Qualidade", cred: 4, ch: 54, tipo: "T/P", nucleo: "prof" },
-                        { nome: "Proj. Sistema Produção III", cred: 4, ch: 54, tipo: "E", nucleo: "ext" },
-                        { nome: "Optativa I", cred: 2, ch: 27, tipo: "T/P", nucleo: "opt" }
-                    ],
-                    [
-                        { nome: "Gestão da Inovação", cred: 2, ch: 27, tipo: "T/P", nucleo: "espec" },
-                        { nome: "Optativa II", cred: 4, ch: 54, tipo: "T/P", nucleo: "opt" },
-                        { nome: "Optativa III", cred: 2, ch: 27, tipo: "T/P", nucleo: "opt" },
-                        { nome: "Estágio Supervisionado I", cred: 0, ch: 162, tipo: "P", nucleo: "estagio" },
-                        { nome: "Estágio Supervisionado II", cred: 0, ch: 162, tipo: "P", nucleo: "estagio" },
-                        { nome: "Trabalho Conclusão I", cred: 2, ch: 27, tipo: "P", nucleo: "estagio" },
-                        { nome: "Trabalho Conclusão II", cred: 2, ch: 27, tipo: "P", nucleo: "estagio" }
-                    ]
-                ]
-            }
-        };
-
-        let currentCourse = 'computacao';
-        let currentFilter = 'todos';
-
-        function initFluxograma() { renderLegend(); renderStats(); renderBoard(); }
-
-        function renderLegend() {
-            const container = document.getElementById('legendContainer');
-            container.innerHTML = filtros.map(f => {
-                const isActive = currentFilter === f.id;
-                const activeClasses = isActive ? 'ring-2 ring-offset-2 ring-black dark:ring-white dark:ring-offset-[#050505] scale-105 shadow-md opacity-100' : 'opacity-80 hover:opacity-100 hover:scale-105';
-                
-                return `
-                <button onclick="setFilter('${f.id}')" 
-                        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-200 ${f.style.bg} ${f.style.border} ${f.style.text} ${activeClasses}">
-                    <div class="w-3 h-3 rounded-sm border ${f.style.border} bg-white/50"></div>
-                    <span class="text-xs font-bold font-mono tracking-tight">${f.label}</span>
-                </button>
-            `}).join('');
-        }
-
-        function setFilter(id) { currentFilter = id; renderLegend(); renderBoard(); }
-
-        function selectCourse(course) {
-            currentCourse = course;
-            const btnComp = document.getElementById('btnComp');
-            const btnProd = document.getElementById('btnProd');
+    function renderBoard() {
+        const data = cursosData[currentCourse];
+        const container = document.getElementById('periodsContainer');
+        
+        let html = '';
+        data.periodos.forEach((periodo, index) => {
+            let horasPeriodo = periodo.reduce((acc, curr) => acc + curr.ch, 0);
+            let credPeriodo = periodo.reduce((acc, curr) => acc + curr.cred, 0);
             
-            if (course === 'computacao') {
-                btnComp.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all bg-emerald-500 text-white shadow-md';
-                btnProd.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white';
-            } else {
-                btnProd.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all bg-emerald-500 text-white shadow-md';
-                btnComp.className = 'px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white';
-            }
-            renderStats(); renderBoard();
-        }
-
-        function renderStats() {
-            const data = cursosData[currentCourse];
-            document.getElementById('courseTitleDisplay').innerText = data.titulo;
-            document.getElementById('courseStats').innerHTML = `
-                <div class="flex items-center bg-black/5 dark:bg-white/5 px-4 py-2 rounded-lg border border-black/5 dark:border-white/10 shadow-sm"><i data-lucide="clock" class="w-4 h-4 mr-2 text-emerald-500"></i> ${data.totalHoras} Totais</div>
-                <div class="flex items-center px-4 py-2 opacity-80 text-xs text-black dark:text-white">${data.resumo}</div>
+            html += `
+                <div class="flex-shrink-0 w-[260px] bg-white/50 dark:bg-[#111111]/80 rounded-2xl border border-black/5 dark:border-white/10 p-3 h-max">
+                    <div class="flex justify-between items-center mb-4 px-2 border-b border-black/10 dark:border-white/10 pb-2">
+                        <h3 class="font-bold text-sm text-emerald-600 dark:text-emerald-400 font-mono">${index + 1}º Período</h3>
+                        <span class="text-xs font-mono text-slate-500 font-bold bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md">${horasPeriodo}h / ${credPeriodo}cr</span>
+                    </div>
+                    <div class="flex flex-col gap-2.5">
             `;
-            lucide.createIcons();
-        }
-
-        function renderBoard() {
-            const data = cursosData[currentCourse];
-            const container = document.getElementById('periodsContainer');
             
-            let html = '';
-            data.periodos.forEach((periodo, index) => {
-                let horasPeriodo = periodo.reduce((acc, curr) => acc + curr.ch, 0);
-                let credPeriodo = periodo.reduce((acc, curr) => acc + curr.cred, 0);
+            periodo.forEach(mat => {
+                const isActive = currentFilter === 'todos' || currentFilter === mat.nucleo;
+                let cardClasses = isActive 
+                    ? `${estilosNucleo[mat.nucleo].bg} ${estilosNucleo[mat.nucleo].border} ${estilosNucleo[mat.nucleo].text} border-2`
+                    : 'bg-slate-100 dark:bg-black/40 border-black/10 dark:border-white/5 inactive-card text-slate-500';
                 
                 html += `
-                    <div class="flex-shrink-0 w-[260px] bg-white/50 dark:bg-[#111111]/80 rounded-2xl border border-black/5 dark:border-white/10 p-3 h-max">
-                        <div class="flex justify-between items-center mb-4 px-2 border-b border-black/10 dark:border-white/10 pb-2">
-                            <h3 class="font-bold text-sm text-emerald-600 dark:text-emerald-400 font-mono">${index + 1}º Período</h3>
-                            <span class="text-xs font-mono text-slate-500 font-bold bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md">${horasPeriodo}h / ${credPeriodo}cr</span>
+                    <div class="rounded-xl p-2.5 text-sm shadow-sm card-subject flex flex-col justify-between min-h-[90px] ${cardClasses}">
+                        <div class="flex justify-end mb-1">
+                            <span class="text-[10px] font-bold font-mono bg-black/10 dark:bg-white/20 px-1.5 py-0.5 rounded opacity-80 tracking-wider">Tipo: ${mat.tipo}</span>
                         </div>
-                        <div class="flex flex-col gap-2.5">
+                        <div class="font-bold leading-tight text-center flex-1 flex items-center justify-center mb-2 px-1 text-[13px]">${mat.nome}</div>
+                        <div class="flex justify-between items-center text-[10px] font-mono font-bold opacity-75 border-t border-black/10 dark:border-white/10 pt-1">
+                            <span>créditos: ${mat.cred}</span>
+                            <span>CH: ${mat.ch}h</span>
+                        </div>
+                    </div>
                 `;
-                
-                periodo.forEach(mat => {
-                    const isActive = currentFilter === 'todos' || currentFilter === mat.nucleo;
-                    let cardClasses = isActive 
-                        ? `${estilosNucleo[mat.nucleo].bg} ${estilosNucleo[mat.nucleo].border} ${estilosNucleo[mat.nucleo].text} border-2`
-                        : 'bg-slate-100 dark:bg-black/40 border-black/10 dark:border-white/5 inactive-card text-slate-500';
-                    
-                    html += `
-                        <div class="rounded-xl p-2.5 text-sm shadow-sm card-subject flex flex-col justify-between min-h-[90px] ${cardClasses}">
-                            <div class="flex justify-end mb-1">
-                                <span class="text-[10px] font-bold font-mono bg-black/10 dark:bg-white/20 px-1.5 py-0.5 rounded opacity-80 tracking-wider">Tipo: ${mat.tipo}</span>
-                            </div>
-                            <div class="font-bold leading-tight text-center flex-1 flex items-center justify-center mb-2 px-1 text-[13px]">${mat.nome}</div>
-                            <div class="flex justify-between items-center text-[10px] font-mono font-bold opacity-75 border-t border-black/10 dark:border-white/10 pt-1">
-                                <span>créditos: ${mat.cred}</span>
-                                <span>CH: ${mat.ch}h</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
             });
-            container.innerHTML = html;
-        }
-
-        const slider = document.getElementById('kanbanBoard');
-        let isDown = false; let startX; let scrollLeft;
-
-        slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
-        slider.addEventListener('mouseleave', () => { isDown = false; });
-        slider.addEventListener('mouseup', () => { isDown = false; });
-        slider.addEventListener('mousemove', (e) => {
-            if(!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            slider.scrollLeft = scrollLeft - ((x - startX) * 2);
+            html += `</div></div>`;
         });
+        container.innerHTML = html;
+    }
 
-        initFluxograma();
-    </script>
-</body>
-</html>
+    const slider = document.getElementById('kanbanBoard');
+    let isDown = false; let startX; let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
+    slider.addEventListener('mouseleave', () => { isDown = false; });
+    slider.addEventListener('mouseup', () => { isDown = false; });
+    slider.addEventListener('mousemove', (e) => {
+        if(!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        slider.scrollLeft = scrollLeft - ((x - startX) * 2);
+    });
+
+    initFluxograma();
+</script>
