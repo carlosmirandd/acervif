@@ -64,6 +64,8 @@ acervif/
 ├── comercios.html               # Guia de comércios locais
 ├── admin.html                   # Painel administrativo (autenticado)
 ├── server.js                    # Servidor Express para desenvolvimento local
+├── firestore.rules              # Regras de segurança do Firestore (leitura pública / escrita restrita a admins)
+├── firebase.json                # Aponta as regras acima para o Firebase CLI
 ├── package.json
 ├── vercel.json                  # Configuração de deploy estático na Vercel
 └── metadata.json
@@ -92,6 +94,34 @@ O projeto ficará disponível em **http://localhost:3000**.
 ## Deploy
 
 O projeto é publicado automaticamente na **Vercel** a cada push na branch principal. Por não usar nenhum framework, a saída é servida diretamente da raiz do projeto (`vercel.json#outputDirectory`).
+
+## Segurança
+
+Este é um projeto de código aberto e o arquivo `firebaseConfig` (com a `apiKey`) aparece exposto no HTML de todas as páginas — **isso é esperado e seguro por design**: no ecossistema Firebase, essa chave apenas identifica o projeto e não concede acesso a nada por si só ([documentação oficial](https://firebase.google.com/docs/projects/api-keys)).
+
+A proteção real dos dados fica nas **[Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started)**, versionadas aqui em [`firestore.rules`](firestore.rules):
+
+- **Leitura pública** para o acervo, categorias, comércios e eventos — afinal, é um repositório público.
+- **Escrita restrita** a contas administrativas autenticadas e presentes em uma allowlist de e-mail, usada pelo `admin.html`.
+- Qualquer coleção não listada explicitamente é **negada por padrão**.
+
+Para aplicar as regras no seu projeto Firebase:
+
+```bash
+npm install -g firebase-tools
+firebase login
+firebase deploy --only firestore:rules
+```
+
+> ⚠️ Antes de publicar, edite a lista de e-mails admin em `firestore.rules` com as contas reais cadastradas no Firebase Authentication.
+
+Camadas extras recomendadas (configuradas fora deste repositório, no Console do Google Cloud / Firebase):
+
+- **Restringir a API key** por domínio (HTTP referrer) em *Google Cloud Console → Credenciais*, liberando apenas os domínios da Vercel e `localhost`.
+- **Desabilitar o autocadastro** de novos usuários no provedor Email/Password do Firebase Authentication, mantendo apenas as contas administrativas criadas manualmente.
+- Ativar o **[Firebase App Check](https://firebase.google.com/docs/app-check)** para bloquear tráfego que não venha do próprio site.
+
+Encontrou uma vulnerabilidade? Abra uma [issue](../../issues) ou entre em contato diretamente com os mantenedores antes de divulgar publicamente.
 
 ## Contribuindo
 

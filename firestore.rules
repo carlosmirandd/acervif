@@ -1,0 +1,56 @@
+rules_version = '2';
+
+// Regras de segurança do Firestore para o AcervIF.
+//
+// A "apiKey" do Firebase presente no código do site é pública por design
+// (https://firebase.google.com/docs/projects/api-keys) e não concede acesso
+// por si só. Quem realmente decide o que pode ser lido ou escrito no banco
+// é este arquivo — por isso ele precisa ser publicado no Console do
+// Firebase (ou via `firebase deploy --only firestore:rules`).
+//
+// IMPORTANTE: substitua os e-mails abaixo pelos e-mails reais das contas
+// administrativas cadastradas no Firebase Authentication.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.token.email in [
+               'admin@acervif.com'
+             ];
+    }
+
+    // Coleções públicas de leitura (acervo, categorias, comércios, eventos).
+    // Qualquer visitante do site pode ler; só administradores autenticados
+    // e presentes na allowlist acima podem criar, editar ou apagar.
+    match /posts/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /comercios/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /comercioCategories/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /events/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Nega tudo o que não foi explicitamente liberado acima.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
