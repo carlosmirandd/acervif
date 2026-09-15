@@ -54,6 +54,7 @@
             --grid-line: rgba(255, 255, 255, 0.03); --scroll-track: #050505; --scroll-thumb: #27272a; --scroll-thumb-hover: #8A2BE2;
         }
 
+        html { overflow-x: hidden; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
         .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px); }
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 4px 20px var(--glass-shadow); transition: background-color 0.3s, border-color 0.3s; }
