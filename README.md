@@ -101,9 +101,8 @@ Este é um projeto de código aberto e o arquivo `firebaseConfig` (com a `apiKey
 
 A proteção real dos dados fica nas **[Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started)**, versionadas aqui em [`firestore.rules`](firestore.rules):
 
-- **Leitura pública** para o acervo, categorias, comércios e eventos — afinal, é um repositório público.
-- **Escrita restrita** a contas administrativas autenticadas e presentes em uma allowlist de e-mail, usada pelo `admin.html`.
-- Qualquer coleção não listada explicitamente é **negada por padrão**.
+- **Leitura pública** em todas as coleções — necessário para o site funcionar para qualquer visitante.
+- **Escrita restrita** a contas presentes em uma allowlist de e-mail, e não apenas a "estar autenticado" (`request.auth != null`). Isso importa porque a `apiKey` pública permite que qualquer pessoa se autocadastre no Firebase Authentication a partir do navegador (o provedor Email/Password não tem como bloquear só o cadastro mantendo o login); uma conta assim, mesmo sem nunca ter passado pelo `admin.html`, também satisfaz `request.auth != null` — por isso a allowlist de e-mail é essencial, não opcional.
 
 Para aplicar as regras no seu projeto Firebase:
 

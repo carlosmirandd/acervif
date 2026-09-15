@@ -8,7 +8,15 @@ rules_version = '2';
 // é este arquivo — por isso ele precisa ser publicado no Console do
 // Firebase (ou via `firebase deploy --only firestore:rules`).
 //
-// IMPORTANTE: substitua os e-mails abaixo pelos e-mails reais das contas
+// Por que não usar apenas "allow write: if request.auth != null"?
+// Porque qualquer pessoa pode usar a apiKey pública para se autocadastrar
+// via createUserWithEmailAndPassword (o provedor Email/Password do Firebase
+// não permite bloquear só o cadastro mantendo o login). Uma conta assim,
+// mesmo nunca tendo passado pelo admin.html, também satisfaz
+// "request.auth != null" — por isso a escrita é restrita a uma allowlist
+// de e-mails abaixo, não apenas a "estar logado".
+//
+// IMPORTANTE: substitua o e-mail abaixo pelo(s) e-mail(is) reais das contas
 // administrativas cadastradas no Firebase Authentication.
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -20,37 +28,14 @@ service cloud.firestore {
              ];
     }
 
-    // Coleções públicas de leitura (acervo, categorias, comércios, eventos).
-    // Qualquer visitante do site pode ler; só administradores autenticados
-    // e presentes na allowlist acima podem criar, editar ou apagar.
-    match /posts/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /categories/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /comercios/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /comercioCategories/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /events/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    // Nega tudo o que não foi explicitamente liberado acima.
+    // Regra global: aplica-se a todas as coleções atuais e futuras.
     match /{document=**} {
-      allow read, write: if false;
+      // Qualquer um pode ler (necessário para os sites públicos funcionarem).
+      allow read: if true;
+
+      // Apenas as contas na allowlist acima, logadas via admin.html,
+      // podem criar, editar ou apagar documentos.
+      allow write: if isAdmin();
     }
   }
 }
