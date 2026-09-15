@@ -24,13 +24,14 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: { 
-                        themeBg: 'var(--bg-color)', 
+                    colors: {
+                        themeBg: 'var(--bg-color)',
                         textMain: 'var(--text-main)',
                         themeMuted: 'var(--text-muted)',
-                        cyanAccent: 'var(--cyan-accent)', 
-                        purpleAccent: 'var(--purple-accent)', 
-                        pinkAccent: 'var(--pink-accent)' 
+                        cyanAccent: 'var(--cyan-accent)',
+                        purpleAccent: 'var(--purple-accent)',
+                        pinkAccent: 'var(--pink-accent)',
+                        ifrjGreen: 'var(--ifrj-green)'
                     },
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
                 }
@@ -46,7 +47,9 @@
             --cyan-accent: #0284C7;
             --purple-accent: #7C3AED;
             --pink-accent: #DB2777;
-            
+            --ifrj-green: #007A33;
+            --ifrj-green-light: #009640;
+
             --glass-bg: rgba(255, 255, 255, 0.6);
             --glass-border: rgba(0, 0, 0, 0.05);
             --glass-hover-bg: rgba(255, 255, 255, 0.9);
@@ -69,7 +72,9 @@
             --cyan-accent: #00F0FF;
             --purple-accent: #8A2BE2;
             --pink-accent: #FF1493;
-            
+            --ifrj-green: #00C853;
+            --ifrj-green-light: #4ADE80;
+
             --glass-bg: rgba(20, 20, 20, 0.4);
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-hover-bg: rgba(255, 255, 255, 0.03);
@@ -113,10 +118,14 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .ifrj-topbar { background: linear-gradient(90deg, var(--ifrj-green), var(--ifrj-green-light), var(--cyan-accent)); }
+        .ifrj-badge { background: linear-gradient(135deg, var(--ifrj-green), var(--ifrj-green-light)); }
     </style>
 </head>
 <body class="antialiased selection:bg-cyanAccent selection:text-white relative pb-20">
 
+    <div class="fixed top-0 left-0 w-full h-[3px] ifrj-topbar z-[60] pointer-events-none"></div>
     <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
     <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-cyanAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float transition-colors duration-500"></div>
     <div class="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purpleAccent rounded-full blur-[150px] opacity-[0.08] pointer-events-none -z-10 animate-float transition-colors duration-500" style="animation-delay: 2s;"></div>
@@ -125,10 +134,18 @@
         
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6 relative z-50 border-b border-[var(--glass-border)] pb-8">
             <div class="flex items-center group cursor-default">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png" alt="Logo IFRJ" class="w-12 h-12 mr-4 group-hover:scale-110 transition-transform duration-500 drop-shadow-sm">
+                <div class="relative mr-4 flex-shrink-0">
+                    <div class="absolute -inset-1.5 rounded-2xl ifrj-badge opacity-20 blur-md group-hover:opacity-40 transition-opacity"></div>
+                    <div class="relative w-14 h-14 rounded-2xl glass-panel flex items-center justify-center p-2 border-2" style="border-color: var(--ifrj-green);">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png" alt="Logo IFRJ" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                </div>
                 <div>
                     <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">AcervIF</h1>
-                    <p class="font-mono text-sm text-themeMuted mt-1">IFRJ Niterói /// Repositório Público</p>
+                    <p class="font-mono text-sm text-themeMuted mt-1.5 flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-white px-2 py-0.5 rounded-full text-[11px] font-bold tracking-wide" style="background: var(--ifrj-green);">IFRJ</span>
+                        Campus Niterói /// Repositório Público
+                    </p>
                 </div>
             </div>
             
@@ -193,6 +210,14 @@
             <h2 class="text-2xl font-bold mb-6 text-themeMuted">Acervo Cronológico</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="regularGrid"></div>
         </div>
+
+        <footer class="relative z-10 mt-20 pt-8 border-t border-[var(--glass-border)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-themeMuted">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full" style="background: var(--ifrj-green);"></span>
+                AcervIF &mdash; Instituto Federal do Rio de Janeiro, Campus Niterói
+            </div>
+            <div>Engenharia de Computação &amp; Engenharia de Produção</div>
+        </footer>
     </div>
 
     <div id="blogModal" class="fixed inset-0 z-50 hidden bg-white/90 dark:bg-[#050505]/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8 transition-colors duration-300">
