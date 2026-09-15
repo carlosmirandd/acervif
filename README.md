@@ -102,7 +102,9 @@ Este é um projeto de código aberto e o arquivo `firebaseConfig` (com a `apiKey
 A proteção real dos dados fica nas **[Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started)**, versionadas aqui em [`firestore.rules`](firestore.rules):
 
 - **Leitura pública** em todas as coleções — necessário para o site funcionar para qualquer visitante.
-- **Escrita restrita** a contas presentes em uma allowlist de e-mail, e não apenas a "estar autenticado" (`request.auth != null`). Isso importa porque a `apiKey` pública permite que qualquer pessoa se autocadastre no Firebase Authentication a partir do navegador (o provedor Email/Password não tem como bloquear só o cadastro mantendo o login); uma conta assim, mesmo sem nunca ter passado pelo `admin.html`, também satisfaz `request.auth != null` — por isso a allowlist de e-mail é essencial, não opcional.
+- **Escrita restrita** a quem estiver cadastrado na coleção `admins`, e não apenas a "estar autenticado" (`request.auth != null`). Isso importa porque a `apiKey` pública permite que qualquer pessoa se autocadastre no Firebase Authentication a partir do navegador (o provedor Email/Password não tem como bloquear só o cadastro mantendo o login); uma conta assim, mesmo sem nunca ter passado pelo `admin.html`, também satisfaz `request.auth != null`.
+
+**Gerenciando administradores:** cada admin é um documento na coleção `admins`, cujo ID é o e-mail da pessoa. Para promover ou remover alguém, basta criar/apagar esse documento em *Firebase Console → Firestore Database → `admins`* — não é necessário editar código nem reimplantar as regras. A própria coleção `admins` é bloqueada para leitura/escrita via app, o que não afeta o Console nem o Admin SDK.
 
 Para aplicar as regras no seu projeto Firebase:
 
@@ -112,7 +114,7 @@ firebase login
 firebase deploy --only firestore:rules
 ```
 
-> ⚠️ Antes de publicar, edite a lista de e-mails admin em `firestore.rules` com as contas reais cadastradas no Firebase Authentication.
+Ou, mais simples: cole o conteúdo de [`firestore.rules`](firestore.rules) diretamente em *Firebase Console → Firestore Database → Regras → Publicar*.
 
 Camadas extras recomendadas (configuradas fora deste repositório, no Console do Google Cloud / Firebase):
 

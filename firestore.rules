@@ -13,28 +13,37 @@ rules_version = '2';
 // via createUserWithEmailAndPassword (o provedor Email/Password do Firebase
 // não permite bloquear só o cadastro mantendo o login). Uma conta assim,
 // mesmo nunca tendo passado pelo admin.html, também satisfaz
-// "request.auth != null" — por isso a escrita é restrita a uma allowlist
-// de e-mails abaixo, não apenas a "estar logado".
+// "request.auth != null".
 //
-// IMPORTANTE: substitua o e-mail abaixo pelo(s) e-mail(is) reais das contas
-// administrativas cadastradas no Firebase Authentication.
+// Como gerenciar admins:
+// Cada administrador é um documento na coleção "admins", cujo ID é o
+// e-mail da pessoa (ex.: "carlos@acervif.com"). Para adicionar ou remover
+// um admin, vá em Firebase Console → Firestore Database → coleção
+// "admins" e crie/apague o documento correspondente — não é preciso
+// mexer nestas regras nem fazer novo deploy. A própria coleção "admins"
+// fica travada para leitura/escrita via app (linha abaixo); isso não
+// afeta o Console nem o Admin SDK, que ignoram estas regras.
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
       return request.auth != null &&
-             request.auth.token.email in [
-               'admin@acervif.com'
-             ];
+             exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
     }
 
-    // Regra global: aplica-se a todas as coleções atuais e futuras.
+    // A lista de admins só pode ser lida/gerenciada pelo Console do
+    // Firebase ou pelo Admin SDK — nunca pelo app.
+    match /admins/{email} {
+      allow read, write: if false;
+    }
+
+    // Regra global: aplica-se a todas as demais coleções, atuais e futuras.
     match /{document=**} {
       // Qualquer um pode ler (necessário para os sites públicos funcionarem).
       allow read: if true;
 
-      // Apenas as contas na allowlist acima, logadas via admin.html,
-      // podem criar, editar ou apagar documentos.
+      // Apenas quem estiver cadastrado na coleção "admins" pode criar,
+      // editar ou apagar documentos.
       allow write: if isAdmin();
     }
   }
