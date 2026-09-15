@@ -96,11 +96,12 @@
             --scroll-thumb-hover: #22c55e;
         }
 
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            overflow-x: hidden; 
-            transition: background-color 0.3s, color 0.3s; 
+        html { overflow-x: hidden; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .bg-grid {
@@ -239,17 +240,17 @@
             </div>
 
             <!-- View Mode Switcher -->
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs font-mono text-themeMuted hidden sm:inline">Visualização:</span>
-                <div class="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl w-full sm:w-auto">
-                    <button onclick="setViewMode('auto')" id="btnViewAuto" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all bg-green-600 text-white shadow-sm flex-1 sm:flex-none flex items-center justify-center">
+                <div class="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl w-full sm:w-auto overflow-x-auto scrollbar-hide">
+                    <button onclick="setViewMode('auto')" id="btnViewAuto" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all bg-green-600 text-white shadow-sm flex-shrink-0 flex items-center justify-center whitespace-nowrap">
                         <i data-lucide="smartphone" class="w-3.5 h-3.5 mr-1.5 sm:hidden"></i>
                         <i data-lucide="monitor" class="w-3.5 h-3.5 mr-1.5 hidden sm:inline"></i> Auto (Padrão)
                     </button>
-                    <button onclick="setViewMode('table')" id="btnViewTable" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all flex-1 sm:flex-none flex items-center justify-center">
+                    <button onclick="setViewMode('table')" id="btnViewTable" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all flex-shrink-0 flex items-center justify-center whitespace-nowrap">
                         <i data-lucide="table" class="w-3.5 h-3.5 mr-1.5"></i> Planilha
                     </button>
-                    <button onclick="setViewMode('lines')" id="btnViewLines" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all flex-1 sm:flex-none flex items-center justify-center">
+                    <button onclick="setViewMode('lines')" id="btnViewLines" class="view-btn px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-themeMuted hover:text-textMain transition-all flex-shrink-0 flex items-center justify-center whitespace-nowrap">
                         <i data-lucide="list" class="w-3.5 h-3.5 mr-1.5"></i> Sequência (Linhas)
                     </button>
                 </div>
