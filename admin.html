@@ -64,7 +64,25 @@
         .text-gradient { background: linear-gradient(to right, var(--text-main), var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .tab-btn { transition: all 0.3s; }
         .tab-btn.active { border-bottom-color: var(--purple-accent); color: var(--purple-accent); background-color: rgba(124, 58, 237, 0.05); }
-        
+
+        .rte-toolbar { border: 1px solid var(--input-border); border-bottom: none; border-radius: 0.5rem 0.5rem 0 0; background: var(--input-bg); }
+        .rte-btn { padding: 6px; border-radius: 6px; color: var(--text-muted); transition: all .15s ease; display: flex; align-items: center; justify-content: center; }
+        .rte-btn:hover { background: rgba(0,0,0,0.08); color: var(--text-main); }
+        .dark .rte-btn:hover { background: rgba(255,255,255,0.1); }
+        .rte-btn.active { background: var(--purple-accent); color: white; }
+        .rte-sep { width: 1px; height: 20px; background: var(--input-border); margin: 0 2px; flex-shrink: 0; }
+        .rte-editor { outline: none; line-height: 1.6; border-radius: 0 0 0.5rem 0.5rem !important; }
+        .rte-editor:focus { border-color: var(--purple-accent) !important; }
+        .rte-editor:empty:before { content: attr(data-placeholder); color: var(--text-muted); pointer-events: none; }
+        .rte-editor img { max-width: 100%; border-radius: 8px; margin: 8px 0; display: block; }
+        .rte-editor a { color: var(--cyan-accent); text-decoration: underline; }
+        .rte-editor h2 { font-size: 1.4em; font-weight: 700; margin: 0.6em 0 0.3em; }
+        .rte-editor h3 { font-size: 1.15em; font-weight: 700; margin: 0.5em 0 0.3em; }
+        .rte-editor ul { list-style: disc; padding-left: 1.4em; }
+        .rte-editor ol { list-style: decimal; padding-left: 1.4em; }
+        .rte-editor blockquote { border-left: 3px solid var(--purple-accent); padding-left: 12px; color: var(--text-muted); font-style: italic; margin: 0.5em 0; }
+        .rte-editor p { margin: 0.4em 0; }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--scroll-track); }
         ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
@@ -154,7 +172,33 @@
                             </div>
                             
                             <div id="postLinkWrapper"><input type="url" id="postLink" class="w-full glass-input rounded-lg p-2 text-sm" placeholder="https://github.com/..."></div>
-                            <div id="postBlogWrapper" class="hidden"><textarea id="postBlogContent" class="w-full glass-input rounded-lg p-3 text-sm min-h-[150px]" placeholder="Escreva todo o conteúdo aqui..."></textarea></div>
+                            <div id="postBlogWrapper" class="hidden">
+                                <div class="rte-toolbar flex flex-wrap items-center gap-0.5 p-1.5">
+                                    <button type="button" class="rte-btn" data-cmd="bold" title="Negrito"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="italic" title="Itálico"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="underline" title="Sublinhado"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="strikeThrough" title="Riscado"><i data-lucide="strikethrough" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="H2" title="Título"><i data-lucide="heading-2" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="H3" title="Subtítulo"><i data-lucide="heading-3" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="P" title="Texto normal"><i data-lucide="pilcrow" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="justifyLeft" title="Alinhar à esquerda"><i data-lucide="align-left" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="justifyCenter" title="Centralizar"><i data-lucide="align-center" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="justifyRight" title="Alinhar à direita"><i data-lucide="align-right" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="justifyFull" title="Justificar"><i data-lucide="align-justify" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="insertUnorderedList" title="Lista"><i data-lucide="list" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="insertOrderedList" title="Lista numerada"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="BLOCKQUOTE" title="Citação"><i data-lucide="quote" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="createLink" title="Inserir link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="insertImage" title="Inserir imagem (URL)"><i data-lucide="image" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="removeFormat" title="Limpar formatação"><i data-lucide="eraser" class="w-4 h-4"></i></button>
+                                </div>
+                                <div id="postBlogContent" contenteditable="true" class="rte-editor w-full glass-input rounded-lg p-3 text-sm min-h-[180px] max-h-[420px] overflow-y-auto" data-placeholder="Escreva todo o conteúdo aqui..."></div>
+                            </div>
 
                             <label class="flex items-center text-sm text-themeMuted"><input type="checkbox" id="postPriority" class="mr-2 accent-cyanAccent">Destaque na Home</label>
                             
@@ -197,7 +241,33 @@
                             </div>
                             
                             <div id="comLinkWrapper"><input type="url" id="comLink" class="w-full glass-input rounded-lg p-2 text-sm" placeholder="https://instagram.com/..."></div>
-                            <div id="comBlogWrapper" class="hidden"><textarea id="comBlogContent" class="w-full glass-input rounded-lg p-3 text-sm min-h-[150px]" placeholder="Escreva os produtos, preços e detalhes..."></textarea></div>
+                            <div id="comBlogWrapper" class="hidden">
+                                <div class="rte-toolbar flex flex-wrap items-center gap-0.5 p-1.5">
+                                    <button type="button" class="rte-btn" data-cmd="bold" title="Negrito"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="italic" title="Itálico"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="underline" title="Sublinhado"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="strikeThrough" title="Riscado"><i data-lucide="strikethrough" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="H2" title="Título"><i data-lucide="heading-2" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="H3" title="Subtítulo"><i data-lucide="heading-3" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="P" title="Texto normal"><i data-lucide="pilcrow" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="justifyLeft" title="Alinhar à esquerda"><i data-lucide="align-left" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="justifyCenter" title="Centralizar"><i data-lucide="align-center" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="justifyRight" title="Alinhar à direita"><i data-lucide="align-right" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="justifyFull" title="Justificar"><i data-lucide="align-justify" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="insertUnorderedList" title="Lista"><i data-lucide="list" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="insertOrderedList" title="Lista numerada"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="formatBlock" data-val="BLOCKQUOTE" title="Citação"><i data-lucide="quote" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="createLink" title="Inserir link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                                    <button type="button" class="rte-btn" data-cmd="insertImage" title="Inserir imagem (URL)"><i data-lucide="image" class="w-4 h-4"></i></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="removeFormat" title="Limpar formatação"><i data-lucide="eraser" class="w-4 h-4"></i></button>
+                                </div>
+                                <div id="comBlogContent" contenteditable="true" class="rte-editor w-full glass-input rounded-lg p-3 text-sm min-h-[180px] max-h-[420px] overflow-y-auto" data-placeholder="Escreva os produtos, preços e detalhes..."></div>
+                            </div>
 
                             <div class="flex gap-2">
                                 <button type="submit" id="btnCom" class="bg-pinkAccent text-white py-2 px-4 rounded-lg font-bold w-full">Salvar Comércio</button>
@@ -274,6 +344,36 @@
             if(isBlog) document.getElementById(`${prefix}Link`).value = '';
         };
 
+        function initRichEditor(prefix) {
+            const editor = document.getElementById(`${prefix}BlogContent`);
+            const toolbar = editor.previousElementSibling;
+            toolbar.querySelectorAll('.rte-btn').forEach(btn => {
+                btn.addEventListener('mousedown', (e) => e.preventDefault());
+                btn.addEventListener('click', () => {
+                    editor.focus();
+                    const cmd = btn.dataset.cmd;
+                    if (cmd === 'createLink') {
+                        const url = prompt('Digite a URL do link:', 'https://');
+                        if (url) document.execCommand('createLink', false, url);
+                        return;
+                    }
+                    if (cmd === 'insertImage') {
+                        const url = prompt('Digite a URL da imagem:', 'https://');
+                        if (url) document.execCommand('insertImage', false, url);
+                        return;
+                    }
+                    document.execCommand(cmd, false, btn.dataset.val || null);
+                });
+            });
+            editor.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                document.execCommand('insertText', false, text);
+            });
+        }
+        initRichEditor('post');
+        initRichEditor('com');
+
         let dbPosts = [], dbCats = [], dbCom = [], dbComCats = [], dbEvts = [];
         let editId = { cat: null, post: null, comCat: null, com: null, evt: null };
 
@@ -319,14 +419,14 @@
         
         document.getElementById('postForm').addEventListener('submit', async e => {
             e.preventDefault(); const pType = document.querySelector('input[name="postType"]:checked').value;
-            await saveDoc('posts', { title: document.getElementById('postTitle').value, categoryId: document.getElementById('postCategory').value, description: document.getElementById('postDesc').value, imageUrl: document.getElementById('postImg').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('postLink').value:'', blogContent: pType==='blog'?document.getElementById('postBlogContent').value:'', isPriority: document.getElementById('postPriority').checked, createdAt: editId.post ? undefined : serverTimestamp() }, editId.post);
-            document.getElementById('postForm').reset(); editId.post=null; togglePostType('post'); document.getElementById('btnCancelPost').classList.add('hidden');
+            await saveDoc('posts', { title: document.getElementById('postTitle').value, categoryId: document.getElementById('postCategory').value, description: document.getElementById('postDesc').value, imageUrl: document.getElementById('postImg').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('postLink').value:'', blogContent: pType==='blog'?document.getElementById('postBlogContent').innerHTML:'', isPriority: document.getElementById('postPriority').checked, createdAt: editId.post ? undefined : serverTimestamp() }, editId.post);
+            document.getElementById('postForm').reset(); document.getElementById('postBlogContent').innerHTML=''; editId.post=null; togglePostType('post'); document.getElementById('btnCancelPost').classList.add('hidden');
         });
 
         document.getElementById('comForm').addEventListener('submit', async e => {
             e.preventDefault(); const pType = document.querySelector('input[name="comType"]:checked').value;
-            await saveDoc('comercios', { title: document.getElementById('comTitle').value, categoryId: document.getElementById('comCategory').value, description: document.getElementById('comDesc').value, imageUrl: document.getElementById('comImg').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('comLink').value:'', blogContent: pType==='blog'?document.getElementById('comBlogContent').value:'', createdAt: editId.com ? undefined : serverTimestamp() }, editId.com);
-            document.getElementById('comForm').reset(); editId.com=null; togglePostType('com'); document.getElementById('btnCancelCom').classList.add('hidden');
+            await saveDoc('comercios', { title: document.getElementById('comTitle').value, categoryId: document.getElementById('comCategory').value, description: document.getElementById('comDesc').value, imageUrl: document.getElementById('comImg').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('comLink').value:'', blogContent: pType==='blog'?document.getElementById('comBlogContent').innerHTML:'', createdAt: editId.com ? undefined : serverTimestamp() }, editId.com);
+            document.getElementById('comForm').reset(); document.getElementById('comBlogContent').innerHTML=''; editId.com=null; togglePostType('com'); document.getElementById('btnCancelCom').classList.add('hidden');
         });
 
         document.getElementById('evtForm').addEventListener('submit', async e => {
@@ -336,8 +436,8 @@
 
         document.getElementById('btnCancelCat').onclick = () => { editId.cat=null; document.getElementById('catForm').reset(); document.getElementById('btnCancelCat').classList.add('hidden'); };
         document.getElementById('btnCancelComCat').onclick = () => { editId.comCat=null; document.getElementById('comCatForm').reset(); document.getElementById('btnCancelComCat').classList.add('hidden'); };
-        document.getElementById('btnCancelPost').onclick = () => { editId.post=null; document.getElementById('postForm').reset(); document.getElementById('btnCancelPost').classList.add('hidden'); togglePostType('post'); };
-        document.getElementById('btnCancelCom').onclick = () => { editId.com=null; document.getElementById('comForm').reset(); document.getElementById('btnCancelCom').classList.add('hidden'); togglePostType('com'); };
+        document.getElementById('btnCancelPost').onclick = () => { editId.post=null; document.getElementById('postForm').reset(); document.getElementById('postBlogContent').innerHTML=''; document.getElementById('btnCancelPost').classList.add('hidden'); togglePostType('post'); };
+        document.getElementById('btnCancelCom').onclick = () => { editId.com=null; document.getElementById('comForm').reset(); document.getElementById('comBlogContent').innerHTML=''; document.getElementById('btnCancelCom').classList.add('hidden'); togglePostType('com'); };
         document.getElementById('btnCancelEvt').onclick = () => { editId.evt=null; document.getElementById('evtForm').reset(); document.getElementById('btnCancelEvt').classList.add('hidden'); };
 
         async function saveDoc(col, data, id) { try { if(id) { delete data.createdAt; await updateDoc(doc(db, col, id), data); } else await addDoc(collection(db, col), data); showStatus('Sucesso!'); await loadAllData(); } catch(e) { console.error(e); showStatus('Erro ao salvar.', 'error'); } }
@@ -348,12 +448,12 @@
             if(type==='comCat') { const d = dbComCats.find(c=>c.id===id); document.getElementById('comCatName').value=d.name; editId.comCat=id; document.getElementById('btnCancelComCat').classList.remove('hidden'); }
             if(type==='post') { 
                 const d = dbPosts.find(p=>p.id===id); editId.post=id; document.getElementById('postTitle').value=d.title; document.getElementById('postCategory').value=d.categoryId; document.getElementById('postDesc').value=d.description; document.getElementById('postImg').value=d.imageUrl || ''; document.getElementById('postPriority').checked=d.isPriority; document.querySelector(`input[name="postType"][value="${d.postType||'link'}"]`).checked = true;
-                if(d.postType==='blog') document.getElementById('postBlogContent').value=d.blogContent||''; else document.getElementById('postLink').value=d.redirectUrl||'';
+                if(d.postType==='blog') document.getElementById('postBlogContent').innerHTML=d.blogContent||''; else document.getElementById('postLink').value=d.redirectUrl||'';
                 togglePostType('post'); document.getElementById('btnCancelPost').classList.remove('hidden'); document.getElementById('postTitle').scrollIntoView();
             }
             if(type==='com') { 
                 const d = dbCom.find(p=>p.id===id); editId.com=id; document.getElementById('comTitle').value=d.title; document.getElementById('comCategory').value=d.categoryId; document.getElementById('comDesc').value=d.description; document.getElementById('comImg').value=d.imageUrl || ''; document.querySelector(`input[name="comType"][value="${d.postType||'link'}"]`).checked = true;
-                if(d.postType==='blog') document.getElementById('comBlogContent').value=d.blogContent||''; else document.getElementById('comLink').value=d.redirectUrl||'';
+                if(d.postType==='blog') document.getElementById('comBlogContent').innerHTML=d.blogContent||''; else document.getElementById('comLink').value=d.redirectUrl||'';
                 togglePostType('com'); document.getElementById('btnCancelCom').classList.remove('hidden'); document.getElementById('comTitle').scrollIntoView();
             }
             if(type==='evt') {
