@@ -1,0 +1,522 @@
+[
+  {
+    "matricula": "20252021444",
+    "nome": "ADILSON OLIVEIRA CAMILO"
+  },
+  {
+    "matricula": "20252021373",
+    "nome": "ALINE THOMAS CAETANO"
+  },
+  {
+    "matricula": "20252021435",
+    "nome": "ALLAN GOMES BARBOSA DE CARVALHO"
+  },
+  {
+    "matricula": "20251037029",
+    "nome": "ANDRE LIMA FIRMO"
+  },
+  {
+    "matricula": "20251037038",
+    "nome": "CAIO HENRIQUE DO AMARAL MONTES"
+  },
+  {
+    "matricula": "20252021417",
+    "nome": "CARLOS HENRIQUE DA SILVA"
+  },
+  {
+    "matricula": "20251037056",
+    "nome": "CAUÃ DE SOUZA DANIEL DA SILVA"
+  },
+  {
+    "matricula": "20252021337",
+    "nome": "EDUARDO ARTUR BATISTA DOS SANTOS"
+  },
+  {
+    "matricula": "20251037092",
+    "nome": "FELIPE NATHAN PACHECO DE SANT'ANNA"
+  },
+  {
+    "matricula": "20252021177",
+    "nome": "FELIPE VIEIRA ROLSZT"
+  },
+  {
+    "matricula": "20251037109",
+    "nome": "GABRIEL FERNANDES BARRETO ANTUNES"
+  },
+  {
+    "matricula": "20252021480",
+    "nome": "GEOVANA TEIXEIRA VIANA"
+  },
+  {
+    "matricula": "20252021328",
+    "nome": "GUILHERME ARAUJO DA COSTA"
+  },
+  {
+    "matricula": "20252021346",
+    "nome": "GUILHERME AZEVEDO KITA"
+  },
+  {
+    "matricula": "20252021355",
+    "nome": "HELENA BLANK DOS SANTOS BARBOSA"
+  },
+  {
+    "matricula": "20252021490",
+    "nome": "IRENE GOMES SEMI DA SILVA"
+  },
+  {
+    "matricula": "20251037127",
+    "nome": "ISABELY CABRAL CORRÊA"
+  },
+  {
+    "matricula": "20252021275",
+    "nome": "ISRAEL DOS SANTOS LACERDA"
+  },
+  {
+    "matricula": "20252021293",
+    "nome": "JOELMA RAMOS DE OLIVEIRA"
+  },
+  {
+    "matricula": "20251037216",
+    "nome": "JORGE MIGUEL LESSA DA FONSECA LOBO"
+  },
+  {
+    "matricula": "20251037190",
+    "nome": "JOÃO PEDRO COUTINHO LUDOLF"
+  },
+  {
+    "matricula": "20251037225",
+    "nome": "JUAN FERNANDES LISBOA"
+  },
+  {
+    "matricula": "20251037261",
+    "nome": "JULYA ROSA DA SILVA"
+  },
+  {
+    "matricula": "20252021382",
+    "nome": "KHETTLEY DA SILVA SANTIAGO"
+  },
+  {
+    "matricula": "20252021319",
+    "nome": "LARISA ALVES GOMES"
+  },
+  {
+    "matricula": "20252021257",
+    "nome": "LARISSA FERREIRA E SOUZA"
+  },
+  {
+    "matricula": "20251037305",
+    "nome": "LAURA DE SÁ AGUIAR"
+  },
+  {
+    "matricula": "20251037314",
+    "nome": "LEONARDO BASILIO"
+  },
+  {
+    "matricula": "20251037360",
+    "nome": "LUCAS SALES COUTINHO DA CRUZ ROCHA"
+  },
+  {
+    "matricula": "20251037379",
+    "nome": "LUCAS VELLOSO DELACASTRO SANTOS"
+  },
+  {
+    "matricula": "20252021426",
+    "nome": "LUCIANA BARBOSA DE LIMA"
+  },
+  {
+    "matricula": "20251037403",
+    "nome": "LUIZ GABRIEL GEDEON ROZENTAL"
+  },
+  {
+    "matricula": "20251037412",
+    "nome": "MANUELLA DE OLIVEIRA MATTA"
+  },
+  {
+    "matricula": "20252021284",
+    "nome": "MATHEUS GABRIEL LOPES DE ANDRADE"
+  },
+  {
+    "matricula": "20252021364",
+    "nome": "MATHEUS PEREIRA DA SILVA"
+  },
+  {
+    "matricula": "20251037388",
+    "nome": "MIRELLA DE SOUZA MURRAY"
+  },
+  {
+    "matricula": "20252021201",
+    "nome": "NATHALIA SILVEIRA ANDRADE"
+  },
+  {
+    "matricula": "20252021266",
+    "nome": "NATHÁLIA DA SILVA SANTOS"
+  },
+  {
+    "matricula": "20251037350",
+    "nome": "NICOLE BHENSON AMARAL CAMPOS"
+  },
+  {
+    "matricula": "20252021408",
+    "nome": "NICOLE SANTOS DE OLIVEIRA"
+  },
+  {
+    "matricula": "20251037323",
+    "nome": "PEDRO HENRIQUE MOTTA DA SILVA"
+  },
+  {
+    "matricula": "20252021391",
+    "nome": "PEDRO LUCAS DE SOUSA GONÇALVES"
+  },
+  {
+    "matricula": "20251037299",
+    "nome": "RAMON DA SILVA COUTO"
+  },
+  {
+    "matricula": "20252021239",
+    "nome": "RAYSSA VICTÓRIA DE OLIVEIRA COSTA DE ARAÚJO"
+  },
+  {
+    "matricula": "20252021462",
+    "nome": "REBECA MARIA DE SOUZA VASCONCELOS"
+  },
+  {
+    "matricula": "20251037280",
+    "nome": "RICARDO ERICK LUSTOSA FIDELIS"
+  },
+  {
+    "matricula": "20252021300",
+    "nome": "RUAN SANTANA MONTENEGRO DE ALMEIDA"
+  },
+  {
+    "matricula": "20252021471",
+    "nome": "RYAN QUINTO MARQUES SOUZA FERREIRA"
+  },
+  {
+    "matricula": "20252021453",
+    "nome": "SAMIRA CARLA DA SILVA"
+  },
+  {
+    "matricula": "20251037252",
+    "nome": "SARAH FILENE DOS SANTOS PINTO"
+  },
+  {
+    "matricula": "20251037207",
+    "nome": "SILVANIA FREIRE CAVALCANTI"
+  },
+  {
+    "matricula": "20252021195",
+    "nome": "SUZANA CORREIA FLORES"
+  },
+  {
+    "matricula": "20252021210",
+    "nome": "TATIANA DE LIMA ARAUJO"
+  },
+  {
+    "matricula": "20251037181",
+    "nome": "THIAGO FERNANDES DE MELO MORAES"
+  },
+  {
+    "matricula": "20251037154",
+    "nome": "VERIDIANA BARBOSA SIMPLICIO"
+  },
+  {
+    "matricula": "20251037136",
+    "nome": "VINÍCIUS FERNANDO DE OLIVEIRA LIMA"
+  },
+  {
+    "matricula": "20252021506",
+    "nome": "WANESSA ALBUQUERQUE PATROCINIO"
+  },
+  {
+    "matricula": "20251037118",
+    "nome": "WASHINGTON LOPES DE CARVALHO"
+  },
+  {
+    "matricula": "20252021168",
+    "nome": "WESLEY LOPES DA SILVA"
+  },
+  {
+    "matricula": "20251037083",
+    "nome": "YSABELLA CRISTINA FERREIRA DA SILVA"
+  },
+  {
+    "matricula": "20251037430",
+    "nome": "YTSAK HENRIQUE DANIEL DA SILVA"
+  },
+  {
+    "matricula": "20261017665",
+    "nome": "ALEF AZEVEDO MEDEIROS"
+  },
+  {
+    "matricula": "20262009603",
+    "nome": "ALLAN VICTOR DE SANT ANNA DE LIMA"
+  },
+  {
+    "matricula": "20262009612",
+    "nome": "ANA CAROLINA DA COSTA FIGUEIREDO"
+  },
+  {
+    "matricula": "20262009621",
+    "nome": "ANA LUIZA BRITO ABREU"
+  },
+  {
+    "matricula": "20262008400",
+    "nome": "ANDRE DAVI PINTO DAS CHAGAS"
+  },
+  {
+    "matricula": "20262008419",
+    "nome": "ANTONIO JOSE CARNEIRO MENA"
+  },
+  {
+    "matricula": "20262009630",
+    "nome": "AQUILA SALES RAMOS"
+  },
+  {
+    "matricula": "20261030630",
+    "nome": "ARTHUR BATISTA FROTA"
+  },
+  {
+    "matricula": "20261031440",
+    "nome": "ARTHUR MARTINS DA ROSA"
+  },
+  {
+    "matricula": "20261033515",
+    "nome": "BEATRIZ NEVES DE OLIVEIRA"
+  },
+  {
+    "matricula": "20262008141",
+    "nome": "BEATRIZ SILVA DA CUNHA"
+  },
+  {
+    "matricula": "20262008310",
+    "nome": "BERNARDO BARCELOS TASSARA"
+  },
+  {
+    "matricula": "20261031459",
+    "nome": "BERNARDO DEMIER BRAGA"
+  },
+  {
+    "matricula": "20261031468",
+    "nome": "BRUNA PARDINI JADEL LEMOS"
+  },
+  {
+    "matricula": "20262007725",
+    "nome": "CAIO DE ARAUJO PEIXOTO"
+  },
+  {
+    "matricula": "20262008268",
+    "nome": "CAMILA SANTOS SERRA DA SILVA"
+  },
+  {
+    "matricula": "20262008286",
+    "nome": "CARLOS EDUARDO DA SILVA GONCALVES"
+  },
+  {
+    "matricula": "20262008366",
+    "nome": "CLARISSE LIMA DA SILVA"
+  },
+  {
+    "matricula": "20261030658",
+    "nome": "DANIEL ALVES MANCANO"
+  },
+  {
+    "matricula": "20262007743",
+    "nome": "DANIEL DE OLIVEIRA SILVA"
+  },
+  {
+    "matricula": "20261030700",
+    "nome": "DANILO AMATUZZI COSTA"
+  },
+  {
+    "matricula": "20262009659",
+    "nome": "DIOGO RODRIGUES DA MOTTA"
+  },
+  {
+    "matricula": "20261030710",
+    "nome": "ENZO PENNA DUARTE"
+  },
+  {
+    "matricula": "20261031314",
+    "nome": "FERNANDO OLIVEIRA JUNIOR"
+  },
+  {
+    "matricula": "20261030738",
+    "nome": "GABRIEL DE SOUZA RAMOS"
+  },
+  {
+    "matricula": "20261030765",
+    "nome": "GABRIEL MARTINS PIAZ"
+  },
+  {
+    "matricula": "20261030845",
+    "nome": "GABRIEL MORADO PINTO"
+  },
+  {
+    "matricula": "20261031477",
+    "nome": "GABRIELA BARCELOS SAMARY"
+  },
+  {
+    "matricula": "20261031323",
+    "nome": "GUILHERME GUIMARAES DE OLIVEIRA SENNA GASPAR"
+  },
+  {
+    "matricula": "20261031234",
+    "nome": "IGOR CARDOSO DE SOUZA"
+  },
+  {
+    "matricula": "20261031379",
+    "nome": "ISAQUE LOPES DO ESPIRITO SANTO"
+  },
+  {
+    "matricula": "20261030854",
+    "nome": "JORGE HEITOR DE OLIVEIRA MATHEUS"
+  },
+  {
+    "matricula": "20261033524",
+    "nome": "JOÃO PEDRO DA CRUZ PEREIRA"
+  },
+  {
+    "matricula": "20262008375",
+    "nome": "JOÃO PEDRO LIMA CARDOSO"
+  },
+  {
+    "matricula": "20261031397",
+    "nome": "JOÃO ROBERTO SILVA MACHADO"
+  },
+  {
+    "matricula": "20261033598",
+    "nome": "JULIA TERESA BRASIL DE MORAES E SILVA"
+  },
+  {
+    "matricula": "20261031403",
+    "nome": "JÚLIA FERREIRA RAMOS"
+  },
+  {
+    "matricula": "20261031412",
+    "nome": "KAIKY SILVA DOS SANTOS"
+  },
+  {
+    "matricula": "20262008179",
+    "nome": "LARISSA NEVES PUGLEZ"
+  },
+  {
+    "matricula": "20262007879",
+    "nome": "LEONARDO ARAUJO DE FIGUEIREDO FURTADO"
+  },
+  {
+    "matricula": "20261030872",
+    "nome": "LOUISE LOPES ALMEIDA GOMES"
+  },
+  {
+    "matricula": "20261030881",
+    "nome": "LUAN DA SILVA BARBOSA"
+  },
+  {
+    "matricula": "20262008203",
+    "nome": "LUCAS GABRIEL DE AZEVEDO ROSA"
+  },
+  {
+    "matricula": "20262011862",
+    "nome": "LUIZ HENRIQUE GOMES TEIXEIRA"
+  },
+  {
+    "matricula": "20261031332",
+    "nome": "LUIZ MIGUEL GOMES DOS SANTOS"
+  },
+  {
+    "matricula": "20261031350",
+    "nome": "LUMA ESCOBAR DE ARAUJO"
+  },
+  {
+    "matricula": "20261031510",
+    "nome": "MARCELY MADUREIRA DE ARAUJO"
+  },
+  {
+    "matricula": "20261030890",
+    "nome": "MARIA EDUARDA GAMARIA SOARES GOMES"
+  },
+  {
+    "matricula": "20262008212",
+    "nome": "MARIELE CRISTINA CERQUEIRA PIRES"
+  },
+  {
+    "matricula": "20261030907",
+    "nome": "MATHEUS DE ALENCAR PACHECO"
+  },
+  {
+    "matricula": "20262009668",
+    "nome": "MATHEUS SEIXAS ESCARLATE"
+  },
+  {
+    "matricula": "20261030916",
+    "nome": "PEDRO FILIPI NEMER POMPONET DE FARIA"
+  },
+  {
+    "matricula": "20262007912",
+    "nome": "PEDRO SOUZA DE VARGAS"
+  },
+  {
+    "matricula": "20261030925",
+    "nome": "PEDRO VICTOR DIAS MARTINS"
+  },
+  {
+    "matricula": "20262009677",
+    "nome": "PYETHRO DE SOUSA CARDOSO DA SILVA"
+  },
+  {
+    "matricula": "20261030934",
+    "nome": "RAFAEL ROCHA DA FONSECA SOARES COUTINHO"
+  },
+  {
+    "matricula": "20262007968",
+    "nome": "RAPHAEL CABRAL DA COSTA"
+  },
+  {
+    "matricula": "20262008339",
+    "nome": "RYAN CARNEIRO SANTOS"
+  },
+  {
+    "matricula": "20262008230",
+    "nome": "SAMUEL FREIRE DA SILVA SOUZA"
+  },
+  {
+    "matricula": "20262008259",
+    "nome": "SARA KETLYN DOMINGUES SANTOS"
+  },
+  {
+    "matricula": "20261031261",
+    "nome": "SHIRLEY FERREIRA DE LUCENA"
+  },
+  {
+    "matricula": "20261030943",
+    "nome": "THALLES TEIXEIRA THURLER"
+  },
+  {
+    "matricula": "20261031495",
+    "nome": "THEO ALONSO RANGEL"
+  },
+  {
+    "matricula": "20261030952",
+    "nome": "THIAGO PINHEIRO MACHADO BAPTISTA"
+  },
+  {
+    "matricula": "20261031341",
+    "nome": "THIAGO REIS SOUZA"
+  },
+  {
+    "matricula": "20262008016",
+    "nome": "THIAGO VINAGRE DE MORAES SILVA"
+  },
+  {
+    "matricula": "20262008061",
+    "nome": "VALENTINA SON BARBATO SOYAT"
+  },
+  {
+    "matricula": "20262008150",
+    "nome": "VINICIUS DE LIMA SOUSA"
+  },
+  {
+    "matricula": "20261031520",
+    "nome": "YURI MARTINS MALAQUIAS HEDEJAR"
+  }
+]
