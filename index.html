@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AcervIF | Repositório Público</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#007A33">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AcervIF">
     
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
     
@@ -12,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
-        const theme = localStorage.getItem('theme') || 'system';
+        const theme = localStorage.getItem('theme') || 'dark';
         if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
@@ -235,6 +243,23 @@
         </footer>
     </div>
 
+    <!-- Banner de instalação (PWA) -->
+    <div id="pwaInstallBanner" class="hidden fixed bottom-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-sm z-[70]">
+        <div class="glass-panel rounded-2xl p-4 shadow-xl flex items-center gap-3 border-2" style="border-color: var(--ifrj-green);">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: var(--ifrj-green);">
+                <i data-lucide="smartphone" class="w-5 h-5 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-textMain">Instalar o AcervIF</p>
+                <p id="pwaInstallHint" class="text-xs text-themeMuted mt-0.5">Acesso rápido direto da tela inicial</p>
+            </div>
+            <button id="pwaInstallBtn" class="hidden flex-shrink-0 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap" style="background: var(--ifrj-green);">Instalar</button>
+            <button id="pwaInstallClose" class="flex-shrink-0 text-themeMuted hover:text-textMain p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors" title="Fechar" aria-label="Fechar">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
     <div id="blogModal" class="fixed inset-0 z-50 hidden bg-white/90 dark:bg-[#050505]/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8 transition-colors duration-300">
         <div class="max-w-4xl mx-auto bg-themeBg rounded-3xl overflow-hidden relative shadow-2xl border border-[var(--glass-border)]">
             <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/10 dark:bg-white/10 p-3 rounded-full text-textMain hover:text-cyanAccent hover:scale-110 transition-all z-10 shadow-md">
@@ -262,7 +287,7 @@
         };
 
         function updateTheme() {
-            const mode = localStorage.getItem('theme') || 'system';
+            const mode = localStorage.getItem('theme') || 'dark';
             if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             } else {
@@ -271,6 +296,60 @@
         }
         
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
+
+    <script>
+        (function() {
+            const STORAGE_KEY = 'pwaInstallDismissed';
+            const banner = document.getElementById('pwaInstallBanner');
+            const btn = document.getElementById('pwaInstallBtn');
+            const closeBtn = document.getElementById('pwaInstallClose');
+            const hint = document.getElementById('pwaInstallHint');
+
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const isDismissed = localStorage.getItem(STORAGE_KEY) === '1';
+            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+
+            if (isStandalone || isDismissed) return;
+
+            let deferredPrompt = null;
+
+            function showBanner() {
+                banner.classList.remove('hidden');
+                if (window.lucide) lucide.createIcons();
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                btn.classList.remove('hidden');
+                showBanner();
+            });
+
+            if (isIOS) {
+                hint.textContent = 'Toque em Compartilhar e depois em "Adicionar à Tela de Início"';
+                showBanner();
+            }
+
+            btn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                banner.classList.add('hidden');
+                if (outcome === 'accepted') localStorage.setItem(STORAGE_KEY, '1');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                banner.classList.add('hidden');
+                localStorage.setItem(STORAGE_KEY, '1');
+            });
+
+            window.addEventListener('appinstalled', () => {
+                banner.classList.add('hidden');
+                localStorage.setItem(STORAGE_KEY, '1');
+            });
+        })();
     </script>
 
     <script type="module">
