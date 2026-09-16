@@ -5,13 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AcervIF | Alunos Ativos</title>
 
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#007A33">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AcervIF">
+
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/15/Logotipo_IFET.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
-        const theme = localStorage.getItem('theme') || 'system';
+        const theme = localStorage.getItem('theme') || 'dark';
         if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
@@ -174,7 +182,7 @@
     <script>
         window.setTheme = function(mode) { localStorage.setItem('theme', mode); updateTheme(); };
         function updateTheme() {
-            const mode = localStorage.getItem('theme') || 'system';
+            const mode = localStorage.getItem('theme') || 'dark';
             if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
             else document.documentElement.classList.remove('dark');
         }

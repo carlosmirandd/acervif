@@ -1,0 +1,17 @@
+{
+  "name": "AcervIF - Repositório IFRJ Niterói",
+  "short_name": "AcervIF",
+  "description": "Repositório de materiais e informações para os cursos de Engenharia de Computação e Produção do IFRJ Campus Niterói.",
+  "start_url": "index.html",
+  "scope": ".",
+  "id": ".",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#007A33",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
