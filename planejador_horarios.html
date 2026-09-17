@@ -524,7 +524,12 @@
     </div>
 
     <!-- Hidden Export Render Sandbox container -->
-    <div id="exportSandbox" class="fixed top-[-9999px] left-[-9999px] w-[1100px] bg-white text-slate-900 p-8 rounded-xl"></div>
+    <!-- Wrapper com altura zero para esconder visualmente o sandbox de exportação sem tirá-lo do fluxo normal
+         (html2canvas/html2pdf falha silenciosamente — gera PDF em branco — quando o alvo está posicionado
+         com position:fixed e offsets negativos extremos, como -9999px). -->
+    <div style="height:0; overflow:hidden;">
+        <div id="exportSandbox" class="w-[1100px] bg-white text-slate-900 p-8 rounded-xl"></div>
+    </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -995,11 +1000,11 @@
 
             if (layout === 'table') {
                 contentHTML = `
-                    <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px; border: 1px solid #e2e8f0;">
+                    <table style="width: 100%; table-layout: fixed; border-collapse: collapse; font-family: sans-serif; font-size: 11px; border: 1px solid #e2e8f0;">
                         <thead>
                             <tr style="background-color: #1B5E20; color: #ffffff;">
-                                <th style="padding: 10px; border: 1px solid #16a34a; width: 120px; text-align: center;">Horário</th>
-                                ${DAYS.map(d => `<th style="padding: 10px; border: 1px solid #16a34a; text-align: left;">${d.label}</th>`).join('')}
+                                <th style="padding: 10px; border: 1px solid #16a34a; width: 90px; text-align: center;">Horário</th>
+                                ${DAYS.map(d => `<th style="padding: 10px; border: 1px solid #16a34a; text-align: left; overflow-wrap: break-word;">${d.label}</th>`).join('')}
                             </tr>
                         </thead>
                         <tbody>
@@ -1013,10 +1018,10 @@
                                             const isEad = (data.sala || '').toLowerCase().includes('ead');
                                             const salaFormatted = isEad ? '<strong>ead</strong>' : escapeHtml(data.sala || '');
                                             return `
-                                                <td style="padding: 8px; border: 1px solid #e2e8f0; background-color: #f0fdf4; border-left: 4px solid #16a34a;">
+                                                <td style="padding: 8px; border: 1px solid #e2e8f0; background-color: #f0fdf4; border-left: 4px solid #16a34a; overflow-wrap: break-word;">
                                                     <div style="font-weight: bold; color: #0f172a; font-size: 11px;">${escapeHtml(data.materia)}</div>
                                                     <div style="color: #475569; font-size: 10px; margin-top: 2px;">
-                                                        ${escapeHtml(data.materia)} · ${escapeHtml(data.professor || '')} · ${salaFormatted}
+                                                        ${escapeHtml(data.professor || 'Sem Prof')} · ${salaFormatted}
                                                     </div>
                                                 </td>
                                             `;
@@ -1053,11 +1058,11 @@
                             const isEad = (entry.data.sala || '').toLowerCase().includes('ead');
                             const salaFormatted = isEad ? '<strong>ead</strong>' : escapeHtml(entry.data.sala || '');
                             contentHTML += `
-                                <div style="display: flex; gap: 12px; align-items: center; border-bottom: 1px border-dashed #f1f5f9; padding-bottom: 6px;">
+                                <div style="display: flex; gap: 12px; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 6px;">
                                     <div style="width: 100px; font-size: 11px; font-weight: bold; color: #166534;">${entry.slot.label}</div>
                                     <div style="flex: 1; background: #f0fdf4; border-left: 3px solid #16a34a; padding: 6px 10px; border-radius: 6px;">
-                                        <div style="font-bold; font-size: 12px; color: #0f172a;">${escapeHtml(entry.data.materia)}</div>
-                                        <div style="font-size: 10px; color: #475569;">${escapeHtml(entry.data.materia)} · ${escapeHtml(entry.data.professor || '')} · ${salaFormatted}</div>
+                                        <div style="font-weight: bold; font-size: 12px; color: #0f172a;">${escapeHtml(entry.data.materia)}</div>
+                                        <div style="font-size: 10px; color: #475569;">${escapeHtml(entry.data.professor || 'Sem Prof')} · ${salaFormatted}</div>
                                     </div>
                                 </div>
                             `;
@@ -1091,10 +1096,13 @@
         }
 
         function exportToXLSX() {
+            const dayLabels = DAYS.map(d => d.label);
             const data = [];
-            data.push([courseInfo.name, courseInfo.semester, 'AcervIF — IFRJ Niterói']);
+            data.push([`${courseInfo.name} — ${courseInfo.semester}`]);
+            data.push(['AcervIF /// IFRJ Niterói — Grade Curricular']);
             data.push([]);
-            data.push(['Horário', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta']);
+            const headerRowIndex = data.length;
+            data.push(['Horário', ...dayLabels]);
 
             TIME_SLOTS.forEach(slot => {
                 const row = [slot.label];
@@ -1102,7 +1110,7 @@
                     const key = `${day.id}_${slot.id}`;
                     const entry = currentSchedule[key];
                     if (entry && entry.materia) {
-                        row.push(`${entry.materia} (${entry.professor || 'Sem Prof'} - ${entry.sala || 'Sala'})`);
+                        row.push(`${entry.materia}\n${entry.professor || 'Sem Prof'} · ${entry.sala || 'Sala'}`);
                     } else {
                         row.push('-');
                     }
@@ -1111,6 +1119,38 @@
             });
 
             const ws = XLSX.utils.aoa_to_sheet(data);
+            const totalCols = dayLabels.length + 1;
+
+            // Título e subtítulo ocupando toda a largura da tabela
+            ws['!merges'] = [
+                { s: { r: 0, c: 0 }, e: { r: 0, c: totalCols - 1 } },
+                { s: { r: 1, c: 0 }, e: { r: 1, c: totalCols - 1 } }
+            ];
+
+            // Largura das colunas: horário mais estreito, dias mais largos para não truncar o texto
+            ws['!cols'] = [
+                { wch: 14 },
+                ...dayLabels.map(() => ({ wch: 32 }))
+            ];
+
+            // Altura das linhas: título maior, linhas de aula com espaço para 2 linhas de texto
+            ws['!rows'] = data.map((_, idx) => {
+                if (idx === 0) return { hpx: 26 };
+                if (idx === 1) return { hpx: 18 };
+                if (idx === headerRowIndex) return { hpx: 22 };
+                if (idx > headerRowIndex) return { hpx: 34 };
+                return undefined;
+            });
+
+            // Quebra de linha automática nas células de aula (título/professor/sala em linhas separadas)
+            Object.keys(ws).forEach(cellRef => {
+                if (cellRef.startsWith('!')) return;
+                const cell = ws[cellRef];
+                if (typeof cell.v === 'string' && cell.v.includes('\n')) {
+                    cell.s = { alignment: { wrapText: true, vertical: 'top' } };
+                }
+            });
+
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Horários');
             XLSX.writeFile(wb, 'planejador_horarios.xlsx');
