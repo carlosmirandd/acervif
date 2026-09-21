@@ -430,10 +430,22 @@
         document.getElementById('catForm').addEventListener('submit', async e => { e.preventDefault(); await saveDoc('categories', {name: document.getElementById('catName').value}, editId.cat); document.getElementById('catForm').reset(); editId.cat=null; document.getElementById('btnCancelCat').classList.add('hidden'); });
         document.getElementById('comCatForm').addEventListener('submit', async e => { e.preventDefault(); await saveDoc('comercioCategories', {name: document.getElementById('comCatName').value}, editId.comCat); document.getElementById('comCatForm').reset(); editId.comCat=null; document.getElementById('btnCancelComCat').classList.add('hidden'); });
         
+        function notifySubscribers(title, body, url) {
+            fetch('/api/send-notification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, body, url })
+            }).catch(e => console.error('Falha ao enviar notificação push:', e));
+        }
+
         document.getElementById('postForm').addEventListener('submit', async e => {
             e.preventDefault(); const pType = document.querySelector('input[name="postType"]:checked').value;
-            await saveDoc('posts', { title: document.getElementById('postTitle').value, categoryId: document.getElementById('postCategory').value, description: document.getElementById('postDesc').value, imageUrl: document.getElementById('postImg').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('postLink').value:'', blogContent: pType==='blog'?document.getElementById('postBlogContent').innerHTML:'', isPriority: document.getElementById('postPriority').checked, createdAt: editId.post ? undefined : serverTimestamp() }, editId.post);
+            const isNewPost = !editId.post;
+            const newPostTitle = document.getElementById('postTitle').value;
+            const newPostDesc = document.getElementById('postDesc').value;
+            await saveDoc('posts', { title: newPostTitle, categoryId: document.getElementById('postCategory').value, description: newPostDesc, imageUrl: document.getElementById('postImg').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('postLink').value:'', blogContent: pType==='blog'?document.getElementById('postBlogContent').innerHTML:'', isPriority: document.getElementById('postPriority').checked, createdAt: editId.post ? undefined : serverTimestamp() }, editId.post);
             document.getElementById('postForm').reset(); document.getElementById('postBlogContent').innerHTML=''; editId.post=null; togglePostType('post'); document.getElementById('btnCancelPost').classList.add('hidden');
+            if (isNewPost) notifySubscribers('Novo post no AcervIF', newPostTitle, '/index.html');
         });
 
         document.getElementById('comForm').addEventListener('submit', async e => {
