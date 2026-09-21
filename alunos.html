@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AcervIF | Alunos Ativos</title>
+    <meta name="description" content="Lista de alunos ativos dos cursos de Engenharia de Computação e Produção do IFRJ Campus Niterói.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AcervIF | Alunos Ativos">
+    <meta property="og:description" content="Lista de alunos ativos dos cursos de Engenharia de Computação e Produção do IFRJ Campus Niterói.">
+    <meta property="og:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
+    <meta property="og:url" content="https://acervif.ifrj.edu.br/alunos.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AcervIF | Alunos Ativos">
+    <meta name="twitter:description" content="Lista de alunos ativos dos cursos de Engenharia de Computação e Produção do IFRJ Campus Niterói.">
+    <meta name="twitter:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
 
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/favicon-32.ico" sizes="32x32" type="image/x-icon">
@@ -221,6 +231,16 @@
                 allStudents.computacao = await compRes.json();
                 allStudents.producao = await prodRes.json();
                 renderPeriodFilters();
+
+                const buscaParam = new URLSearchParams(window.location.search).get('busca');
+                if (buscaParam) {
+                    searchInput.value = buscaParam;
+                    const term = normalize(buscaParam.trim());
+                    const inComp = allStudents.computacao.some(s => normalize(s.nome).includes(term));
+                    const inProd = allStudents.producao.some(s => normalize(s.nome).includes(term));
+                    if (inProd && !inComp) { selectCourse('producao'); return; }
+                }
+
                 renderStudents();
             } catch (error) {
                 console.error('Erro ao carregar lista de alunos:', error);

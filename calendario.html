@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AcervIF | Calendário Letivo 2026</title>
+    <meta name="description" content="Datas e prazos do calendário letivo 2026 do IFRJ Campus Niterói, com exportação para Google/Apple Calendar.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AcervIF | Calendário Letivo 2026">
+    <meta property="og:description" content="Datas e prazos do calendário letivo 2026 do IFRJ Campus Niterói, com exportação para Google/Apple Calendar.">
+    <meta property="og:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
+    <meta property="og:url" content="https://acervif.ifrj.edu.br/calendario.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AcervIF | Calendário Letivo 2026">
+    <meta name="twitter:description" content="Datas e prazos do calendário letivo 2026 do IFRJ Campus Niterói, com exportação para Google/Apple Calendar.">
+    <meta name="twitter:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
 
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/favicon-32.ico" sizes="32x32" type="image/x-icon">
@@ -98,7 +108,9 @@
             
             <div class="flex flex-wrap items-center gap-4">
                 <a href="index.html" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-cyanAccent hover:bg-cyanAccent hover:text-white transition-all shadow-sm flex items-center"><i data-lucide="database" class="w-4 h-4 mr-2"></i>Voltar ao Acervo</a>
-                
+
+                <button onclick="downloadICS()" class="glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-purpleAccent hover:bg-purpleAccent hover:text-white transition-all shadow-sm flex items-center"><i data-lucide="calendar-plus" class="w-4 h-4 mr-2"></i>Adicionar ao Calendário</button>
+
                 <div class="relative group z-50">
                     <button class="glass-panel p-3 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-11 h-11 shadow-sm">
                         <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
@@ -370,6 +382,50 @@
 
         document.getElementById('prevMonth').addEventListener('click', () => { currentMonth--; if(currentMonth<0){currentMonth=11;currentYear--;} renderCalendar(); });
         document.getElementById('nextMonth').addEventListener('click', () => { currentMonth++; if(currentMonth>11){currentMonth=0;currentYear++;} renderCalendar(); });
+
+        function toICSDate(dateStr) { return dateStr.replaceAll('-', ''); }
+
+        function addDays(dateStr, days) {
+            const d = new Date(dateStr + 'T12:00:00Z');
+            d.setUTCDate(d.getUTCDate() + days);
+            return d.toISOString().split('T')[0];
+        }
+
+        function escapeICS(text) {
+            return String(text).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+        }
+
+        function generateICS() {
+            const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//AcervIF//Calendario Letivo//PT-BR', 'CALSCALE:GREGORIAN'];
+            const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+            allEvents.forEach((evt, idx) => {
+                if(!evt.start || !evt.end) return;
+                lines.push('BEGIN:VEVENT');
+                lines.push(`UID:acervif-evento-${idx}-${toICSDate(evt.start)}@acervif.ifrj.edu.br`);
+                lines.push(`DTSTAMP:${stamp}`);
+                lines.push(`DTSTART;VALUE=DATE:${toICSDate(evt.start)}`);
+                lines.push(`DTEND;VALUE=DATE:${toICSDate(addDays(evt.end, 1))}`);
+                lines.push(`SUMMARY:${escapeICS(evt.title)}`);
+                lines.push('END:VEVENT');
+            });
+
+            lines.push('END:VCALENDAR');
+            return lines.join('\r\n');
+        }
+
+        window.downloadICS = function() {
+            const icsContent = generateICS();
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'calendario-letivo-acervif-2026.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
 
         init();
     </script>

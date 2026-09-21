@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AcervIF | Terminal Administrativo</title>
+    <meta name="robots" content="noindex, nofollow">
 
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/favicon-32.ico" sizes="32x32" type="image/x-icon">
@@ -242,7 +243,11 @@
                             </div>
                             <input type="url" id="comImg" class="w-full glass-input rounded-lg p-2 text-sm" placeholder="URL da Imagem">
                             <textarea id="comDesc" required class="w-full glass-input rounded-lg p-2 text-sm" rows="2" placeholder="O que vende?"></textarea>
-                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input type="text" id="comWhatsapp" class="glass-input rounded-lg p-2 text-sm" placeholder="WhatsApp (ex: 5521999999999)">
+                                <input type="url" id="comMapsUrl" class="glass-input rounded-lg p-2 text-sm" placeholder="Link do Google Maps">
+                            </div>
+
                             <div class="flex gap-4 bg-black/5 dark:bg-white/5 p-2 rounded-lg">
                                 <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="comType" value="link" checked class="mr-2 accent-pinkAccent" onchange="togglePostType('com')"> Link Externo</label>
                                 <label class="flex items-center text-sm cursor-pointer"><input type="radio" name="comType" value="blog" class="mr-2 accent-pinkAccent" onchange="togglePostType('com')"> Cardápio Interno</label>
@@ -433,7 +438,7 @@
 
         document.getElementById('comForm').addEventListener('submit', async e => {
             e.preventDefault(); const pType = document.querySelector('input[name="comType"]:checked').value;
-            await saveDoc('comercios', { title: document.getElementById('comTitle').value, categoryId: document.getElementById('comCategory').value, description: document.getElementById('comDesc').value, imageUrl: document.getElementById('comImg').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('comLink').value:'', blogContent: pType==='blog'?document.getElementById('comBlogContent').innerHTML:'', createdAt: editId.com ? undefined : serverTimestamp() }, editId.com);
+            await saveDoc('comercios', { title: document.getElementById('comTitle').value, categoryId: document.getElementById('comCategory').value, description: document.getElementById('comDesc').value, imageUrl: document.getElementById('comImg').value, whatsapp: document.getElementById('comWhatsapp').value, mapsUrl: document.getElementById('comMapsUrl').value, postType: pType, redirectUrl: pType==='link'?document.getElementById('comLink').value:'', blogContent: pType==='blog'?document.getElementById('comBlogContent').innerHTML:'', createdAt: editId.com ? undefined : serverTimestamp() }, editId.com);
             document.getElementById('comForm').reset(); document.getElementById('comBlogContent').innerHTML=''; editId.com=null; togglePostType('com'); document.getElementById('btnCancelCom').classList.add('hidden');
         });
 
@@ -460,7 +465,7 @@
                 togglePostType('post'); document.getElementById('btnCancelPost').classList.remove('hidden'); document.getElementById('postTitle').scrollIntoView();
             }
             if(type==='com') { 
-                const d = dbCom.find(p=>p.id===id); editId.com=id; document.getElementById('comTitle').value=d.title; document.getElementById('comCategory').value=d.categoryId; document.getElementById('comDesc').value=d.description; document.getElementById('comImg').value=d.imageUrl || ''; document.querySelector(`input[name="comType"][value="${d.postType||'link'}"]`).checked = true;
+                const d = dbCom.find(p=>p.id===id); editId.com=id; document.getElementById('comTitle').value=d.title; document.getElementById('comCategory').value=d.categoryId; document.getElementById('comDesc').value=d.description; document.getElementById('comImg').value=d.imageUrl || ''; document.getElementById('comWhatsapp').value=d.whatsapp || ''; document.getElementById('comMapsUrl').value=d.mapsUrl || ''; document.querySelector(`input[name="comType"][value="${d.postType||'link'}"]`).checked = true;
                 if(d.postType==='blog') document.getElementById('comBlogContent').innerHTML=d.blogContent||''; else document.getElementById('comLink').value=d.redirectUrl||'';
                 togglePostType('com'); document.getElementById('btnCancelCom').classList.remove('hidden'); document.getElementById('comTitle').scrollIntoView();
             }
