@@ -25,7 +25,10 @@ module.exports = async (req, res) => {
         // SDK do Firebase automaticamente — evita a notificação aparecer duplicada.
         const response = await admin.messaging().sendEachForMulticast({
             data: { title, body, url: url || '/' },
-            tokens
+            tokens,
+            // Prioridade alta via Web Push: sem isso, mensagens "data-only" podem ser
+            // seguradas pelo Doze mode do Android por bastante tempo antes de entregar.
+            webpush: { headers: { Urgency: 'high' } }
         });
 
         console.log(`[send-notification] sucesso=${response.successCount} falha=${response.failureCount}`);

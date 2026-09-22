@@ -31,7 +31,8 @@ module.exports = async (req, res) => {
             const evt = eventDoc.data();
             const response = await admin.messaging().sendEachForMulticast({
                 data: { title: 'Evento amanhã no calendário letivo', body: evt.title, url: '/calendario.html' },
-                tokens
+                tokens,
+                webpush: { headers: { Urgency: 'high' } }
             });
             sent += response.successCount;
         }
