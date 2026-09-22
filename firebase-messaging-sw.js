@@ -14,6 +14,11 @@ firebase.initializeApp({
     appId: "1:698647384488:web:c45b99428d9767fe04cd9d"
 });
 
+// Ativa este SW imediatamente, sem esperar reload da página — evita a corrida
+// em que getToken() tenta se inscrever antes de existir um Service Worker ativo.
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
