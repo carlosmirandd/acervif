@@ -30,8 +30,7 @@ module.exports = async (req, res) => {
         for (const eventDoc of eventsSnap.docs) {
             const evt = eventDoc.data();
             const response = await admin.messaging().sendEachForMulticast({
-                notification: { title: 'Evento amanhã no calendário letivo', body: evt.title },
-                data: { url: '/calendario.html' },
+                data: { title: 'Evento amanhã no calendário letivo', body: evt.title, url: '/calendario.html' },
                 tokens
             });
             sent += response.successCount;

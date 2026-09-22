@@ -20,9 +20,11 @@ module.exports = async (req, res) => {
         console.log(`[send-notification] ${tokens.length} token(s) inscrito(s) encontrados.`);
         if (tokens.length === 0) return res.status(200).json({ sent: 0, failed: 0 });
 
+        // Mensagem só com "data" (sem "notification"): assim quem decide exibir a
+        // notificação é o nosso Service Worker (firebase-messaging-sw.js), e não o
+        // SDK do Firebase automaticamente — evita a notificação aparecer duplicada.
         const response = await admin.messaging().sendEachForMulticast({
-            notification: { title, body },
-            data: { url: url || '/' },
+            data: { title, body, url: url || '/' },
             tokens
         });
 
