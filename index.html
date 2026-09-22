@@ -199,6 +199,11 @@
                         <div id="globalSearchResults" class="hidden absolute top-full mt-2 left-0 w-full sm:w-80 glass-panel rounded-2xl p-2 z-40 max-h-80 overflow-y-auto"></div>
                     </div>
 
+                    <!-- Botão de Notificações -->
+                    <button id="notifyBtn" onclick="enablePushNotifications()" title="Ativar notificações" class="glass-panel p-3 rounded-full text-themeMuted hover:text-cyanAccent transition-all flex items-center justify-center w-11 h-11 shadow-sm flex-shrink-0">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                    </button>
+
                     <!-- Botão Seletor de Tema -->
                     <div class="relative group z-50 flex-shrink-0">
                         <button class="glass-panel p-3 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-11 h-11 shadow-sm">
@@ -360,7 +365,11 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
+
+        // Gerada em: Console do Firebase > Configurações do Projeto > Cloud Messaging > Configuração da Web > "Gerar par de chaves"
+        const VAPID_KEY = "COLE_AQUI_A_VAPID_KEY_DO_FIREBASE";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
@@ -396,17 +405,58 @@
         const priorityGrid = document.getElementById('priorityGrid');
         const regularGrid = document.getElementById('regularGrid');
 
+        let firebaseApp;
+
         async function init() {
             lucide.createIcons();
             try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
+                firebaseApp = initializeApp(firebaseConfig);
+                db = getFirestore(firebaseApp);
                 await fetchData();
             } catch (error) {
                 console.error("Erro Firebase:", error);
                 document.getElementById('emptyState').classList.remove('hidden');
             }
+            updateNotifyButton();
         }
+
+        function updateNotifyButton() {
+            const btn = document.getElementById('notifyBtn');
+            if (!btn) return;
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) { btn.classList.add('hidden'); return; }
+            if (Notification.permission === 'granted') {
+                btn.classList.add('text-cyanAccent');
+                btn.title = 'Notificações ativadas';
+            }
+        }
+
+        window.enablePushNotifications = async function() {
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+                alert('Seu navegador não suporta notificações push.');
+                return;
+            }
+            if (VAPID_KEY.startsWith('COLE_AQUI')) {
+                console.error('Configure a VAPID_KEY do Firebase Cloud Messaging antes de ativar notificações.');
+                alert('Notificações ainda não configuradas. Volte em breve!');
+                return;
+            }
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') return;
+
+                const registration = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+                const messaging = getMessaging(firebaseApp);
+                const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
+
+                if (token) {
+                    await setDoc(doc(db, 'pushSubscriptions', token), { createdAt: new Date().toISOString(), userAgent: navigator.userAgent });
+                    updateNotifyButton();
+                }
+            } catch (error) {
+                console.error('Erro ao ativar notificações:', error);
+                alert('Não foi possível ativar as notificações agora.');
+            }
+        };
 
         async function fetchData() {
             document.getElementById('loader').classList.remove('hidden');

@@ -37,6 +37,14 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Tokens de notificação push (FCM). Qualquer visitante pode se
+    // cadastrar/descadastrar por conta própria — não depende de login
+    // de admin. O envio das notificações em si é feito pelo Admin SDK
+    // (nas funções da Vercel), que ignora estas regras.
+    match /pushSubscriptions/{token} {
+      allow write: if true;
+    }
+
     // Regra global: aplica-se a todas as demais coleções, atuais e futuras.
     match /{document=**} {
       // Qualquer um pode ler (necessário para os sites públicos funcionarem).
