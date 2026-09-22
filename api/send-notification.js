@@ -17,6 +17,7 @@ module.exports = async (req, res) => {
         const snap = await db.collection('pushSubscriptions').get();
         const tokens = snap.docs.map(d => d.id);
 
+        console.log(`[send-notification] ${tokens.length} token(s) inscrito(s) encontrados.`);
         if (tokens.length === 0) return res.status(200).json({ sent: 0, failed: 0 });
 
         const response = await admin.messaging().sendEachForMulticast({
@@ -25,9 +26,14 @@ module.exports = async (req, res) => {
             tokens
         });
 
+        console.log(`[send-notification] sucesso=${response.successCount} falha=${response.failureCount}`);
+
         const invalidTokens = [];
         response.responses.forEach((r, i) => {
             const code = r.error?.code;
+            if (!r.success) {
+                console.error(`[send-notification] token ${tokens[i].slice(0, 12)}... falhou: ${code} - ${r.error?.message}`);
+            }
             if (!r.success && (code === 'messaging/invalid-registration-token' || code === 'messaging/registration-token-not-registered')) {
                 invalidTokens.push(tokens[i]);
             }
