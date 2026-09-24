@@ -6,6 +6,7 @@
 
 **Repositório público de informações acadêmicas para os alunos de Engenharia do IFRJ Campus Niterói**
 
+[![Site](https://img.shields.io/badge/site-acervif.site-007A33?style=for-the-badge)](https://acervif.site)
 [![Deploy](https://img.shields.io/badge/deploy-vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![Firebase](https://img.shields.io/badge/backend-firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/docs/Web/HTML)
@@ -13,10 +14,12 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/docs/Web/JavaScript)
 [![PWA](https://img.shields.io/badge/PWA-installable-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 
+[![CI](https://github.com/carlosmirandd/acervif/actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](#contribuindo)
 [![Made for IFRJ](https://img.shields.io/badge/feito%20para-IFRJ%20Niterói-007A33?style=flat-square)](https://www.ifrj.edu.br)
 
-[Reportar bug](../../issues) · [Sugerir feature](../../issues)
+[Acessar o site](https://acervif.site) · [Reportar bug](../../issues) · [Sugerir feature](../../issues)
 
 </div>
 
@@ -84,7 +87,12 @@ acervif/
 ├── firestore.rules                 # Regras de segurança do Firestore
 ├── firebase.json                   # Aponta as regras acima para o Firebase CLI
 ├── package.json
-└── vercel.json                     # Configuração de deploy e do Cron Job na Vercel
+├── vercel.json                     # Configuração de deploy e do Cron Job na Vercel
+├── .env.example                    # Variáveis de ambiente necessárias (ver seção Deploy)
+├── LICENSE                         # MIT
+├── CODE_OF_CONDUCT.md
+├── scripts/check-html.js           # Validação usada pelo CI
+└── .github/workflows/ci.yml        # Checagem automática em push/PR
 ```
 
 ## Como rodar localmente
@@ -109,14 +117,16 @@ O projeto ficará disponível em **http://localhost:3000**.
 
 ## Deploy
 
-O projeto é publicado automaticamente na **Vercel** a cada push na branch principal. Por não usar nenhum framework, a saída é servida diretamente da raiz do projeto (`vercel.json#outputDirectory`). As funções em `api/` são detectadas automaticamente pela Vercel como Serverless Functions.
+O projeto é publicado automaticamente na **Vercel** a cada push na branch principal, e fica disponível em **[acervif.site](https://acervif.site)** (domínio próprio, apontado para o deploy de produção na Vercel). Por não usar nenhum framework, a saída é servida diretamente da raiz do projeto (`vercel.json#outputDirectory`). As funções em `api/` são detectadas automaticamente pela Vercel como Serverless Functions.
+
+Cada push também dispara o workflow de **[CI](.github/workflows/ci.yml)**, que valida a sintaxe de todo HTML/JS do projeto antes de ir para produção.
 
 ### Configurando as notificações push
 
 As notificações push dependem de duas configurações que não ficam neste repositório (por segurança):
 
 1. **VAPID key** — gere em *Firebase Console → Configurações do Projeto → Cloud Messaging → Configuração da Web → Gerar par de chaves* e cole no lugar da constante `VAPID_KEY` em `index.html`.
-2. **Conta de serviço do Firebase** — gere em *Firebase Console → Configurações do Projeto → Contas de serviço → Gerar nova chave privada* e cole o JSON inteiro como variável de ambiente `FIREBASE_SERVICE_ACCOUNT` no painel do projeto na Vercel.
+2. **Conta de serviço do Firebase** — gere em *Firebase Console → Configurações do Projeto → Contas de serviço → Gerar nova chave privada* e cole o JSON inteiro como variável de ambiente `FIREBASE_SERVICE_ACCOUNT` no painel do projeto na Vercel (veja o formato esperado em [`.env.example`](.env.example)).
 
 Sem essas duas configurações, o site funciona normalmente — só o botão de notificações fica inativo.
 
@@ -144,7 +154,7 @@ Ou, mais simples: cole o conteúdo de [`firestore.rules`](firestore.rules) diret
 
 Camadas extras recomendadas (configuradas fora deste repositório, no Console do Google Cloud / Firebase):
 
-- **Restringir a API key** por domínio (HTTP referrer) em *Google Cloud Console → Credenciais*, liberando apenas os domínios da Vercel e `localhost`.
+- **Restringir a API key** por domínio (HTTP referrer) em *Google Cloud Console → Credenciais*, liberando apenas `acervif.site`, os domínios de preview da Vercel e `localhost`.
 - **Desabilitar o autocadastro** de novos usuários no provedor Email/Password do Firebase Authentication, mantendo apenas as contas administrativas criadas manualmente.
 - Ativar o **[Firebase App Check](https://firebase.google.com/docs/app-check)** para bloquear tráfego que não venha do próprio site.
 
@@ -154,13 +164,17 @@ Encontrou uma vulnerabilidade? Abra uma [issue](../../issues) ou entre em contat
 
 ## Contribuindo
 
-Contribuições são muito bem-vindas — seja corrigindo um bug, adicionando uma disciplina que faltou no fluxograma ou sugerindo uma nova funcionalidade.
+Contribuições são muito bem-vindas — seja corrigindo um bug, adicionando uma disciplina que faltou no fluxograma ou sugerindo uma nova funcionalidade. Ao participar, você concorda em seguir o [Código de Conduta](CODE_OF_CONDUCT.md) do projeto.
 
 1. Faça um fork do projeto
 2. Crie uma branch para sua feature (`git checkout -b feat/minha-feature`)
 3. Commit suas mudanças (`git commit -m 'feat: minha nova feature'`)
 4. Push para a branch (`git push origin feat/minha-feature`)
-5. Abra um Pull Request
+5. Abra um Pull Request — o CI vai validar automaticamente a sintaxe do que for alterado
+
+## Licença
+
+Este projeto é distribuído sob a licença [MIT](LICENSE) — use, copie, modifique e redistribua livremente, inclusive para fins comerciais, mantendo o aviso de copyright original.
 
 ---
 

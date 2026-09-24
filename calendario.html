@@ -8,12 +8,12 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="AcervIF | Calendário Letivo 2026">
     <meta property="og:description" content="Datas e prazos do calendário letivo 2026 do IFRJ Campus Niterói, com exportação para Google/Apple Calendar.">
-    <meta property="og:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
-    <meta property="og:url" content="https://acervif.ifrj.edu.br/calendario.html">
+    <meta property="og:image" content="https://acervif.site/icons/logoacervif.png">
+    <meta property="og:url" content="https://acervif.site/calendario.html">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="AcervIF | Calendário Letivo 2026">
     <meta name="twitter:description" content="Datas e prazos do calendário letivo 2026 do IFRJ Campus Niterói, com exportação para Google/Apple Calendar.">
-    <meta name="twitter:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
+    <meta name="twitter:image" content="https://acervif.site/icons/logoacervif.png">
 
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/favicon-32.ico" sizes="32x32" type="image/x-icon">
@@ -402,7 +402,7 @@
             allEvents.forEach((evt, idx) => {
                 if(!evt.start || !evt.end) return;
                 lines.push('BEGIN:VEVENT');
-                lines.push(`UID:acervif-evento-${idx}-${toICSDate(evt.start)}@acervif.ifrj.edu.br`);
+                lines.push(`UID:acervif-evento-${idx}-${toICSDate(evt.start)}@acervif.site`);
                 lines.push(`DTSTAMP:${stamp}`);
                 lines.push(`DTSTART;VALUE=DATE:${toICSDate(evt.start)}`);
                 lines.push(`DTEND;VALUE=DATE:${toICSDate(addDays(evt.end, 1))}`);
