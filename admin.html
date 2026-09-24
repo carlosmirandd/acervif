@@ -152,6 +152,7 @@
                 <button class="tab-btn active px-6 py-3 font-mono text-sm border-b-2 font-bold whitespace-nowrap" data-target="acervoTab"><i data-lucide="database" class="inline w-4 h-4 mr-2"></i>Acervo</button>
                 <button class="tab-btn px-6 py-3 font-mono text-sm border-b-2 border-transparent text-themeMuted hover:text-textMain whitespace-nowrap" data-target="comerciosTab"><i data-lucide="store" class="inline w-4 h-4 mr-2"></i>Comércios</button>
                 <button class="tab-btn px-6 py-3 font-mono text-sm border-b-2 border-transparent text-themeMuted hover:text-textMain whitespace-nowrap" data-target="calendarTab"><i data-lucide="calendar" class="inline w-4 h-4 mr-2"></i>Calendário</button>
+                <button class="tab-btn px-6 py-3 font-mono text-sm border-b-2 border-transparent text-themeMuted hover:text-textMain whitespace-nowrap" data-target="diretorioTab"><i data-lucide="book-user" class="inline w-4 h-4 mr-2"></i>Diretório</button>
             </div>
 
             <div id="acervoTab" class="tab-content">
@@ -316,6 +317,33 @@
                 </div>
             </div>
 
+            <div id="diretorioTab" class="tab-content hidden">
+                <div class="max-w-2xl mx-auto">
+                    <h3 class="font-bold mb-4 flex items-center text-indigo-500"><i data-lucide="user-plus" class="w-5 h-5 mr-2"></i> Adicionar Contato</h3>
+                    <form id="contForm" class="space-y-4">
+                        <input type="text" id="contNome" required class="w-full glass-input rounded-lg p-3" placeholder="Nome do docente, setor ou coordenação">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold text-themeMuted block mb-1">Tipo</label>
+                                <select id="contTipo" required class="w-full glass-input rounded-lg p-3 [&>option]:bg-white dark:[&>option]:bg-[#050505]">
+                                    <option value="Docente">Docente</option>
+                                    <option value="Setor">Setor / Coordenação</option>
+                                </select>
+                            </div>
+                            <div><label class="text-xs font-bold text-themeMuted block mb-1">E-mail</label><input type="email" id="contEmail" required class="w-full glass-input rounded-lg p-3" placeholder="nome@ifrj.edu.br"></div>
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit" id="btnCont" class="bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg w-full shadow-md">Salvar Contato</button>
+                            <button type="button" id="btnCancelCont" class="hidden bg-red-500/10 text-red-500 font-bold py-3 px-6 rounded-lg w-1/3">Cancelar</button>
+                        </div>
+                    </form>
+                    <div class="mt-8 pt-6 border-t border-[var(--glass-border)]">
+                        <h4 class="font-bold text-themeMuted mb-4">Contatos Cadastrados</h4>
+                        <div id="adminContList" class="flex flex-col gap-2 text-sm text-themeMuted"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -387,8 +415,8 @@
         initRichEditor('post');
         initRichEditor('com');
 
-        let dbPosts = [], dbCats = [], dbCom = [], dbComCats = [], dbEvts = [];
-        let editId = { cat: null, post: null, comCat: null, com: null, evt: null };
+        let dbPosts = [], dbCats = [], dbCom = [], dbComCats = [], dbEvts = [], dbContatos = [];
+        let editId = { cat: null, post: null, comCat: null, com: null, evt: null, cont: null };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) { document.getElementById('loginSection').classList.add('hidden'); document.getElementById('adminSection').classList.remove('hidden'); await loadAllData(); } 
@@ -423,7 +451,10 @@
 
             const qe = await getDocs(query(collection(db, 'events'), orderBy('startDate'))); dbEvts = qe.docs.map(d => ({id: d.id, ...d.data()}));
             document.getElementById('adminEvtList').innerHTML = dbEvts.map(e => `<div class="glass-panel p-3 flex justify-between items-center rounded-lg text-textMain"><div><div class="font-bold">${e.title}</div><div class="text-xs font-mono text-themeMuted">${e.startDate} a ${e.endDate}</div></div><div><button class="text-purpleAccent mr-3" onclick="editData('evt','${e.id}')"><i data-lucide="edit-2" class="w-4 h-4 inline"></i></button><button class="text-red-500" onclick="deleteData('events','${e.id}')"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button></div></div>`).join('');
-            
+
+            const qct = await getDocs(query(collection(db, 'contatos'), orderBy('nome'))); dbContatos = qct.docs.map(d => ({id: d.id, ...d.data()}));
+            document.getElementById('adminContList').innerHTML = dbContatos.map(c => `<div class="glass-panel p-3 flex justify-between items-center rounded-lg text-textMain"><div><div class="font-bold">${c.nome}</div><div class="text-xs font-mono text-themeMuted">${c.tipo} — ${c.email}</div></div><div><button class="text-indigo-500 mr-3" onclick="editData('cont','${c.id}')"><i data-lucide="edit-2" class="w-4 h-4 inline"></i></button><button class="text-red-500" onclick="deleteData('contatos','${c.id}')"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button></div></div>`).join('');
+
             lucide.createIcons();
         }
 
@@ -459,11 +490,17 @@
             document.getElementById('evtForm').reset(); editId.evt=null; document.getElementById('btnCancelEvt').classList.add('hidden');
         });
 
+        document.getElementById('contForm').addEventListener('submit', async e => {
+            e.preventDefault(); await saveDoc('contatos', { nome: document.getElementById('contNome').value, tipo: document.getElementById('contTipo').value, email: document.getElementById('contEmail').value }, editId.cont);
+            document.getElementById('contForm').reset(); editId.cont=null; document.getElementById('btnCancelCont').classList.add('hidden');
+        });
+
         document.getElementById('btnCancelCat').onclick = () => { editId.cat=null; document.getElementById('catForm').reset(); document.getElementById('btnCancelCat').classList.add('hidden'); };
         document.getElementById('btnCancelComCat').onclick = () => { editId.comCat=null; document.getElementById('comCatForm').reset(); document.getElementById('btnCancelComCat').classList.add('hidden'); };
         document.getElementById('btnCancelPost').onclick = () => { editId.post=null; document.getElementById('postForm').reset(); document.getElementById('postBlogContent').innerHTML=''; document.getElementById('btnCancelPost').classList.add('hidden'); togglePostType('post'); };
         document.getElementById('btnCancelCom').onclick = () => { editId.com=null; document.getElementById('comForm').reset(); document.getElementById('comBlogContent').innerHTML=''; document.getElementById('btnCancelCom').classList.add('hidden'); togglePostType('com'); };
         document.getElementById('btnCancelEvt').onclick = () => { editId.evt=null; document.getElementById('evtForm').reset(); document.getElementById('btnCancelEvt').classList.add('hidden'); };
+        document.getElementById('btnCancelCont').onclick = () => { editId.cont=null; document.getElementById('contForm').reset(); document.getElementById('btnCancelCont').classList.add('hidden'); };
 
         async function saveDoc(col, data, id) { try { if(id) { delete data.createdAt; await updateDoc(doc(db, col, id), data); } else await addDoc(collection(db, col), data); showStatus('Sucesso!'); await loadAllData(); } catch(e) { console.error(e); showStatus('Erro ao salvar.', 'error'); } }
         window.deleteData = async (col, id) => { if(!confirm('Tem certeza que deseja deletar?')) return; await deleteDoc(doc(db, col, id)); showStatus('Deletado com sucesso'); await loadAllData(); }
@@ -484,6 +521,10 @@
             if(type==='evt') {
                 const d = dbEvts.find(e=>e.id===id); editId.evt=id; document.getElementById('evtTitle').value=d.title; document.getElementById('evtStart').value=d.startDate; document.getElementById('evtEnd').value=d.endDate; document.getElementById('evtIcon').value=d.iconUrl || '';
                 document.getElementById('btnCancelEvt').classList.remove('hidden'); document.getElementById('evtTitle').scrollIntoView();
+            }
+            if(type==='cont') {
+                const d = dbContatos.find(c=>c.id===id); editId.cont=id; document.getElementById('contNome').value=d.nome; document.getElementById('contTipo').value=d.tipo; document.getElementById('contEmail').value=d.email;
+                document.getElementById('btnCancelCont').classList.remove('hidden'); document.getElementById('contNome').scrollIntoView();
             }
         }
     </script>

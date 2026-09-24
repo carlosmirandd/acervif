@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcervIF | Diretório de Contatos</title>
+    <meta name="description" content="E-mails de docentes, coordenações e setores do IFRJ Campus Niterói.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AcervIF | Diretório de Contatos">
+    <meta property="og:description" content="E-mails de docentes, coordenações e setores do IFRJ Campus Niterói.">
+    <meta property="og:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
+    <meta property="og:url" content="https://acervif.ifrj.edu.br/contatos.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AcervIF | Diretório de Contatos">
+    <meta name="twitter:description" content="E-mails de docentes, coordenações e setores do IFRJ Campus Niterói.">
+    <meta name="twitter:image" content="https://acervif.ifrj.edu.br/icons/logoacervif.png">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/favicon-32.ico" sizes="32x32" type="image/x-icon">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#007A33">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AcervIF">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        const theme = localStorage.getItem('theme') || 'dark';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        themeBg: 'var(--bg-color)',
+                        textMain: 'var(--text-main)',
+                        themeMuted: 'var(--text-muted)',
+                        cyanAccent: 'var(--cyan-accent)',
+                        purpleAccent: 'var(--purple-accent)',
+                        pinkAccent: 'var(--pink-accent)',
+                        indigoAccent: 'var(--indigo-accent)'
+                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #F8FAFC; --text-main: #0F172A; --text-muted: #64748B;
+            --cyan-accent: #0284C7; --purple-accent: #7C3AED; --pink-accent: #DB2777;
+            --indigo-accent: #4F46E5;
+            --ifrj-green: #007A33; --ifrj-green-light: #009640;
+            --glass-bg: rgba(255, 255, 255, 0.7); --glass-border: rgba(0, 0, 0, 0.05); --glass-shadow: rgba(0, 0, 0, 0.03);
+            --input-bg: rgba(255, 255, 255, 0.85); --input-border: rgba(0, 0, 0, 0.12); --input-focus-bg: #FFFFFF;
+            --grid-line: rgba(0, 0, 0, 0.04); --scroll-track: #F8FAFC; --scroll-thumb: #CBD5E1; --scroll-thumb-hover: #4F46E5;
+        }
+
+        .dark {
+            --bg-color: #050505; --text-main: #FFFFFF; --text-muted: #A1A1AA;
+            --cyan-accent: #00F0FF; --purple-accent: #8A2BE2; --pink-accent: #FF1493;
+            --indigo-accent: #818CF8;
+            --ifrj-green: #00C853; --ifrj-green-light: #4ADE80;
+            --glass-bg: rgba(20, 20, 20, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --glass-shadow: rgba(0, 0, 0, 0.3);
+            --input-bg: rgba(255, 255, 255, 0.04); --input-border: rgba(255, 255, 255, 0.12); --input-focus-bg: rgba(255, 255, 255, 0.06);
+            --grid-line: rgba(255, 255, 255, 0.03); --scroll-track: #050505; --scroll-thumb: #27272a; --scroll-thumb-hover: #818CF8;
+        }
+
+        html { overflow-x: hidden; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%); }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 4px 30px var(--glass-shadow); transition: background-color 0.3s, border-color 0.3s; }
+        .glass-input { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); transition: all 0.3s ease; }
+        .glass-input:focus { outline: none; border-color: var(--indigo-accent); background: var(--input-focus-bg); box-shadow: 0 0 15px rgba(79, 70, 229, 0.15); }
+        .dark .glass-input:focus { box-shadow: 0 0 15px rgba(129, 140, 248, 0.2); }
+        .text-gradient { background: linear-gradient(to right, var(--text-main), var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .contact-row { transition: background-color 0.2s ease; }
+        .contact-row:hover { background: rgba(79, 70, 229, 0.06); }
+        .dark .contact-row:hover { background: rgba(129, 140, 248, 0.08); }
+
+        .type-pill { transition: all 0.2s ease; }
+        .type-pill.active { background: var(--indigo-accent); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .ifrj-topbar { background: linear-gradient(90deg, var(--ifrj-green), var(--ifrj-green-light), var(--indigo-accent)); }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigoAccent selection:text-white relative pb-20 min-h-screen flex flex-col">
+
+    <div class="fixed top-0 left-0 w-full h-[3px] ifrj-topbar z-[60] pointer-events-none"></div>
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+    <div class="fixed top-[-10%] right-[10%] w-[550px] h-[550px] bg-indigoAccent rounded-full blur-[180px] opacity-[0.08] pointer-events-none -z-10 transition-colors duration-500"></div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 w-full flex-1 relative z-10">
+
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6 border-b border-[var(--glass-border)] pb-8">
+            <div class="flex items-center group cursor-default">
+                <div class="p-3 bg-white dark:bg-black/40 rounded-2xl mr-4 border-2 shadow-sm group-hover:scale-105 transition-transform" style="border-color: var(--ifrj-green);">
+                    <i data-lucide="book-user" class="w-8 h-8 text-indigoAccent"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Diretório de Contatos</h1>
+                    <p class="font-mono text-sm text-themeMuted mt-1.5 flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-white px-2 py-0.5 rounded-full text-[11px] font-bold tracking-wide" style="background: var(--ifrj-green);">IFRJ</span>
+                        Campus Niterói /// Docentes e Setores
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <a href="index.html" class="glass-panel px-4 py-2.5 rounded-full font-mono text-xs font-bold text-cyanAccent hover:bg-cyanAccent hover:text-white transition-all shadow-sm flex items-center">
+                    <i data-lucide="database" class="w-4 h-4 mr-1.5"></i>Voltar ao Acervo
+                </a>
+
+                <div class="relative group z-50 ml-auto md:ml-0">
+                    <button class="glass-panel p-2.5 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-10 h-10 shadow-sm">
+                        <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="sun" class="w-4 h-4 mr-2"></i> Claro</button>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="moon" class="w-4 h-4 mr-2"></i> Escuro</button>
+                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="monitor" class="w-4 h-4 mr-2"></i> Sistema</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Filtro de tipo -->
+        <div class="flex flex-col lg:flex-row gap-4 mb-6 items-start lg:items-center justify-between glass-panel p-4 rounded-2xl">
+            <div class="flex bg-black/5 dark:bg-white/5 p-1.5 rounded-xl w-full lg:w-auto">
+                <button id="btnTodos" onclick="selectType('todos')" class="flex-1 lg:flex-none px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all bg-indigoAccent text-white shadow-md">Todos</button>
+                <button id="btnDocente" onclick="selectType('Docente')" class="flex-1 lg:flex-none px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-themeMuted hover:text-textMain">Docentes</button>
+                <button id="btnSetor" onclick="selectType('Setor')" class="flex-1 lg:flex-none px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all text-themeMuted hover:text-textMain">Setores</button>
+            </div>
+            <div class="font-mono text-sm text-themeMuted flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span id="totalCount">0</span> contato(s) encontrado(s)
+            </div>
+        </div>
+
+        <!-- Busca -->
+        <div class="glass-panel p-5 rounded-2xl mb-6">
+            <div class="relative w-full">
+                <input type="text" id="searchInput" placeholder="Buscar por nome, setor ou e-mail..." class="w-full glass-input rounded-full py-3 pl-12 pr-4 font-mono text-sm">
+                <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-themeMuted"></i>
+            </div>
+        </div>
+
+        <!-- Lista -->
+        <div id="loader" class="text-center py-20 font-mono text-indigoAccent animate-pulse hidden">Carregando diretório...</div>
+
+        <div id="emptyState" class="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto mt-10 hidden">
+            <i data-lucide="user-x" class="w-12 h-12 text-themeMuted mx-auto mb-4"></i>
+            <h3 class="text-xl font-bold text-textMain mb-2">Nenhum contato encontrado</h3>
+            <p class="text-themeMuted font-mono text-sm">Tente ajustar a busca ou o filtro.</p>
+        </div>
+
+        <div id="contactsList" class="glass-panel rounded-3xl overflow-hidden divide-y divide-[var(--glass-border)]"></div>
+
+        <footer class="mt-16 pt-8 border-t border-[var(--glass-border)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-themeMuted">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full" style="background: var(--ifrj-green);"></span>
+                AcervIF &mdash; Instituto Federal do Rio de Janeiro, Campus Niterói
+            </div>
+            <div>Engenharia de Computação &amp; Engenharia de Produção</div>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        window.setTheme = function(mode) { localStorage.setItem('theme', mode); updateTheme(); };
+        function updateTheme() {
+            const mode = localStorage.getItem('theme') || 'dark';
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
+            authDomain: "acervif12.firebaseapp.com",
+            projectId: "acervif12",
+            storageBucket: "acervif12.firebasestorage.app",
+            messagingSenderId: "698647384488",
+            appId: "1:698647384488:web:c45b99428d9767fe04cd9d",
+        };
+
+        let allContacts = [];
+        let activeType = 'todos';
+
+        const searchInput = document.getElementById('searchInput');
+        const contactsList = document.getElementById('contactsList');
+        const emptyState = document.getElementById('emptyState');
+        const loader = document.getElementById('loader');
+        const totalCount = document.getElementById('totalCount');
+
+        function normalize(str) {
+            return String(str).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+        }
+
+        async function init() {
+            lucide.createIcons();
+            loader.classList.remove('hidden');
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const snap = await getDocs(query(collection(db, 'contatos'), orderBy('nome')));
+                allContacts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderContacts();
+            } catch (error) {
+                console.error('Erro ao carregar diretório:', error);
+                emptyState.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        window.selectType = (type) => {
+            activeType = type;
+            document.getElementById('btnTodos').className = `flex-1 lg:flex-none px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all ${type === 'todos' ? 'bg-indigoAccent text-white shadow-md' : 'text-themeMuted hover:text-textMain'}`;
+            document.getElementById('btnDocente').className = `flex-1 lg:flex-none px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all ${type === 'Docente' ? 'bg-indigoAccent text-white shadow-md' : 'text-themeMuted hover:text-textMain'}`;
+            document.getElementById('btnSetor').className = `flex-1 lg:flex-none px-6 py-2 rounded-lg font-bold font-mono text-sm transition-all ${type === 'Setor' ? 'bg-indigoAccent text-white shadow-md' : 'text-themeMuted hover:text-textMain'}`;
+            renderContacts();
+        };
+
+        function renderContacts() {
+            const term = normalize(searchInput.value.trim());
+
+            const filtered = allContacts.filter(c => {
+                const matchesType = activeType === 'todos' || c.tipo === activeType;
+                const matchesSearch = !term || normalize(c.nome).includes(term) || normalize(c.email).includes(term);
+                return matchesType && matchesSearch;
+            }).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+            totalCount.innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                contactsList.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            contactsList.classList.remove('hidden');
+
+            contactsList.innerHTML = filtered.map(c => `
+                <a href="mailto:${c.email}" class="contact-row flex items-center justify-between gap-4 px-5 sm:px-8 py-4">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: var(--indigo-accent);">
+                            <i data-lucide="${c.tipo === 'Setor' ? 'building-2' : 'user'}" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-bold text-textMain truncate">${c.nome}</p>
+                            <p class="font-mono text-xs text-themeMuted">${c.tipo === 'Setor' ? 'Setor / Coordenação' : 'Docente'}</p>
+                        </div>
+                    </div>
+                    <span class="font-mono text-xs sm:text-sm text-indigoAccent bg-indigoAccent/10 px-3 py-1.5 rounded-full flex-shrink-0 truncate max-w-[45%]">${c.email}</span>
+                </a>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        searchInput.addEventListener('input', renderContacts);
+        init();
+    </script>
+</body>
+</html>
