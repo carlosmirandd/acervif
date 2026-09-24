@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcervIF | Repositório Público</title>
+    <meta name="description" content="Repositório de materiais, horários, fluxogramas e informações para os cursos de Engenharia de Computação e Produção do IFRJ Campus Niterói.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AcervIF | Repositório Público">
+    <meta property="og:description" content="Repositório de materiais, horários, fluxogramas e informações para os cursos de Engenharia de Computação e Produção do IFRJ Campus Niterói.">
+    <meta property="og:image" content="https://acervif.site/icons/logoacervif.png">
+    <meta property="og:url" content="https://acervif.site/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AcervIF | Repositório Público">
+    <meta name="twitter:description" content="Repositório de materiais, horários, fluxogramas e informações para os cursos de Engenharia de Computação e Produção do IFRJ Campus Niterói.">
+    <meta name="twitter:image" content="https://acervif.site/icons/logoacervif.png">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/favicon-32.ico" sizes="32x32" type="image/x-icon">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#007A33">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AcervIF">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        const theme = localStorage.getItem('theme') || 'dark';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        themeBg: 'var(--bg-color)',
+                        textMain: 'var(--text-main)',
+                        themeMuted: 'var(--text-muted)',
+                        cyanAccent: 'var(--cyan-accent)',
+                        purpleAccent: 'var(--purple-accent)',
+                        pinkAccent: 'var(--pink-accent)',
+                        ifrjGreen: 'var(--ifrj-green)'
+                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --cyan-accent: #0284C7;
+            --purple-accent: #7C3AED;
+            --pink-accent: #DB2777;
+            --ifrj-green: #007A33;
+            --ifrj-green-light: #009640;
+
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --glass-hover-bg: rgba(255, 255, 255, 0.9);
+            --glass-shadow: rgba(0, 0, 0, 0.03);
+            
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --input-border: rgba(0, 0, 0, 0.1);
+            --input-focus-bg: #FFFFFF;
+            
+            --grid-line: rgba(0, 0, 0, 0.04);
+            --scroll-track: #F8FAFC;
+            --scroll-thumb: #CBD5E1;
+            --scroll-thumb-hover: #0284C7;
+        }
+
+        .dark {
+            --bg-color: #050505;
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --cyan-accent: #00F0FF;
+            --purple-accent: #8A2BE2;
+            --pink-accent: #FF1493;
+            --ifrj-green: #00C853;
+            --ifrj-green-light: #4ADE80;
+
+            --glass-bg: rgba(20, 20, 20, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.03);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            
+            --input-bg: rgba(255, 255, 255, 0.03);
+            --input-border: rgba(255, 255, 255, 0.1);
+            --input-focus-bg: rgba(255, 255, 255, 0.05);
+            
+            --grid-line: rgba(255, 255, 255, 0.03);
+            --scroll-track: #050505;
+            --scroll-thumb: #27272a;
+            --scroll-thumb-hover: #00F0FF;
+        }
+
+        html { overflow-x: hidden; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                              linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 4px 30px var(--glass-shadow); transition: background-color 0.3s, border-color 0.3s; }
+        .glass-input { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); transition: all 0.3s ease; }
+        .glass-input:focus { outline: none; border-color: var(--cyan-accent); background: var(--input-focus-bg); box-shadow: 0 0 15px rgba(2, 132, 199, 0.15); }
+        .dark .glass-input:focus { box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+        
+        .glass-card-hover { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s, border-color 0.3s, box-shadow 0.3s; position: relative; }
+        .glass-card-hover:hover { transform: translateY(-8px); background: var(--glass-hover-bg); box-shadow: 0 20px 40px -15px rgba(2, 132, 199, 0.15); border-color: var(--cyan-accent); }
+        .dark .glass-card-hover:hover { box-shadow: 0 20px 40px -15px rgba(0, 240, 255, 0.15); }
+
+        .text-gradient { background: linear-gradient(to right, var(--text-main), var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .rte-content img { max-width: 100%; border-radius: 12px; margin: 1em 0; }
+        .rte-content a { color: var(--cyan-accent); text-decoration: underline; }
+        .rte-content h2 { font-size: 1.5em; font-weight: 700; margin: 0.8em 0 0.4em; color: var(--text-main); }
+        .rte-content h3 { font-size: 1.25em; font-weight: 700; margin: 0.7em 0 0.4em; color: var(--text-main); }
+        .rte-content ul { list-style: disc; padding-left: 1.4em; margin: 0.5em 0; }
+        .rte-content ol { list-style: decimal; padding-left: 1.4em; margin: 0.5em 0; }
+        .rte-content blockquote { border-left: 3px solid var(--cyan-accent); padding-left: 1em; color: var(--text-muted); font-style: italic; margin: 0.8em 0; }
+        .rte-content p { margin: 0.6em 0; }
+
+        .ifrj-topbar { background: linear-gradient(90deg, var(--ifrj-green), var(--ifrj-green-light), var(--cyan-accent)); }
+        .ifrj-badge { background: linear-gradient(135deg, var(--ifrj-green), var(--ifrj-green-light)); }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyanAccent selection:text-white relative pb-20">
+
+    <div class="fixed top-0 left-0 w-full h-[3px] ifrj-topbar z-[60] pointer-events-none"></div>
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+    <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-cyanAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float transition-colors duration-500"></div>
+    <div class="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purpleAccent rounded-full blur-[150px] opacity-[0.08] pointer-events-none -z-10 animate-float transition-colors duration-500" style="animation-delay: 2s;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 relative z-10">
+
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4 relative z-50 border-b border-[var(--glass-border)] pb-5">
+            <div class="flex items-center group cursor-default w-full lg:w-auto">
+                <div class="relative mr-3 flex-shrink-0">
+                    <img src="icons/logoacervif.png" alt="Logo AcervIF" class="w-14 h-14 object-contain group-hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tighter text-gradient leading-none">AcervIF</h1>
+                    <p class="font-mono text-xs text-themeMuted mt-1 flex flex-wrap items-center gap-1.5">
+                        <span class="inline-flex items-center gap-1 text-white px-1.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide" style="background: var(--ifrj-green);">IFRJ</span>
+                        Campus Niterói
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                <!-- Botões de Navegação Secundária -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 w-full sm:w-auto">
+                    <a href="alunos.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-4 py-2 rounded-full font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm w-full justify-center">
+                        <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i> Alunos
+                    </a>
+                    <a href="comercios.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-4 py-2 rounded-full font-mono text-xs font-bold text-cyanAccent hover:bg-cyanAccent hover:text-white transition-all shadow-sm w-full justify-center">
+                        <i data-lucide="store" class="w-3.5 h-3.5"></i> Comércios
+                    </a>
+                    <a href="fluxograma.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-4 py-2 rounded-full font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm w-full justify-center">
+                        <i data-lucide="git-branch" class="w-3.5 h-3.5"></i> Fluxogramas
+                    </a>
+                    <a href="calendario.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-4 py-2 rounded-full font-mono text-xs font-bold text-purpleAccent hover:bg-purpleAccent hover:text-white transition-all shadow-sm w-full justify-center">
+                        <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> Calendário
+                    </a>
+                    <a href="planejador_horarios.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-4 py-2 rounded-full font-mono text-xs font-bold text-green-600 dark:text-green-400 hover:bg-green-600 hover:text-white transition-all shadow-sm w-full justify-center">
+                        <i data-lucide="clock" class="w-3.5 h-3.5"></i> Horários
+                    </a>
+                    <a href="contatos.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-4 py-2 rounded-full font-mono text-xs font-bold text-sky-600 dark:text-sky-400 hover:bg-sky-600 hover:text-white transition-all shadow-sm w-full justify-center">
+                        <i data-lucide="book-user" class="w-3.5 h-3.5"></i> Contatos
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto sm:flex-1 lg:flex-none">
+                    <div class="relative flex-1 min-w-0 lg:w-64">
+                        <input type="text" id="searchInput" placeholder="Buscar algoritmos..." class="w-full glass-input rounded-full py-3 pl-12 pr-4 font-mono text-sm" autocomplete="off">
+                        <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-themeMuted"></i>
+                        <div id="globalSearchResults" class="hidden absolute top-full mt-2 left-0 w-full sm:w-80 glass-panel rounded-2xl p-2 z-40 max-h-80 overflow-y-auto"></div>
+                    </div>
+
+                    <!-- Botão de Notificações -->
+                    <button id="notifyBtn" onclick="enablePushNotifications()" title="Ativar notificações" class="glass-panel p-3 rounded-full text-themeMuted hover:text-cyanAccent transition-all flex items-center justify-center w-11 h-11 shadow-sm flex-shrink-0">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                    </button>
+
+                    <!-- Botão Seletor de Tema -->
+                    <div class="relative group z-50 flex-shrink-0">
+                        <button class="glass-panel p-3 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-11 h-11 shadow-sm">
+                            <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                            <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="sun" class="w-4 h-4 mr-2"></i> Claro</button>
+                            <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="moon" class="w-4 h-4 mr-2"></i> Escuro</button>
+                            <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="monitor" class="w-4 h-4 mr-2"></i> Sistema</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex space-x-3 overflow-x-auto pb-6 mb-8 scrollbar-hide relative z-10" id="categoriesContainer"></div>
+
+        <div id="loader" class="text-center py-20 font-mono text-cyanAccent animate-pulse hidden">
+            Acessando banco de dados do núcleo...
+        </div>
+
+        <div id="emptyState" class="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto mt-20 hidden relative z-10">
+            <i data-lucide="shield-alert" class="w-12 h-12 text-themeMuted mx-auto mb-4"></i>
+            <h3 class="text-xl font-bold text-textMain mb-2">Acervo Vazio ou Não Encontrado</h3>
+            <p class="text-themeMuted font-mono text-sm">Nenhum registro encontrado para esta busca.</p>
+        </div>
+
+        <div id="prioritySection" class="mb-16 hidden relative z-10">
+            <div class="flex items-center mb-6">
+                <div class="w-2 h-2 rounded-full bg-cyanAccent animate-ping mr-3"></div>
+                <h2 class="text-2xl font-bold text-textMain">Em Destaque</h2>
+            </div>
+            <div id="priorityGrid" class="grid gap-6"></div>
+        </div>
+
+        <div id="regularSection" class="hidden relative z-10">
+            <h2 class="text-2xl font-bold mb-6 text-themeMuted">Acervo Cronológico</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="regularGrid"></div>
+        </div>
+
+        <footer class="relative z-10 mt-20 pt-8 border-t border-[var(--glass-border)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-themeMuted">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full" style="background: var(--ifrj-green);"></span>
+                AcervIF &mdash; Instituto Federal do Rio de Janeiro, Campus Niterói
+            </div>
+            <div>Repositório Público</div>
+        </footer>
+    </div>
+
+    <!-- Banner de instalação (PWA) -->
+    <div id="pwaInstallBanner" class="hidden fixed bottom-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-sm z-[70]">
+        <div class="glass-panel rounded-2xl p-4 shadow-xl flex items-center gap-3 border-2" style="border-color: var(--ifrj-green);">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: var(--ifrj-green);">
+                <i data-lucide="smartphone" class="w-5 h-5 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-textMain">Instalar o AcervIF</p>
+                <p id="pwaInstallHint" class="text-xs text-themeMuted mt-0.5">Acesso rápido direto da tela inicial</p>
+            </div>
+            <button id="pwaInstallBtn" class="hidden flex-shrink-0 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap" style="background: var(--ifrj-green);">Instalar</button>
+            <button id="pwaInstallClose" class="flex-shrink-0 text-themeMuted hover:text-textMain p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors" title="Fechar" aria-label="Fechar">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="blogModal" class="fixed inset-0 z-50 hidden bg-white/90 dark:bg-[#050505]/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto bg-themeBg rounded-3xl overflow-hidden relative shadow-2xl border border-[var(--glass-border)]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/10 dark:bg-white/10 p-3 rounded-full text-textMain hover:text-cyanAccent hover:scale-110 transition-all z-10 shadow-md">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <img id="modalImg" class="w-full h-64 md:h-96 object-cover border-b border-[var(--glass-border)]" src="" alt="Capa">
+            <div class="p-8 md:p-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span id="modalCategory" class="text-xs font-mono text-white bg-cyanAccent px-3 py-1 rounded-full font-bold"></span>
+                    <span id="modalDate" class="text-xs font-mono text-themeMuted"></span>
+                </div>
+                <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold text-textMain mb-6 leading-tight"></h2>
+                <p id="modalDesc" class="text-xl md:text-2xl text-cyanAccent font-light mb-10 border-l-4 border-cyanAccent pl-4"></p>
+                <div id="modalContent" class="rte-content text-slate-700 dark:text-slate-300 leading-relaxed font-sans text-lg whitespace-pre-wrap"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        window.setTheme = function(mode) {
+            localStorage.setItem('theme', mode);
+            updateTheme();
+        };
+
+        function updateTheme() {
+            const mode = localStorage.getItem('theme') || 'dark';
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
+
+    <script>
+        (function() {
+            const STORAGE_KEY = 'pwaInstallDismissed';
+            const banner = document.getElementById('pwaInstallBanner');
+            const btn = document.getElementById('pwaInstallBtn');
+            const closeBtn = document.getElementById('pwaInstallClose');
+            const hint = document.getElementById('pwaInstallHint');
+
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const isDismissed = localStorage.getItem(STORAGE_KEY) === '1';
+            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+
+            if (isStandalone || isDismissed) return;
+
+            let deferredPrompt = null;
+
+            function showBanner() {
+                banner.classList.remove('hidden');
+                if (window.lucide) lucide.createIcons();
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                btn.classList.remove('hidden');
+                showBanner();
+            });
+
+            if (isIOS) {
+                hint.textContent = 'Toque em Compartilhar e depois em "Adicionar à Tela de Início"';
+                showBanner();
+            }
+
+            btn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                banner.classList.add('hidden');
+                if (outcome === 'accepted') localStorage.setItem(STORAGE_KEY, '1');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                banner.classList.add('hidden');
+                localStorage.setItem(STORAGE_KEY, '1');
+            });
+
+            window.addEventListener('appinstalled', () => {
+                banner.classList.add('hidden');
+                localStorage.setItem(STORAGE_KEY, '1');
+            });
+        })();
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
+
+        // Gerada em: Console do Firebase > Configurações do Projeto > Cloud Messaging > Configuração da Web > "Gerar par de chaves"
+        const VAPID_KEY = "BEIOON7UCs2CFfn_OZ3GRVesR6f16daoDpUucVziiLENtXQuidmtUp-teSZJ3NVfsZkUN6khpxVcpBeJLXRTdHQ";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
+            authDomain: "acervif12.firebaseapp.com",
+            projectId: "acervif12",
+            storageBucket: "acervif12.firebasestorage.app",
+            messagingSenderId: "698647384488",
+            appId: "1:698647384488:web:c45b99428d9767fe04cd9d",
+            measurementId: "G-9C095VDTBG"
+        };
+
+        let db;
+        let allPosts = [];
+        let allCategories = [];
+        let activeCategory = 'Todas';
+        let showOnlyFavorites = false;
+
+        function getFavorites() {
+            try { return JSON.parse(localStorage.getItem('acervif_favorites') || '[]'); } catch(e) { return []; }
+        }
+        function isFavorite(id) { return getFavorites().includes(id); }
+        window.toggleFavorite = function(id) {
+            let favs = getFavorites();
+            favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
+            localStorage.setItem('acervif_favorites', JSON.stringify(favs));
+            filterAndRenderPosts();
+        };
+
+        const searchInput = document.getElementById('searchInput');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const prioritySection = document.getElementById('prioritySection');
+        const regularSection = document.getElementById('regularSection');
+        const priorityGrid = document.getElementById('priorityGrid');
+        const regularGrid = document.getElementById('regularGrid');
+
+        let firebaseApp;
+
+        async function init() {
+            lucide.createIcons();
+            try {
+                firebaseApp = initializeApp(firebaseConfig);
+                db = getFirestore(firebaseApp);
+                await fetchData();
+            } catch (error) {
+                console.error("Erro Firebase:", error);
+                document.getElementById('emptyState').classList.remove('hidden');
+            }
+            updateNotifyButton();
+        }
+
+        function updateNotifyButton() {
+            const btn = document.getElementById('notifyBtn');
+            if (!btn) return;
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) { btn.classList.add('hidden'); return; }
+            if (Notification.permission === 'granted') {
+                btn.classList.add('text-cyanAccent');
+                btn.title = 'Notificações ativadas';
+            }
+        }
+
+        window.enablePushNotifications = async function() {
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+                alert('Seu navegador não suporta notificações push.');
+                return;
+            }
+            if (VAPID_KEY.startsWith('COLE_AQUI')) {
+                console.error('Configure a VAPID_KEY do Firebase Cloud Messaging antes de ativar notificações.');
+                alert('Notificações ainda não configuradas. Volte em breve!');
+                return;
+            }
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') return;
+
+                await navigator.serviceWorker.register('firebase-messaging-sw.js');
+                const readyRegistration = await navigator.serviceWorker.ready;
+                const messaging = getMessaging(firebaseApp);
+                const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: readyRegistration });
+
+                if (token) {
+                    await setDoc(doc(db, 'pushSubscriptions', token), { createdAt: new Date().toISOString(), userAgent: navigator.userAgent });
+                    updateNotifyButton();
+                }
+            } catch (error) {
+                console.error('Erro ao ativar notificações:', error);
+                alert('Não foi possível ativar as notificações agora.');
+            }
+        };
+
+        async function fetchData() {
+            document.getElementById('loader').classList.remove('hidden');
+            try {
+                const catQuery = query(collection(db, 'categories'), orderBy('name'));
+                const catSnapshot = await getDocs(catQuery);
+                allCategories = catSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                const postQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+                const postSnapshot = await getDocs(postQuery);
+                allPosts = postSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                renderCategories();
+                filterAndRenderPosts();
+            } catch (error) {
+                console.error("Erro dados:", error);
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
+            }
+        }
+
+        function buildCategoryButtons(container) {
+            const btnAll = document.createElement('button');
+            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+            btnAll.innerText = '[Todas]';
+            btnAll.onclick = () => { activeCategory = 'Todas'; renderCategories(); filterAndRenderPosts(); };
+            container.appendChild(btnAll);
+
+            const btnFav = document.createElement('button');
+            btnFav.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-300 flex items-center gap-2 ${showOnlyFavorites ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+            btnFav.innerHTML = `<i data-lucide="star" class="w-4 h-4"></i> Meus Salvos`;
+            btnFav.onclick = () => { showOnlyFavorites = !showOnlyFavorites; renderCategories(); filterAndRenderPosts(); };
+            container.appendChild(btnFav);
+
+            allCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-300 ${activeCategory === cat.id ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+                btn.innerText = cat.name;
+                btn.onclick = () => { activeCategory = cat.id; renderCategories(); filterAndRenderPosts(); };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderCategories() {
+            const prevScroll = categoriesContainer.scrollLeft;
+            categoriesContainer.innerHTML = '';
+            // Renderiza o conjunto de categorias duas vezes seguidas: permite um
+            // scroll automático infinito (ao passar da metade, volta pro início
+            // sem "salto" visível, porque o conteúdo se repete identicamente).
+            buildCategoryButtons(categoriesContainer);
+            buildCategoryButtons(categoriesContainer);
+            categoriesContainer.scrollLeft = prevScroll;
+            lucide.createIcons();
+        }
+
+        function setupCategoryMarquee() {
+            let isDown = false, moved = false, startX = 0, startScroll = 0;
+            let autoScrollPaused = false, resumeTimeout = null;
+
+            categoriesContainer.classList.add('cursor-grab');
+
+            categoriesContainer.addEventListener('mousedown', (e) => {
+                isDown = true; moved = false; autoScrollPaused = true;
+                clearTimeout(resumeTimeout);
+                startX = e.pageX; startScroll = categoriesContainer.scrollLeft;
+                categoriesContainer.classList.add('cursor-grabbing');
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                const dx = e.pageX - startX;
+                if (Math.abs(dx) > 5) moved = true;
+                categoriesContainer.scrollLeft = startScroll - dx;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (!isDown) return;
+                isDown = false;
+                categoriesContainer.classList.remove('cursor-grabbing');
+                resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, 1500);
+            });
+
+            // Se o usuário arrastou, não deixa o clique "vazar" pro botão embaixo do cursor.
+            categoriesContainer.addEventListener('click', (e) => {
+                if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+            }, true);
+
+            categoriesContainer.addEventListener('touchstart', () => { autoScrollPaused = true; clearTimeout(resumeTimeout); }, { passive: true });
+            categoriesContainer.addEventListener('touchend', () => { resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, 1500); }, { passive: true });
+            categoriesContainer.addEventListener('mouseenter', () => { autoScrollPaused = true; clearTimeout(resumeTimeout); });
+            categoriesContainer.addEventListener('mouseleave', () => { if (!isDown) resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, 800); });
+
+            function tick() {
+                if (!autoScrollPaused && categoriesContainer.scrollWidth > categoriesContainer.clientWidth) {
+                    categoriesContainer.scrollLeft += 0.6;
+                    const half = categoriesContainer.scrollWidth / 2;
+                    if (categoriesContainer.scrollLeft >= half) categoriesContainer.scrollLeft -= half;
+                }
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        function filterAndRenderPosts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const favorites = getFavorites();
+            const filtered = allPosts.filter(post => {
+                const matchesSearch = post.title.toLowerCase().includes(searchTerm) || post.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = activeCategory === 'Todas' || post.categoryId === activeCategory;
+                const matchesFavorite = !showOnlyFavorites || favorites.includes(post.id);
+                return matchesSearch && matchesCategory && matchesFavorite;
+            });
+
+            if (filtered.length === 0) {
+                prioritySection.classList.add('hidden'); regularSection.classList.add('hidden');
+                document.getElementById('emptyState').classList.remove('hidden'); return;
+            }
+
+            document.getElementById('emptyState').classList.add('hidden');
+            const priority = filtered.filter(p => p.isPriority);
+            const regular = filtered.filter(p => !p.isPriority);
+
+            // Dinâmica dos Destaques Cinemáticos
+            if (priority.length > 0) {
+                if (priority.length === 1) {
+                    priorityGrid.className = "grid grid-cols-1 gap-6";
+                    priorityGrid.innerHTML = priority.map(p => createFullBleedHTML(p, 'h-[400px] md:h-[500px]')).join('');
+                } else if (priority.length === 2) {
+                    priorityGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-6";
+                    priorityGrid.innerHTML = priority.map(p => createFullBleedHTML(p, 'h-[350px] md:h-[450px]')).join('');
+                } else {
+                    priorityGrid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+                    priorityGrid.innerHTML = priority.map(p => createStandardHTML(p)).join('');
+                }
+                prioritySection.classList.remove('hidden');
+            } else {
+                prioritySection.classList.add('hidden');
+            }
+
+            if (regular.length > 0) {
+                regularGrid.innerHTML = regular.map(p => createStandardHTML(p)).join('');
+                regularSection.classList.remove('hidden');
+            } else {
+                regularSection.classList.add('hidden');
+            }
+
+            lucide.createIcons();
+        }
+
+        function createFullBleedHTML(post, heightClass) {
+            const catName = allCategories.find(c => c.id === post.categoryId)?.name || 'Geral';
+            let dateStr = post.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Recente';
+            const defaultImg = 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800';
+            
+            const isBlog = post.postType === 'blog';
+            const actionTag = isBlog ? `<div onclick="openModal('${post.id}')"` : `<a href="${post.redirectUrl}" target="_blank" rel="noopener"`;
+            const closeTag = isBlog ? `</div>` : `</a>`;
+
+            return `
+                ${actionTag} class="relative w-full ${heightClass} rounded-3xl overflow-hidden group cursor-pointer block shadow-lg border border-[var(--glass-border)]">
+                    <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000" onerror="this.src='${defaultImg}'">
+
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10"></div>
+
+                    <button type="button" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite('${post.id}')" title="Salvar" class="absolute top-4 left-4 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/30 text-white hover:text-pinkAccent transition-colors shadow-lg">
+                        <i data-lucide="heart" class="w-4 h-4 ${isFavorite(post.id) ? 'fill-current text-pinkAccent' : ''}"></i>
+                    </button>
+                    ${isBlog ? '<div class="absolute top-4 right-4 z-20 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-xs font-mono text-white border border-white/30 flex items-center shadow-lg"><i data-lucide="align-left" class="w-4 h-4 mr-2"></i> Postagem Interna</div>' : ''}
+
+                    <div class="absolute bottom-0 left-0 w-full p-8 md:p-10 z-20 flex flex-col justify-end h-full">
+                        <div class="mb-4"><span class="text-xs font-mono text-themeBg bg-cyanAccent px-3 py-1 rounded-full font-bold shadow-md">${catName}</span></div>
+                        <h3 class="text-3xl md:text-4xl font-bold text-white group-hover:text-cyanAccent transition-colors leading-tight mb-3 drop-shadow-md">${post.title}</h3>
+                        <p class="text-slate-300 text-sm md:text-base leading-relaxed line-clamp-2 md:line-clamp-3 mb-4 max-w-3xl">${post.description}</p>
+                        <div class="flex items-center text-sm font-mono text-slate-400">
+                            <i data-lucide="calendar" class="w-4 h-4 mr-2"></i> ${dateStr}
+                            ${!isBlog ? '<i data-lucide="external-link" class="w-4 h-4 ml-4 opacity-0 group-hover:opacity-100 transition-opacity"></i>' : ''}
+                        </div>
+                    </div>
+                ${closeTag}
+            `;
+        }
+
+        function createStandardHTML(post) {
+            const catName = allCategories.find(c => c.id === post.categoryId)?.name || 'Geral';
+            let dateStr = post.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Recente';
+            const defaultImg = 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800';
+            
+            const isBlog = post.postType === 'blog';
+            const actionTag = isBlog ? `<div onclick="openModal('${post.id}')"` : `<a href="${post.redirectUrl}" target="_blank" rel="noopener"`;
+            const closeTag = isBlog ? `</div>` : `</a>`;
+
+            return `
+                ${actionTag} class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">
+                    <div class="relative h-48 rounded-2xl overflow-hidden border border-[var(--glass-border)]">
+                        <div class="absolute inset-0 bg-black/10 dark:bg-white/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                        <img src="${post.imageUrl || defaultImg}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
+                        <button type="button" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite('${post.id}')" title="Salvar" class="absolute top-3 left-3 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-black/30 backdrop-blur-sm border border-white/30 text-white hover:text-pinkAccent transition-colors shadow-sm">
+                            <i data-lucide="heart" class="w-3.5 h-3.5 ${isFavorite(post.id) ? 'fill-current text-pinkAccent' : ''}"></i>
+                        </button>
+                        ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-themeBg/80 px-3 py-1 rounded-full text-xs font-mono text-cyanAccent backdrop-blur-sm border border-[var(--glass-border)] flex items-center shadow-sm"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Ler</div>' : ''}
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="text-xl font-bold text-textMain group-hover:text-cyanAccent transition-colors leading-tight">${post.title}</h3>
+                            <i data-lucide="${isBlog ? 'book-open' : 'external-link'}" class="w-5 h-5 text-themeMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
+                        </div>
+                        <p class="text-themeMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${post.description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-[var(--glass-border)]">
+                            <span class="text-xs font-mono text-cyanAccent bg-cyanAccent/10 px-3 py-1 rounded-full">${catName}</span>
+                            <span class="flex items-center text-xs font-mono text-themeMuted"><i data-lucide="calendar" class="w-3 h-3 mr-1"></i> ${dateStr}</span>
+                        </div>
+                    </div>
+                ${closeTag}
+            `;
+        }
+
+        window.openModal = (id) => {
+            const post = allPosts.find(p => p.id === id);
+            if(!post) return;
+            document.getElementById('modalImg').src = post.imageUrl || '';
+            document.getElementById('modalTitle').innerText = post.title;
+            document.getElementById('modalDesc').innerText = post.description;
+            document.getElementById('modalContent').innerHTML = post.blogContent || '';
+            document.getElementById('modalCategory').innerText = allCategories.find(c => c.id === post.categoryId)?.name || 'Geral';
+            document.getElementById('modalDate').innerText = post.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Recente';
+            
+            document.getElementById('blogModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        };
+
+        window.closeModal = () => {
+            document.getElementById('blogModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        let comerciosCache = null;
+        let alunosCache = null;
+        const globalSearchResults = document.getElementById('globalSearchResults');
+
+        async function ensureGlobalSearchData() {
+            if (comerciosCache === null) {
+                try {
+                    const snap = await getDocs(collection(db, 'comercios'));
+                    comerciosCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                } catch(e) { comerciosCache = []; }
+            }
+            if (alunosCache === null) {
+                try {
+                    const [compRes, prodRes] = await Promise.all([fetch('alunos_computacao.json'), fetch('alunos_producao.json')]);
+                    const [comp, prod] = await Promise.all([compRes.json(), prodRes.json()]);
+                    alunosCache = [...comp, ...prod];
+                } catch(e) { alunosCache = []; }
+            }
+        }
+
+        async function updateGlobalSearchDropdown(term) {
+            if (term.length < 2) { globalSearchResults.classList.add('hidden'); globalSearchResults.innerHTML = ''; return; }
+            await ensureGlobalSearchData();
+
+            const comMatches = comerciosCache.filter(c => c.title?.toLowerCase().includes(term) || c.description?.toLowerCase().includes(term)).slice(0, 4);
+            const alunoMatches = alunosCache.filter(a => a.nome?.toLowerCase().includes(term) || a.matricula?.includes(term)).slice(0, 4);
+
+            if (comMatches.length === 0 && alunoMatches.length === 0) { globalSearchResults.classList.add('hidden'); globalSearchResults.innerHTML = ''; return; }
+
+            let html = '';
+            if (comMatches.length > 0) {
+                html += `<div class="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider text-themeMuted">Comércios</div>`;
+                html += comMatches.map(c => `<a href="comercios.html?busca=${encodeURIComponent(c.title)}" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors"><i data-lucide="store" class="w-4 h-4 text-pinkAccent flex-shrink-0"></i><span class="text-sm text-textMain truncate">${c.title}</span></a>`).join('');
+            }
+            if (alunoMatches.length > 0) {
+                html += `<div class="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider text-themeMuted">Alunos</div>`;
+                html += alunoMatches.map(a => `<a href="alunos.html?busca=${encodeURIComponent(a.nome)}" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors"><i data-lucide="user" class="w-4 h-4 text-indigo-400 flex-shrink-0"></i><span class="text-sm text-textMain truncate">${a.nome}</span></a>`).join('');
+            }
+            globalSearchResults.innerHTML = html;
+            globalSearchResults.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        searchInput.addEventListener('input', () => {
+            filterAndRenderPosts();
+            updateGlobalSearchDropdown(searchInput.value.trim().toLowerCase());
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#globalSearchResults') && e.target !== searchInput) globalSearchResults.classList.add('hidden');
+        });
+
+        setupCategoryMarquee();
+        init();
+    </script>
+</body>
+</html>

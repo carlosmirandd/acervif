@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// Regras de segurança do Firestore para o AcervIF.
+//
+// A "apiKey" do Firebase presente no código do site é pública por design
+// (https://firebase.google.com/docs/projects/api-keys) e não concede acesso
+// por si só. Quem realmente decide o que pode ser lido ou escrito no banco
+// é este arquivo — por isso ele precisa ser publicado no Console do
+// Firebase (ou via `firebase deploy --only firestore:rules`).
+//
+// Por que não usar apenas "allow write: if request.auth != null"?
+// Porque qualquer pessoa pode usar a apiKey pública para se autocadastrar
+// via createUserWithEmailAndPassword (o provedor Email/Password do Firebase
+// não permite bloquear só o cadastro mantendo o login). Uma conta assim,
+// mesmo nunca tendo passado pelo admin.html, também satisfaz
+// "request.auth != null".
+//
+// Como gerenciar admins:
+// Cada administrador é um documento na coleção "admins", cujo ID é o
+// e-mail da pessoa (ex.: "carlos@acervif.com"). Para adicionar ou remover
+// um admin, vá em Firebase Console → Firestore Database → coleção
+// "admins" e crie/apague o documento correspondente — não é preciso
+// mexer nestas regras nem fazer novo deploy. A própria coleção "admins"
+// fica travada para leitura/escrita via app (linha abaixo); isso não
+// afeta o Console nem o Admin SDK, que ignoram estas regras.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    // A lista de admins só pode ser lida/gerenciada pelo Console do
+    // Firebase ou pelo Admin SDK — nunca pelo app.
+    match /admins/{email} {
+      allow read, write: if false;
+    }
+
+    // Tokens de notificação push (FCM). Qualquer visitante pode se
+    // cadastrar/descadastrar por conta própria — não depende de login
+    // de admin. O envio das notificações em si é feito pelo Admin SDK
+    // (nas funções da Vercel), que ignora estas regras.
+    match /pushSubscriptions/{token} {
+      allow write: if true;
+    }
+
+    // Regra global: aplica-se a todas as demais coleções, atuais e futuras.
+    match /{document=**} {
+      // Qualquer um pode ler (necessário para os sites públicos funcionarem).
+      allow read: if true;
+
+      // Apenas quem estiver cadastrado na coleção "admins" pode criar,
+      // editar ou apagar documentos.
+      allow write: if isAdmin();
+    }
+  }
+}

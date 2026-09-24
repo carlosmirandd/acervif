@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AcervIF | Comércios Locais</title>
+    <meta name="description" content="Comércios e serviços parceiros próximos ao IFRJ Campus Niterói, com contato direto por WhatsApp e localização no mapa.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AcervIF | Comércios Locais">
+    <meta property="og:description" content="Comércios e serviços parceiros próximos ao IFRJ Campus Niterói, com contato direto por WhatsApp e localização no mapa.">
+    <meta property="og:image" content="https://acervif.site/icons/logoacervif.png">
+    <meta property="og:url" content="https://acervif.site/comercios.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AcervIF | Comércios Locais">
+    <meta name="twitter:description" content="Comércios e serviços parceiros próximos ao IFRJ Campus Niterói, com contato direto por WhatsApp e localização no mapa.">
+    <meta name="twitter:image" content="https://acervif.site/icons/logoacervif.png">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/favicon-32.ico" sizes="32x32" type="image/x-icon">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#007A33">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AcervIF">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        const theme = localStorage.getItem('theme') || 'dark';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { 
+                        themeBg: 'var(--bg-color)', 
+                        textMain: 'var(--text-main)',
+                        themeMuted: 'var(--text-muted)',
+                        cyanAccent: 'var(--cyan-accent)', 
+                        purpleAccent: 'var(--purple-accent)', 
+                        pinkAccent: 'var(--pink-accent)' 
+                    },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], mono: ['Fira Code', 'monospace'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #F8FAFC; --text-main: #0F172A; --text-muted: #64748B;
+            --cyan-accent: #0284C7; --purple-accent: #7C3AED; --pink-accent: #DB2777;
+            --ifrj-green: #007A33; --ifrj-green-light: #009640;
+            --glass-bg: rgba(255, 255, 255, 0.6); --glass-border: rgba(0, 0, 0, 0.05);
+            --glass-hover-bg: rgba(255, 255, 255, 0.9); --glass-shadow: rgba(0, 0, 0, 0.03);
+            --input-bg: rgba(255, 255, 255, 0.8); --input-border: rgba(0, 0, 0, 0.1); --input-focus-bg: #FFFFFF;
+            --grid-line: rgba(0, 0, 0, 0.04); --scroll-track: #F8FAFC; --scroll-thumb: #CBD5E1; --scroll-thumb-hover: #DB2777;
+        }
+
+        .dark {
+            --bg-color: #050505; --text-main: #FFFFFF; --text-muted: #A1A1AA;
+            --cyan-accent: #00F0FF; --purple-accent: #8A2BE2; --pink-accent: #FF1493;
+            --ifrj-green: #00C853; --ifrj-green-light: #4ADE80;
+            --glass-bg: rgba(20, 20, 20, 0.4); --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.03); --glass-shadow: rgba(0, 0, 0, 0.3);
+            --input-bg: rgba(255, 255, 255, 0.03); --input-border: rgba(255, 255, 255, 0.1); --input-focus-bg: rgba(255, 255, 255, 0.05);
+            --grid-line: rgba(255, 255, 255, 0.03); --scroll-track: #050505; --scroll-thumb: #27272a; --scroll-thumb-hover: #FF1493;
+        }
+
+        html { overflow-x: hidden; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        .bg-grid { background-size: 50px 50px; background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%); }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 4px 30px var(--glass-shadow); transition: background-color 0.3s, border-color 0.3s; }
+        .glass-input { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); transition: all 0.3s ease; }
+        .glass-input:focus { outline: none; border-color: var(--pink-accent); background: var(--input-focus-bg); box-shadow: 0 0 15px rgba(219, 39, 119, 0.15); }
+        .dark .glass-input:focus { box-shadow: 0 0 15px rgba(255, 20, 147, 0.2); }
+        
+        .glass-card-hover { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s, border-color 0.3s; position: relative; }
+        .glass-card-hover:hover { transform: translateY(-8px); background: var(--glass-hover-bg); box-shadow: 0 20px 40px -15px rgba(219, 39, 119, 0.15); border-color: var(--pink-accent); }
+        .dark .glass-card-hover:hover { box-shadow: 0 20px 40px -15px rgba(255, 20, 147, 0.15); }
+        .text-gradient { background: linear-gradient(to right, var(--text-main), var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .rte-content img { max-width: 100%; border-radius: 12px; margin: 1em 0; }
+        .rte-content a { color: var(--pink-accent); text-decoration: underline; }
+        .rte-content h2 { font-size: 1.5em; font-weight: 700; margin: 0.8em 0 0.4em; color: var(--text-main); }
+        .rte-content h3 { font-size: 1.25em; font-weight: 700; margin: 0.7em 0 0.4em; color: var(--text-main); }
+        .rte-content ul { list-style: disc; padding-left: 1.4em; margin: 0.5em 0; }
+        .rte-content ol { list-style: decimal; padding-left: 1.4em; margin: 0.5em 0; }
+        .rte-content blockquote { border-left: 3px solid var(--pink-accent); padding-left: 1em; color: var(--text-muted); font-style: italic; margin: 0.8em 0; }
+        .rte-content p { margin: 0.6em 0; }
+        .ifrj-topbar { background: linear-gradient(90deg, var(--ifrj-green), var(--ifrj-green-light), var(--pink-accent)); }
+    </style>
+</head>
+<body class="antialiased selection:bg-pinkAccent selection:text-white relative pb-20 min-h-screen">
+
+    <div class="fixed top-0 left-0 w-full h-[3px] ifrj-topbar z-[60] pointer-events-none"></div>
+    <div class="fixed inset-0 bg-grid -z-20 pointer-events-none transition-colors duration-300"></div>
+    <div class="fixed top-[-10%] left-[-5%] w-[600px] h-[600px] bg-pinkAccent rounded-full blur-[180px] opacity-10 pointer-events-none -z-10 animate-float transition-colors duration-500"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyanAccent rounded-full blur-[150px] opacity-[0.05] pointer-events-none -z-10 animate-float transition-colors duration-500" style="animation-delay: 2s;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 relative z-10">
+        
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6 relative z-10 border-b border-[var(--glass-border)] pb-8">
+            <div class="flex items-center group cursor-default w-full lg:w-auto">
+                <div class="p-3 bg-white dark:bg-black/40 rounded-2xl mr-4 border-2 shadow-sm group-hover:scale-105 transition-transform flex-shrink-0" style="border-color: var(--ifrj-green);">
+                    <i data-lucide="store" class="w-8 h-8 text-pinkAccent"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-gradient leading-none">Comércios Locais</h1>
+                    <p class="font-mono text-sm text-themeMuted mt-1.5 flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-white px-2 py-0.5 rounded-full text-[11px] font-bold tracking-wide" style="background: var(--ifrj-green);">IFRJ</span>
+                        Campus Niterói /// Alunos e Serviços
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                <a href="index.html" class="flex items-center gap-2 whitespace-nowrap glass-panel px-5 py-3 rounded-full font-mono text-sm font-bold text-cyanAccent hover:bg-cyanAccent hover:text-white transition-all shadow-sm w-full sm:w-auto justify-center">
+                    <i data-lucide="database" class="w-4 h-4"></i> Voltar para o Acervo
+                </a>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto sm:flex-1 lg:flex-none">
+                    <div class="relative flex-1 min-w-0 lg:w-64">
+                        <input type="text" id="searchInput" placeholder="Buscar doces, xerox..." class="w-full glass-input rounded-full py-3 pl-12 pr-4 font-mono text-sm">
+                        <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-themeMuted"></i>
+                    </div>
+
+                    <!-- Botão Seletor -->
+                    <div class="relative group z-50 flex-shrink-0">
+                        <button class="glass-panel p-3 rounded-full text-themeMuted hover:text-textMain transition-all flex items-center justify-center w-11 h-11 shadow-sm">
+                            <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                            <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-36 glass-panel rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                            <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="sun" class="w-4 h-4 mr-2"></i> Claro</button>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="moon" class="w-4 h-4 mr-2"></i> Escuro</button>
+                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2 text-sm font-mono text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 flex items-center"><i data-lucide="monitor" class="w-4 h-4 mr-2"></i> Sistema</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="flex space-x-3 overflow-x-auto pb-6 mb-8 scrollbar-hide relative z-10" id="categoriesContainer"></div>
+
+        <div id="loader" class="text-center py-20 font-mono text-pinkAccent animate-pulse hidden">Buscando lojas do campus...</div>
+
+        <div id="emptyState" class="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto mt-20 hidden relative z-10">
+            <i data-lucide="store" class="w-12 h-12 text-themeMuted mx-auto mb-4"></i>
+            <h3 class="text-xl font-bold text-textMain mb-2">Nenhum comércio cadastrado</h3>
+            <p class="text-themeMuted font-mono text-sm">Ainda não há lojinhas ou serviços ativos registrados para esta categoria.</p>
+        </div>
+
+        <div id="regularSection" class="hidden relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="regularGrid"></div>
+        </div>
+
+        <footer class="relative z-10 mt-20 pt-8 border-t border-[var(--glass-border)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-themeMuted">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full" style="background: var(--ifrj-green);"></span>
+                AcervIF &mdash; Instituto Federal do Rio de Janeiro, Campus Niterói
+            </div>
+            <div>Engenharia de Computação &amp; Engenharia de Produção</div>
+        </footer>
+    </div>
+
+    <div id="blogModal" class="fixed inset-0 z-50 hidden bg-white/90 dark:bg-[#050505]/95 backdrop-blur-xl overflow-y-auto pt-10 pb-20 px-4 sm:px-8 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto bg-themeBg rounded-3xl overflow-hidden relative shadow-2xl border border-[var(--glass-border)]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/10 dark:bg-white/10 p-3 rounded-full text-textMain hover:text-pinkAccent hover:scale-110 transition-all z-10 shadow-md">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <img id="modalImg" class="w-full h-64 md:h-96 object-cover border-b border-[var(--glass-border)]" src="" alt="Capa">
+            <div class="p-8 md:p-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span id="modalCategory" class="text-xs font-mono text-white bg-pinkAccent px-3 py-1 rounded-full font-bold"></span>
+                    <span id="modalDate" class="text-xs font-mono text-themeMuted"></span>
+                </div>
+                <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold text-textMain mb-6 leading-tight"></h2>
+                <p id="modalDesc" class="text-xl md:text-2xl text-pinkAccent font-light mb-10 border-l-4 border-pinkAccent pl-4"></p>
+                <div id="modalContent" class="rte-content text-slate-700 dark:text-slate-300 leading-relaxed font-sans text-lg whitespace-pre-wrap"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        window.setTheme = function(mode) { localStorage.setItem('theme', mode); updateTheme(); };
+        function updateTheme() {
+            const mode = localStorage.getItem('theme') || 'dark';
+            if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+    </script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA91S9TJQ-YhfKPrvXMBVwaop6cwfmPLIc",
+            authDomain: "acervif12.firebaseapp.com",
+            projectId: "acervif12",
+            storageBucket: "acervif12.firebasestorage.app",
+            messagingSenderId: "698647384488",
+            appId: "1:698647384488:web:c45b99428d9767fe04cd9d",
+            measurementId: "G-9C095VDTBG"
+        };
+
+        let db;
+        let allStores = [];
+        let allCategories = [];
+        let activeCategory = 'Todas';
+
+        const searchInput = document.getElementById('searchInput');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const emptyState = document.getElementById('emptyState');
+        const regularGrid = document.getElementById('regularGrid');
+
+        async function init() {
+            lucide.createIcons();
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            await fetchData();
+
+            const buscaParam = new URLSearchParams(window.location.search).get('busca');
+            if (buscaParam) { searchInput.value = buscaParam; filterAndRenderStores(); }
+        }
+
+        async function fetchData() {
+            document.getElementById('loader').classList.remove('hidden');
+            try {
+                const catSnapshot = await getDocs(query(collection(db, 'comercioCategories'), orderBy('name')));
+                allCategories = catSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                const storeSnapshot = await getDocs(query(collection(db, 'comercios'), orderBy('createdAt', 'desc')));
+                allStores = storeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                renderCategories();
+                filterAndRenderStores();
+            } catch (error) { showEmptyState(); }
+            finally { document.getElementById('loader').classList.add('hidden'); }
+        }
+
+        function renderCategories() {
+            categoriesContainer.innerHTML = '';
+            const btnAll = document.createElement('button');
+            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-pinkAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+            btnAll.innerText = '[Todas]';
+            btnAll.onclick = () => { activeCategory = 'Todas'; renderCategories(); filterAndRenderStores(); };
+            categoriesContainer.appendChild(btnAll);
+
+            allCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === cat.id ? 'bg-pinkAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+                btn.innerText = cat.name;
+                btn.onclick = () => { activeCategory = cat.id; renderCategories(); filterAndRenderStores(); };
+                categoriesContainer.appendChild(btn);
+            });
+        }
+
+        function filterAndRenderStores() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filtered = allStores.filter(p => {
+                return (activeCategory === 'Todas' || p.categoryId === activeCategory) && 
+                       (p.title.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm));
+            });
+
+            if (filtered.length === 0) { showEmptyState(); return; }
+            emptyState.classList.add('hidden');
+            document.getElementById('regularSection').classList.remove('hidden');
+            regularGrid.innerHTML = filtered.map(p => createStoreHTML(p)).join('');
+            lucide.createIcons();
+        }
+
+        function createStoreHTML(store) {
+            const catName = allCategories.find(c => c.id === store.categoryId)?.name || 'Geral';
+            const defaultImg = 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&q=80&w=800';
+            const isBlog = store.postType === 'blog';
+            const actionTag = isBlog ? `<div onclick="openModal('${store.id}')"` : `<a href="${store.redirectUrl}" target="_blank" rel="noopener"`;
+            const closeTag = isBlog ? `</div>` : `</a>`;
+
+            return `
+                ${actionTag} class="glass-panel glass-card-hover rounded-3xl overflow-hidden flex flex-col group p-2 h-full cursor-pointer block">
+                    <div class="relative h-48 rounded-2xl overflow-hidden border border-[var(--glass-border)]">
+                        <div class="absolute inset-0 bg-black/10 dark:bg-white/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                        <img src="${store.imageUrl || defaultImg}" alt="${store.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" onerror="this.src='${defaultImg}'">
+                        ${isBlog ? '<div class="absolute top-3 right-3 z-20 bg-themeBg/80 px-3 py-1 rounded-full text-xs font-mono text-pinkAccent backdrop-blur-sm border border-[var(--glass-border)] flex items-center shadow-sm"><i data-lucide="align-left" class="w-3 h-3 mr-1"></i> Detalhes</div>' : ''}
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="text-xl font-bold text-textMain group-hover:text-pinkAccent transition-colors leading-tight">${store.title}</h3>
+                            <i data-lucide="${isBlog ? 'book-open' : 'external-link'}" class="w-5 h-5 text-themeMuted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 -group-hover:translate-y-1 transition-all flex-shrink-0 ml-2"></i>
+                        </div>
+                        <p class="text-themeMuted text-sm mb-6 flex-grow leading-relaxed line-clamp-3">${store.description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-[var(--glass-border)]">
+                            <span class="text-xs font-mono text-pinkAccent bg-pinkAccent/10 px-3 py-1 rounded-full">${catName}</span>
+                            <div class="flex items-center gap-2">
+                                ${store.whatsapp ? `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); window.open('https://wa.me/${store.whatsapp.replace(/\D/g,'')}', '_blank', 'noopener')" title="WhatsApp" class="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-colors"><i data-lucide="message-circle" class="w-4 h-4"></i></button>` : ''}
+                                ${store.mapsUrl ? `<button type="button" onclick="event.preventDefault(); event.stopPropagation(); window.open('${store.mapsUrl}', '_blank', 'noopener')" title="Ver no Mapa" class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                ${closeTag}
+            `;
+        }
+
+        function showEmptyState() {
+            document.getElementById('regularSection').classList.add('hidden'); 
+            emptyState.classList.remove('hidden');
+        }
+
+        window.openModal = (id) => {
+            const store = allStores.find(p => p.id === id);
+            if(!store) return;
+            document.getElementById('modalImg').src = store.imageUrl || '';
+            document.getElementById('modalTitle').innerText = store.title;
+            document.getElementById('modalDesc').innerText = store.description;
+            document.getElementById('modalContent').innerHTML = store.blogContent || '';
+            document.getElementById('modalCategory').innerText = allCategories.find(c => c.id === store.categoryId)?.name || 'Geral';
+            document.getElementById('modalDate').innerText = store.createdAt?.toDate().toLocaleDateString('pt-BR') || 'Recente';
+            
+            document.getElementById('blogModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        };
+
+        window.closeModal = () => {
+            document.getElementById('blogModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        searchInput.addEventListener('input', filterAndRenderStores);
+        init();
+    </script>
+</body>
+</html>

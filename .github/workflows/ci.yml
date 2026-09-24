@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validar arquivos JSON
+        run: |
+          for f in package.json manifest.json vercel.json firebase.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$f', 'utf8')); console.log('$f OK')"
+          done
+
+      - name: Checar sintaxe e tags dos arquivos HTML
+        run: node scripts/check-html.js
+
+      - name: Checar sintaxe das Serverless Functions
+        run: |
+          node --check api/send-notification.js
+          node --check api/notify-upcoming-events.js
+
+      - name: Checar sintaxe do Service Worker
+        run: node --check firebase-messaging-sw.js

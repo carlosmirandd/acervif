@@ -1,0 +1,6 @@
+{
+  "outputDirectory": ".",
+  "crons": [
+    { "path": "/api/notify-upcoming-events", "schedule": "0 12 * * *" }
+  ]
+}

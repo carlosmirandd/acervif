@@ -1,0 +1,19 @@
+{
+  "name": "acervif-app",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carlosmirandd/acervif.git"
+  },
+  "homepage": "https://acervif.site",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'No build step required for static site'"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "firebase-admin": "^13.0.2"
+  }
+}
