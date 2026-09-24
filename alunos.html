@@ -303,17 +303,17 @@
             studentsList.classList.remove('hidden');
 
             studentsList.innerHTML = filtered.map((s, idx) => `
-                <div class="student-row flex items-center justify-between gap-4 px-5 sm:px-8 py-4">
+                <div class="student-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 px-5 sm:px-8 py-4">
                     <div class="flex items-center gap-4 min-w-0">
                         <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 font-mono text-xs font-bold text-white" style="background: var(--indigo-accent);">
                             ${(idx + 1)}
                         </div>
                         <div class="min-w-0">
-                            <p class="font-bold text-textMain truncate">${s.nome}</p>
+                            <p class="font-bold text-textMain break-words">${s.nome}</p>
                             <p class="font-mono text-xs text-themeMuted">${getPeriod(s.matricula)}</p>
                         </div>
                     </div>
-                    <span class="font-mono text-sm text-indigoAccent bg-indigoAccent/10 px-3 py-1.5 rounded-full flex-shrink-0">${s.matricula}</span>
+                    <span class="font-mono text-sm text-indigoAccent bg-indigoAccent/10 px-3 py-1.5 rounded-full flex-shrink-0 self-start sm:self-center ml-[52px] sm:ml-0">${s.matricula}</span>
                 </div>
             `).join('');
         }
