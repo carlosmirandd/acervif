@@ -482,27 +482,86 @@
             }
         }
 
-        function renderCategories() {
-            categoriesContainer.innerHTML = '';
+        function buildCategoryButtons(container) {
             const btnAll = document.createElement('button');
-            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+            btnAll.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-300 ${activeCategory === 'Todas' ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
             btnAll.innerText = '[Todas]';
             btnAll.onclick = () => { activeCategory = 'Todas'; renderCategories(); filterAndRenderPosts(); };
-            categoriesContainer.appendChild(btnAll);
+            container.appendChild(btnAll);
 
             const btnFav = document.createElement('button');
-            btnFav.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 flex items-center gap-2 ${showOnlyFavorites ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+            btnFav.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-300 flex items-center gap-2 ${showOnlyFavorites ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
             btnFav.innerHTML = `<i data-lucide="star" class="w-4 h-4"></i> Meus Salvos`;
             btnFav.onclick = () => { showOnlyFavorites = !showOnlyFavorites; renderCategories(); filterAndRenderPosts(); };
-            categoriesContainer.appendChild(btnFav);
+            container.appendChild(btnFav);
 
             allCategories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === cat.id ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
+                btn.className = `px-6 py-2 rounded-full font-mono text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all duration-300 ${activeCategory === cat.id ? 'bg-cyanAccent text-white shadow-md' : 'glass-panel text-themeMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5'}`;
                 btn.innerText = cat.name;
                 btn.onclick = () => { activeCategory = cat.id; renderCategories(); filterAndRenderPosts(); };
-                categoriesContainer.appendChild(btn);
+                container.appendChild(btn);
             });
+        }
+
+        function renderCategories() {
+            const prevScroll = categoriesContainer.scrollLeft;
+            categoriesContainer.innerHTML = '';
+            // Renderiza o conjunto de categorias duas vezes seguidas: permite um
+            // scroll automático infinito (ao passar da metade, volta pro início
+            // sem "salto" visível, porque o conteúdo se repete identicamente).
+            buildCategoryButtons(categoriesContainer);
+            buildCategoryButtons(categoriesContainer);
+            categoriesContainer.scrollLeft = prevScroll;
+            lucide.createIcons();
+        }
+
+        function setupCategoryMarquee() {
+            let isDown = false, moved = false, startX = 0, startScroll = 0;
+            let autoScrollPaused = false, resumeTimeout = null;
+
+            categoriesContainer.classList.add('cursor-grab');
+
+            categoriesContainer.addEventListener('mousedown', (e) => {
+                isDown = true; moved = false; autoScrollPaused = true;
+                clearTimeout(resumeTimeout);
+                startX = e.pageX; startScroll = categoriesContainer.scrollLeft;
+                categoriesContainer.classList.add('cursor-grabbing');
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                const dx = e.pageX - startX;
+                if (Math.abs(dx) > 5) moved = true;
+                categoriesContainer.scrollLeft = startScroll - dx;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (!isDown) return;
+                isDown = false;
+                categoriesContainer.classList.remove('cursor-grabbing');
+                resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, 1500);
+            });
+
+            // Se o usuário arrastou, não deixa o clique "vazar" pro botão embaixo do cursor.
+            categoriesContainer.addEventListener('click', (e) => {
+                if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+            }, true);
+
+            categoriesContainer.addEventListener('touchstart', () => { autoScrollPaused = true; clearTimeout(resumeTimeout); }, { passive: true });
+            categoriesContainer.addEventListener('touchend', () => { resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, 1500); }, { passive: true });
+            categoriesContainer.addEventListener('mouseenter', () => { autoScrollPaused = true; clearTimeout(resumeTimeout); });
+            categoriesContainer.addEventListener('mouseleave', () => { if (!isDown) resumeTimeout = setTimeout(() => { autoScrollPaused = false; }, 800); });
+
+            function tick() {
+                if (!autoScrollPaused && categoriesContainer.scrollWidth > categoriesContainer.clientWidth) {
+                    categoriesContainer.scrollLeft += 0.6;
+                    const half = categoriesContainer.scrollWidth / 2;
+                    if (categoriesContainer.scrollLeft >= half) categoriesContainer.scrollLeft -= half;
+                }
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
         }
 
         function filterAndRenderPosts() {
@@ -689,6 +748,7 @@
             if (!e.target.closest('#globalSearchResults') && e.target !== searchInput) globalSearchResults.classList.add('hidden');
         });
 
+        setupCategoryMarquee();
         init();
     </script>
 </body>
